@@ -64,6 +64,9 @@ jobs:
       - name: Validate template
         run: sam validate --lint --config-env ci
 
+      - name: Build DAX client layer (no bundled botocore)
+        run: bash scripts/build_dax_layer.sh
+
       - name: Build (packages the Lambda code)
         run: sam build --config-env ci
 

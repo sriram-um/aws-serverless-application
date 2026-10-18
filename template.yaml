@@ -15,6 +15,16 @@ Parameters:
     Type: String
     Description: Deployed version (the CI pipeline passes the git commit SHA)
     Default: local
+  EnableCaching:
+    Type: String
+    Description: >
+      Exercise 10. 'true' creates DAX (+ VPC, endpoints) and enables the API Gateway cache.
+      These bill by the hour - deploy with true for a demo, then back to false.
+    AllowedValues: ['true', 'false']
+    Default: 'false'
+
+Conditions:
+  CachingEnabled: !Equals [!Ref EnableCaching, 'true']
 
 Globals:
   Function:
@@ -102,6 +112,9 @@ Resources:
       Name: !Sub '${AWS::StackName}-api'
       Description: Orders REST API
       StageName: prod
+      # Exercise 10: stage cache (0.5 GB) - per-method TTLs are set in MethodSettings below
+      CacheClusterEnabled: !If [CachingEnabled, true, false]
+      CacheClusterSize: '0.5'
       # Setting OpenApiVersion stops SAM from also creating an extra default "Stage" stage
       OpenApiVersion: '3.0.1'
       # Exercise 9: an OpenAPI body is needed for non-Lambda integrations. SAM applies the
@@ -125,6 +138,35 @@ Resources:
                 httpMethod: POST
                 uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateOrderFunction.Arn}/invocations'
                 passthroughBehavior: when_no_match
+          /orders/{orderId}:
+            get:
+              summary: Get an order via Lambda (reads through DAX when caching is enabled)
+              parameters:
+                - name: orderId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: Authorization
+                  in: header
+                  required: false
+                  schema:
+                    type: string
+              responses:
+                '200':
+                  description: Order items
+                '404':
+                  description: Order not found (or not owned by the caller)
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetOrderFunction.Arn}/invocations'
+                passthroughBehavior: when_no_match
+                # Cache key = orderId AND the caller's token. Without Authorization in the key,
+                # API Gateway would serve one user's cached order to another user.
+                cacheKeyParameters:
+                  - method.request.path.orderId
+                  - method.request.header.Authorization
           /direct/orders/{orderId}:
             get:
               summary: Get an order straight from DynamoDB (no Lambda)
@@ -132,6 +174,11 @@ Resources:
                 - name: orderId
                   in: path
                   required: true
+                  schema:
+                    type: string
+                - name: Authorization
+                  in: header
+                  required: false
                   schema:
                     type: string
               responses:
@@ -145,6 +192,9 @@ Resources:
                 uri: !Sub 'arn:aws:apigateway:${AWS::Region}:dynamodb:action/Query'
                 credentials: !GetAtt ApiDynamoDbReadRole.Arn
                 passthroughBehavior: never
+                cacheKeyParameters:
+                  - method.request.path.orderId
+                  - method.request.header.Authorization
                 requestTemplates:
                   # Only the caller's own order: customerId must equal the verified Cognito sub.
                   # Path parameter is escaped so it cannot break out of the JSON string.
@@ -210,6 +260,266 @@ Resources:
           ThrottlingBurstLimit: 50
           ThrottlingRateLimit: 100
           MetricsEnabled: true
+        # Exercise 10: cache the two read routes for 300 s ('/' in paths is written as ~1)
+        - ResourcePath: '/~1orders~1{orderId}'
+          HttpMethod: GET
+          ThrottlingBurstLimit: 50
+          ThrottlingRateLimit: 100
+          MetricsEnabled: true
+          CachingEnabled: !If [CachingEnabled, true, false]
+          CacheTtlInSeconds: 300
+          CacheDataEncrypted: true
+        - ResourcePath: '/~1direct~1orders~1{orderId}'
+          HttpMethod: GET
+          ThrottlingBurstLimit: 50
+          ThrottlingRateLimit: 100
+          MetricsEnabled: true
+          CachingEnabled: !If [CachingEnabled, true, false]
+          CacheTtlInSeconds: 300
+          CacheDataEncrypted: true
+
+  # ---------------------------------------------------------------------------
+  # Exercise 10: GetOrder Lambda - reads through DAX when EnableCaching=true,
+  # straight from DynamoDB otherwise
+  # ---------------------------------------------------------------------------
+  GetOrderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-GetOrder'
+      Description: Returns the caller's order (DAX read-through cache when enabled)
+      CodeUri: src/get_order/
+      Handler: app.lambda_handler
+      MemorySize: 512
+      Layers:
+        - !Ref DaxClientLayer   # merged with the Powertools layer from Globals
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref OrdersTable
+          DAX_ENDPOINT: !If [CachingEnabled, !GetAtt DaxCluster.ClusterDiscoveryEndpointURL, '']
+          DYNAMODB_ENDPOINT: ''
+      # DAX is only reachable inside its VPC, so the function joins the VPC only with DAX on
+      VpcConfig: !If
+        - CachingEnabled
+        - SecurityGroupIds:
+            - !Ref LambdaSecurityGroup
+          SubnetIds:
+            - !Ref PrivateSubnetA
+            - !Ref PrivateSubnetB
+        - !Ref AWS::NoValue
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref OrdersTable
+        - Statement:
+            - Sid: ReadThroughDax
+              Effect: Allow
+              Action:
+                - dax:GetItem
+                - dax:BatchGetItem
+                - dax:Query
+              Resource: !Sub 'arn:aws:dax:${AWS::Region}:${AWS::AccountId}:cache/orders-dax'
+        # ENI management for VPC attachment (no-op while the function is outside the VPC)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Events:
+        GetOrder:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OrdersApi
+            Path: /orders/{orderId}
+            Method: GET
+
+  # DAX client without its (runtime-provided) dependencies - ~1.2 MB instead of ~28 MB.
+  # Content is generated by scripts/build_dax_layer.sh before `sam build`.
+  DaxClientLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub '${AWS::StackName}-dax-client'
+      Description: amazon-dax-client 2.1.0 + antlr4-python3-runtime (pure Python, no deps)
+      ContentUri: layers/dax/
+      CompatibleRuntimes:
+        - python3.12
+      RetentionPolicy: Delete
+
+  GetOrderLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetOrderFunction}'
+      RetentionInDays: 14
+
+  # --- Network for DAX (only with EnableCaching=true) -------------------------
+  CacheVpc:
+    Type: AWS::EC2::VPC
+    Condition: CachingEnabled
+    Properties:
+      CidrBlock: 10.20.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true   # required for the X-Ray interface endpoint's private DNS
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-cache-vpc'
+        - Key: project
+          Value: serverless-orders
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Condition: CachingEnabled
+    Properties:
+      VpcId: !Ref CacheVpc
+      CidrBlock: 10.20.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-private-a'
+
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Condition: CachingEnabled
+    Properties:
+      VpcId: !Ref CacheVpc
+      CidrBlock: 10.20.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-private-b'
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Condition: CachingEnabled
+    Properties:
+      VpcId: !Ref CacheVpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-private-rt'
+
+  PrivateSubnetARouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: CachingEnabled
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnetBRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: CachingEnabled
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
+
+  # No NAT gateway: DynamoDB is reached through a free gateway endpoint ...
+  DynamoDbGatewayEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: CachingEnabled
+    Properties:
+      VpcId: !Ref CacheVpc
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.dynamodb'
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !Ref PrivateRouteTable
+
+  # ... and X-Ray through an interface endpoint, so tracing keeps working inside the VPC
+  XRayInterfaceEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: CachingEnabled
+    Properties:
+      VpcId: !Ref CacheVpc
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.xray'
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref EndpointSecurityGroup
+
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: CachingEnabled
+    Properties:
+      GroupDescription: GetOrder Lambda ENIs
+      VpcId: !Ref CacheVpc
+
+  DaxSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: CachingEnabled
+    Properties:
+      GroupDescription: DAX cluster - TLS from the GetOrder Lambda only
+      VpcId: !Ref CacheVpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 9111
+          ToPort: 9111
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+          Description: DAX encrypted endpoint
+
+  EndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: CachingEnabled
+    Properties:
+      GroupDescription: Interface endpoints - HTTPS from the GetOrder Lambda only
+      VpcId: !Ref CacheVpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+
+  # --- DAX cluster (only with EnableCaching=true) -----------------------------
+  DaxServiceRole:
+    Type: AWS::IAM::Role
+    Condition: CachingEnabled
+    Properties:
+      Description: Lets DAX read and write the Orders table on behalf of clients
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: dax.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: orders-table-access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:DescribeTable
+                  - dynamodb:GetItem
+                  - dynamodb:BatchGetItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:ConditionCheckItem
+                Resource: !GetAtt OrdersTable.Arn
+
+  DaxSubnetGroup:
+    Type: AWS::DAX::SubnetGroup
+    Condition: CachingEnabled
+    Properties:
+      Description: Private subnets for the orders DAX cluster
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+
+  DaxCluster:
+    Type: AWS::DAX::Cluster
+    Condition: CachingEnabled
+    Properties:
+      ClusterName: orders-dax          # max 20 characters
+      Description: Read-through cache for the Orders table
+      NodeType: dax.t3.small
+      ReplicationFactor: 1             # single node: fine for a demo, not for production
+      IAMRoleARN: !GetAtt DaxServiceRole.Arn
+      SubnetGroupName: !Ref DaxSubnetGroup
+      SecurityGroupIds:
+        - !GetAtt DaxSecurityGroup.GroupId
+      SSESpecification:
+        SSEEnabled: true
+      ClusterEndpointEncryptionType: TLS
+      Tags:
+        project: serverless-orders
 
   # Exercise 9: role API Gateway assumes for the direct DynamoDB integration (read-only, one table)
   ApiDynamoDbReadRole:
@@ -350,12 +660,14 @@ Resources:
               {
                 "type": "metric", "x": 12, "y": 2, "width": 12, "height": 6,
                 "properties": {
-                  "title": "Lambda CreateOrder - Invocations & Errors",
+                  "title": "Lambda - Invocations & Errors",
                   "region": "${AWS::Region}", "view": "timeSeries", "stat": "Sum", "period": 60,
                   "metrics": [
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${CreateOrderFunction}", { "label": "Invocations" } ],
-                    [ ".", "Errors", ".", ".", { "label": "Errors", "color": "#d62728" } ],
-                    [ ".", "Throttles", ".", ".", { "label": "Throttles", "color": "#9467bd" } ]
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${CreateOrderFunction}", { "label": "CreateOrder invocations" } ],
+                    [ ".", "Errors", ".", ".", { "label": "CreateOrder errors", "color": "#d62728" } ],
+                    [ ".", "Invocations", ".", "${GetOrderFunction}", { "label": "GetOrder invocations" } ],
+                    [ ".", "Errors", ".", ".", { "label": "GetOrder errors", "color": "#e377c2" } ],
+                    [ ".", "Throttles", ".", "${CreateOrderFunction}", { "label": "CreateOrder throttles", "color": "#9467bd" } ]
                   ]
                 }
               },
@@ -379,6 +691,17 @@ Resources:
                   "metrics": [
                     [ "AWS/WAFV2", "AllowedRequests", "WebACL", "${WebAclName}", "Region", "${AWS::Region}", "Rule", "ALL", { "label": "Allowed" } ],
                     [ ".", "BlockedRequests", ".", ".", ".", ".", "Rule", "RateLimitPerIP", { "label": "Blocked by RateLimitPerIP", "color": "#d62728" } ]
+                  ]
+                }
+              },
+              {
+                "type": "metric", "x": 0, "y": 14, "width": 24, "height": 6,
+                "properties": {
+                  "title": "API Gateway cache - hits vs misses (EnableCaching=true)",
+                  "region": "${AWS::Region}", "view": "timeSeries", "stat": "Sum", "period": 60,
+                  "metrics": [
+                    [ "AWS/ApiGateway", "CacheHitCount", "ApiName", "${ApiName}", "Stage", "prod", { "label": "Cache hits" } ],
+                    [ ".", "CacheMissCount", ".", ".", ".", ".", { "label": "Cache misses", "color": "#ff7f0e" } ]
                   ]
                 }
               }
@@ -420,6 +743,13 @@ Outputs:
   DashboardUrl:
     Description: CloudWatch dashboard
     Value: !Sub 'https://${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#dashboards/dashboard/${OrdersDashboard}'
+  CachingEnabled:
+    Description: Whether DAX and the API Gateway cache are deployed
+    Value: !Ref EnableCaching
+  DaxEndpoint:
+    Condition: CachingEnabled
+    Description: DAX cluster discovery endpoint
+    Value: !GetAtt DaxCluster.ClusterDiscoveryEndpointURL
   CreateOrderFunctionName:
     Description: Name of the CreateOrder Lambda function
     Value: !Ref CreateOrderFunction

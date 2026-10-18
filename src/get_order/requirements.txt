@@ -1,0 +1,2 @@
+# Nothing to bundle: boto3 comes from the Lambda runtime, aws-lambda-powertools from the
+# Powertools layer and amazon-dax-client from the DAX layer (scripts/build_dax_layer.sh).

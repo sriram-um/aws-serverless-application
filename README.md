@@ -24,7 +24,7 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 | 7 | Local development | SAM CLI, DynamoDB Local | ⏸ Tooling ready, local run pending (Docker issue) |
 | 8 | Lambda optimization | Lambda, Power Tuning | ✅ Done |
 | 9 | Direct integration | API Gateway → DynamoDB | ✅ Done |
-| 10 | Caching | DAX, API Gateway cache | ⬜ |
+| 10 | Caching | DAX, API Gateway cache | 🟡 Built, DAX verified; API cache test pending |
 | 11 | Disaster recovery | DynamoDB Global Tables | ⬜ |
 | 12 | Cost estimate | AWS Pricing Calculator | ⬜ |
 | 13 | Analytics API | DynamoDB Streams, Lambda | ⬜ |
@@ -291,6 +291,20 @@ in seconds without touching Lambda.
   and alter the query (tested — returns 404).
 - **Errors don't leak internals.** DynamoDB 4xx/5xx map to a generic `500 {"message": "internal error"}`;
   an empty result sets `$context.responseOverride.status = 404`.
+- **Caching is a switch, not a fixture.** DAX, its VPC, the X-Ray interface endpoint and the API
+  Gateway cache bill by the hour, so they exist only with `EnableCaching=true`
+  (`sam deploy --parameter-overrides EnableCaching=true`). The same GetOrder code reads through
+  DAX when `DAX_ENDPOINT` is set and straight from DynamoDB otherwise. The CI pipeline always
+  deploys with the default (`false`), so a push also acts as a safety switch-off.
+- **No NAT gateway for the DAX VPC.** The Lambda reaches DynamoDB through a free *gateway*
+  endpoint and X-Ray through an *interface* endpoint; nothing else needs the internet.
+- **DAX client as a lean layer.** `pip install amazon-dax-client` pulls ~26 MB of
+  botocore/urllib3/dateutil the runtime already has (and shadows the runtime's botocore).
+  `scripts/build_dax_layer.sh` installs only `amazondax` + `antlr4` with `--no-deps` into a
+  1.4 MB layer; GetOrder's own package stays at ~5 KB.
+- **Cache key includes the caller's token.** API Gateway caches by path parameters only unless
+  told otherwise, which would serve user A's cached order to user B. Both GET routes add
+  `method.request.header.Authorization` to `cacheKeyParameters`; cache entries are encrypted.
 - **API defined in OpenAPI** (`DefinitionBody` inline in `template.yaml`) — required for non-Lambda
   integrations; both routes are declared there explicitly.
 - **`OpenApiVersion: '3.0.1'`** on the API stops SAM from creating its extra default `Stage` stage,
@@ -590,6 +604,33 @@ role's permissions (`Query` on one table) are the actual guard.
 
 **Pitfall 3 — new deployments take a few seconds to propagate.** The first request right after a
 successful deploy still hit the previous deployment and returned an "unknown route" error.
+
+### Caching (exercise 10): first results — API cache test to be completed
+
+Deployed with `EnableCaching=true` (13.6 min, mostly DAX cluster creation), measured, then switched
+back off to stop hourly charges; the API Gateway cache test will be finished at the end of the project.
+
+**DAX read-through (GetOrder invoked directly, bypassing the API cache):**
+
+| Read path | Read time inside Lambda |
+|---|---|
+| DynamoDB `Query` (caching off) | median **4.5 ms** |
+| DAX — cache miss (DAX fetches from DynamoDB) | 36 ms |
+| DAX — cache hit | median **~2.6 ms** |
+| DAX — first call after cold start (cluster discovery + TLS) | 82 ms typical, 473 ms right after deploy |
+
+**Cold start cost:** GetOrder `Init` ≈ **884 ms** median vs ≈ 530 ms for CreateOrder — the extra
+~350 ms is importing the DAX client (`amazondax` + `antlr4`). The VPC itself no longer adds
+noticeable cold-start time (Lambda creates the VPC network interfaces at deploy time).
+
+**Security:** with the cache enabled, user 2 requesting a path just cached for user 1 got `404` on
+both routes — the `Authorization` header in the cache key keeps entries per caller.
+
+**Open item — API Gateway cache hit rate.** Twenty identical requests (same token, same order)
+produced `CacheHitCount=0 / CacheMissCount=16` on the Lambda route and `4 / 16` on the direct route,
+and every call still invoked GetOrder. The first attempt ran before the cache cluster had finished
+provisioning (it becomes usable minutes *after* CloudFormation reports success); the second
+attempt still missed, so the cache key configuration needs a closer look.
 
 ### The API was briefly public
 
