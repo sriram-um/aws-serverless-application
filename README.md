@@ -170,7 +170,7 @@ and exchanges it for temporary AWS credentials. The trust is set up once with
 | Resource | Purpose |
 |---|---|
 | GitHub OIDC identity provider | Lets AWS STS trust tokens issued by `token.actions.githubusercontent.com` |
-| `aws-serverless-application-github-deploy` role | Assumed by the workflow. Trust is restricted to `repo:sriram-um/aws-serverless-application:ref:refs/heads/main`, so other repos, forks and branches cannot use it. It can only run change sets on this app's stack, upload to the SAM artifact bucket, and pass the execution role to CloudFormation. |
+| `aws-serverless-application-github-deploy` role | Assumed by the workflow. Trust is restricted to the `main` branch of this repository, pinned by GitHub's immutable owner/repo IDs (`repo:sriram-um@93265789/aws-serverless-application@1424159185:ref:refs/heads/main`), so other repos, forks, branches — or a re-created repo with the same name — cannot use it. It can only run change sets on this app's stack, upload to the SAM artifact bucket, and pass the execution role to CloudFormation. |
 | `aws-serverless-application-cfn-execution` role | Assumed only by the CloudFormation service to create the actual resources (`sam deploy --role-arn`). |
 
 This split (same pattern as `sam pipeline bootstrap`) means the credentials GitHub holds cannot
@@ -361,6 +361,22 @@ stats count(*), count_distinct(traceId), avg(durationNano)/1000000
 
 Also note: the first few requests right after the deploy that enabled stage tracing had Lambda
 spans but no API Gateway span — the stage setting takes a short while to propagate.
+
+### GitHub OIDC: "Not authorized to perform sts:AssumeRoleWithWebIdentity"
+
+The first pipeline run passed tests but failed at *Configure AWS credentials*. The role's trust
+policy expected the classic subject claim, but CloudTrail's failed `AssumeRoleWithWebIdentity`
+event showed GitHub sending the newer **immutable-ID** format:
+
+```
+expected:  repo:sriram-um/aws-serverless-application:ref:refs/heads/main
+received:  repo:sriram-um@93265789/aws-serverless-application@1424159185:ref:refs/heads/main
+```
+
+Fix: match the `sub` condition to the received format, with the numeric owner and repo IDs as
+template parameters. Lesson: when OIDC federation fails, CloudTrail (`userIdentity.userName` on the
+failed event) shows the exact claims that were presented, which removes the guesswork. The new
+format is also strictly better security-wise — names can be re-registered, IDs cannot.
 
 ### The API was briefly public
 

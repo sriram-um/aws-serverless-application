@@ -10,9 +10,17 @@ Parameters:
   GitHubOrg:
     Type: String
     Default: sriram-um
+  GitHubOrgId:
+    Type: String
+    Description: Numeric GitHub owner id (https://api.github.com/users/<org> -> id)
+    Default: '93265789'
   GitHubRepo:
     Type: String
     Default: aws-serverless-application
+  GitHubRepoId:
+    Type: String
+    Description: Numeric GitHub repository id (https://api.github.com/repos/<org>/<repo> -> id)
+    Default: '1424159185'
   Branch:
     Type: String
     Default: main
@@ -52,8 +60,10 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                # Only workflows running on the main branch of this repository
-                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/${Branch}'
+                # Only workflows running on the main branch of this repository. GitHub's
+                # immutable-ID subject format pins the numeric owner/repo ids, so a re-created
+                # repo with the same name cannot assume this role.
+                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrg}@${GitHubOrgId}/${GitHubRepo}@${GitHubRepoId}:ref:refs/heads/${Branch}'
       Policies:
         - PolicyName: sam-deploy
           PolicyDocument:
