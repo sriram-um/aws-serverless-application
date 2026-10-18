@@ -9,7 +9,7 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 |---|---|
 | **IaC** | AWS SAM (CloudFormation transform) — one template, one stack |
 | **Runtime** | Python 3.12 on arm64 (Graviton) |
-| **Regions** | us-east-1 (primary), us-west-2 (DR replica — planned) |
+| **Regions** | us-east-1 (primary), us-west-2 (Global Table replica) |
 
 ## Progress
 
@@ -25,8 +25,8 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 | 8 | Lambda optimization | Lambda, Power Tuning | ✅ Done |
 | 9 | Direct integration | API Gateway → DynamoDB | ✅ Done |
 | 10 | Caching | DAX, API Gateway cache | 🟡 Built, DAX verified; API cache test pending |
-| 11 | Disaster recovery | DynamoDB Global Tables | ⬜ |
-| 12 | Cost estimate | AWS Pricing Calculator | ⬜ |
+| 11 | Disaster recovery | DynamoDB Global Tables | ✅ Done |
+| 12 | Cost estimate | AWS Pricing Calculator | ✅ Done — [docs/cost-estimate.md](docs/cost-estimate.md) |
 | 13 | Analytics API | DynamoDB Streams, Lambda | ⬜ |
 
 ## Architecture (current)
@@ -294,8 +294,10 @@ in seconds without touching Lambda.
 - **Caching is a switch, not a fixture.** DAX, its VPC, the X-Ray interface endpoint and the API
   Gateway cache bill by the hour, so they exist only with `EnableCaching=true`
   (`sam deploy --parameter-overrides EnableCaching=true`). The same GetOrder code reads through
-  DAX when `DAX_ENDPOINT` is set and straight from DynamoDB otherwise. The CI pipeline always
-  deploys with the default (`false`), so a push also acts as a safety switch-off.
+  DAX when `DAX_ENDPOINT` is set and straight from DynamoDB otherwise. Switching off requires an
+  explicit `EnableCaching=false`: `sam deploy` keeps a parameter's **previous value** on an
+  existing stack, so a CI push does *not* reset it to the template default (verified the hard way —
+  see observations).
 - **No NAT gateway for the DAX VPC.** The Lambda reaches DynamoDB through a free *gateway*
   endpoint and X-Ray through an *interface* endpoint; nothing else needs the internet.
 - **DAX client as a lean layer.** `pip install amazon-dax-client` pulls ~26 MB of
@@ -626,11 +628,59 @@ noticeable cold-start time (Lambda creates the VPC network interfaces at deploy 
 **Security:** with the cache enabled, user 2 requesting a path just cached for user 1 got `404` on
 both routes — the `Authorization` header in the cache key keeps entries per caller.
 
+**Switching off: parameters keep their previous value.** The plan was that the next CI push
+(which only overrides `AppVersion`) would fall back to the template default `EnableCaching=false`
+and tear the cache down. The pipeline succeeded — and DAX, the VPC and the API cache were all
+still running. On an existing stack `sam deploy` reuses each parameter's previous value unless it is
+overridden. Fix: switch off explicitly (`sam deploy --parameter-overrides EnableCaching=false`)
+and verify the resources are gone (`aws dax describe-clusters`, `aws ec2 describe-vpcs`).
+Lesson: confirm a cost switch-off by checking the resources, not by assuming defaults.
+
 **Open item — API Gateway cache hit rate.** Twenty identical requests (same token, same order)
 produced `CacheHitCount=0 / CacheMissCount=16` on the Lambda route and `4 / 16` on the direct route,
 and every call still invoked GetOrder. The first attempt ran before the cache cluster had finished
 provisioning (it becomes usable minutes *after* CloudFormation reports success); the second
 attempt still missed, so the cache key configuration needs a closer look.
+
+### Disaster recovery with a Global Table (exercise 11)
+
+The Orders table is now `orders-serverless-app-OrdersGlobal`, an `AWS::DynamoDB::GlobalTable`
+with replicas in **us-east-1** (primary) and **us-west-2**, both with point-in-time recovery and
+KMS encryption, and DynamoDB Streams (`NEW_AND_OLD_IMAGES`), which global tables replicate on.
+
+**Replication lag** — [`scripts/measure_replication.py`](scripts/measure_replication.py) writes a
+probe item in us-east-1 and polls us-west-2 every ~20 ms with a warm client:
+
+| n | median | min | max |
+|---|---|---|---|
+| 10 | **539 ms** | 117 ms | 642 ms |
+
+The figure includes one cross-region `GetItem` round trip per poll, so the true lag is slightly
+lower: **the replica is typically within about half a second of the primary.** An order created
+through the API in us-east-1 was readable in us-west-2 with the same items and owner.
+
+*Measurement note:* a first version of the script used the AWS CLI for polling and reported
+~1.8 s. That was mostly CLI start-up time (~0.7–1 s per call on Windows), not replication. Measure
+latency with a warm SDK client, not with process-per-call tools.
+
+**Migrating to a Global Table.** CloudFormation cannot change a resource's type, so
+`AWS::DynamoDB::Table` → `AWS::DynamoDB::GlobalTable` needs a *new* logical ID and a *new* table
+name (both tables exist briefly during the update). Every reference (Lambda env vars, IAM policies,
+the direct-integration request template, DAX, the dashboard) was repointed with one rename, and
+the old table and its test data were deleted in the update's cleanup phase. Keeping data would need
+an export/import or a copy script before switching. The AWS-managed `aws/dynamodb` KMS key already
+existed in us-west-2, so the first-use key problem from exercise 1 did not come back.
+
+**DR runbook (what this setup does and does not cover):**
+
+| Scenario | Effect | Recovery |
+|---|---|---|
+| Accidental delete / bad write | Replicated to both regions within ~0.5 s | Point-in-time restore (per region, up to 35 days) — replication is not a backup |
+| us-east-1 DynamoDB impaired | Data is in us-west-2 (RPO ≈ replication lag, < 1 s) | Point clients/app at the us-west-2 replica, which is read/write |
+| us-east-1 region outage | **The API tier (API Gateway, Lambda, Cognito, WAF) exists only in us-east-1** | Deploy the app stack in us-west-2 against the existing replica. Not automated here: the template would need a "use existing table" mode, and a second Cognito pool means users must sign in again. Active-active would add Route 53 failover and a multi-region identity approach. |
+
+So this exercise gives multi-region **data** durability with a sub-second RPO. Multi-region
+**availability** of the API is the next step and is left as future work.
 
 ### The API was briefly public
 

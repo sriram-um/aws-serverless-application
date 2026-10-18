@@ -15,6 +15,10 @@ Parameters:
     Type: String
     Description: Deployed version (the CI pipeline passes the git commit SHA)
     Default: local
+  ReplicaRegion:
+    Type: String
+    Description: Exercise 11 - secondary region holding the Orders global table replica
+    Default: us-west-2
   EnableCaching:
     Type: String
     Description: >
@@ -47,12 +51,15 @@ Globals:
 
 Resources:
   # ---------------------------------------------------------------------------
-  # Exercise 1: NoSQL database - "Orders" table
+  # Exercise 1: NoSQL database - "Orders" table (orderId / itemId, on-demand)
+  # Exercise 11: now a Global Table with a us-west-2 replica for disaster recovery.
+  # CloudFormation cannot change AWS::DynamoDB::Table into AWS::DynamoDB::GlobalTable in
+  # place, so this is a new resource (new logical id + name) that replaced the original table.
   # ---------------------------------------------------------------------------
-  OrdersTable:
-    Type: AWS::DynamoDB::Table
+  OrdersGlobalTable:
+    Type: AWS::DynamoDB::GlobalTable
     Properties:
-      TableName: !Sub '${AWS::StackName}-Orders'
+      TableName: !Sub '${AWS::StackName}-OrdersGlobal'
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: orderId
@@ -64,13 +71,25 @@ Resources:
           KeyType: HASH
         - AttributeName: itemId
           KeyType: RANGE
+      # Required for global tables (replication runs on streams); also feeds exercise 13
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
       SSESpecification:
         SSEEnabled: true
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: true
-      Tags:
-        - Key: project
-          Value: serverless-orders
+        SSEType: KMS          # AWS managed key aws/dynamodb in each region
+      Replicas:
+        - Region: !Ref AWS::Region
+          PointInTimeRecoverySpecification:
+            PointInTimeRecoveryEnabled: true
+          Tags:
+            - Key: project
+              Value: serverless-orders
+        - Region: !Ref ReplicaRegion
+          PointInTimeRecoverySpecification:
+            PointInTimeRecoveryEnabled: true
+          Tags:
+            - Key: project
+              Value: serverless-orders
 
   # ---------------------------------------------------------------------------
   # Exercise 2: Lambda function that saves orders (SAM generates the IAM role)
@@ -87,14 +106,14 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          TABLE_NAME: !Ref OrdersTable
+          TABLE_NAME: !Ref OrdersGlobalTable
           # Empty in AWS; set by env.json for local runs against DynamoDB Local (exercise 7).
           # sam local only overrides variables that are declared here.
           DYNAMODB_ENDPOINT: ''
       Policies:
         # Least privilege: PutItem/UpdateItem/BatchWriteItem/DeleteItem on this table only
         - DynamoDBWritePolicy:
-            TableName: !Ref OrdersTable
+            TableName: !Ref OrdersGlobalTable
       Events:
         CreateOrder:
           Type: Api
@@ -200,7 +219,7 @@ Resources:
                   # Path parameter is escaped so it cannot break out of the JSON string.
                   application/json: !Sub |
                     {
-                      "TableName": "${OrdersTable}",
+                      "TableName": "${OrdersGlobalTable}",
                       "KeyConditionExpression": "orderId = :o",
                       "FilterExpression": "customerId = :c",
                       "ExpressionAttributeValues": {
@@ -294,7 +313,7 @@ Resources:
         - !Ref DaxClientLayer   # merged with the Powertools layer from Globals
       Environment:
         Variables:
-          TABLE_NAME: !Ref OrdersTable
+          TABLE_NAME: !Ref OrdersGlobalTable
           DAX_ENDPOINT: !If [CachingEnabled, !GetAtt DaxCluster.ClusterDiscoveryEndpointURL, '']
           DYNAMODB_ENDPOINT: ''
       # DAX is only reachable inside its VPC, so the function joins the VPC only with DAX on
@@ -308,7 +327,7 @@ Resources:
         - !Ref AWS::NoValue
       Policies:
         - DynamoDBReadPolicy:
-            TableName: !Ref OrdersTable
+            TableName: !Ref OrdersGlobalTable
         - Statement:
             - Sid: ReadThroughDax
               Effect: Allow
@@ -492,7 +511,7 @@ Resources:
                   - dynamodb:DeleteItem
                   - dynamodb:BatchWriteItem
                   - dynamodb:ConditionCheckItem
-                Resource: !GetAtt OrdersTable.Arn
+                Resource: !GetAtt OrdersGlobalTable.Arn
 
   DaxSubnetGroup:
     Type: AWS::DAX::SubnetGroup
@@ -542,7 +561,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: dynamodb:Query
-                Resource: !GetAtt OrdersTable.Arn
+                Resource: !GetAtt OrdersGlobalTable.Arn
       Tags:
         - Key: project
           Value: serverless-orders
@@ -643,7 +662,7 @@ Resources:
             "widgets": [
               {
                 "type": "text", "x": 0, "y": 0, "width": 24, "height": 2,
-                "properties": { "markdown": "## Serverless Orders - ${AWS::StackName}\nAPI Gateway stage **prod** → Lambda **${CreateOrderFunction}** → DynamoDB **${OrdersTable}**" }
+                "properties": { "markdown": "## Serverless Orders - ${AWS::StackName}\nAPI Gateway stage **prod** → Lambda **${CreateOrderFunction}** → DynamoDB **${OrdersGlobalTable}**" }
               },
               {
                 "type": "metric", "x": 0, "y": 2, "width": 12, "height": 6,
@@ -719,12 +738,18 @@ Resources:
 Outputs:
   OrdersTableName:
     Description: Name of the Orders DynamoDB table
-    Value: !Ref OrdersTable
+    Value: !Ref OrdersGlobalTable
     Export:
       Name: !Sub '${AWS::StackName}-OrdersTableName'
   OrdersTableArn:
     Description: ARN of the Orders DynamoDB table
-    Value: !GetAtt OrdersTable.Arn
+    Value: !GetAtt OrdersGlobalTable.Arn
+  OrdersTableStreamArn:
+    Description: DynamoDB stream of the Orders global table (primary region)
+    Value: !GetAtt OrdersGlobalTable.StreamArn
+  OrdersReplicaRegion:
+    Description: Region of the disaster-recovery replica
+    Value: !Ref ReplicaRegion
   ApiUrl:
     Description: Base URL of the prod stage (POST {ApiUrl}/orders)
     Value: !Sub 'https://${OrdersApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
