@@ -62,14 +62,14 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Validate template
-        run: sam validate --lint
+        run: sam validate --lint --config-env ci
 
       - name: Build (packages the Lambda code)
-        run: sam build
+        run: sam build --config-env ci
 
       - name: Deploy (uploads code to S3 and updates the stack)
         run: >
-          sam deploy
+          sam deploy --config-env ci
           --no-confirm-changeset
           --no-fail-on-empty-changeset
           --role-arn ${{ secrets.AWS_CFN_EXECUTION_ROLE_ARN }}

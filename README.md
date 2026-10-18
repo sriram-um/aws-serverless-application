@@ -21,8 +21,8 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 | 4 | Security | Cognito, WAF | ✅ Done |
 | 5 | Monitoring | CloudWatch, X-Ray | ✅ Done |
 | 6 | CI/CD | GitHub Actions (OIDC) | ✅ Done |
-| 7 | Local development | SAM CLI, DynamoDB Local | ⏳ Next |
-| 8 | Lambda optimization | Lambda, Power Tuning | ⬜ |
+| 7 | Local development | SAM CLI, DynamoDB Local | ⏸ Tooling ready, local run pending (Docker issue) |
+| 8 | Lambda optimization | Lambda, Power Tuning | ✅ Done |
 | 9 | Direct integration | API Gateway → DynamoDB | ⬜ |
 | 10 | Caching | DAX, API Gateway cache | ⬜ |
 | 11 | Disaster recovery | DynamoDB Global Tables | ⬜ |
@@ -39,7 +39,7 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
           │                    │ validates JWT
   client ─┴──► ┌─────────┐   ┌─▼──────────────────────┐      ┌────────────────────────────┐      ┌──────────────────────────┐
   HTTPS        │ AWS WAF │──►│ API Gateway (REST)     │─────►│ Lambda: CreateOrder        │─────►│ DynamoDB: Orders         │
-  Authorization│ 100 req/│   │ stage: prod · REGIONAL │proxy │ python3.12 / arm64 / 256MB │batch │ PK orderId · SK itemId   │
+  Authorization│ 100 req/│   │ stage: prod · REGIONAL │proxy │ python3.12 / arm64 / 512MB │batch │ PK orderId · SK itemId   │
   : <IdToken>  │ 5min/IP │   │ POST /orders           │      │ IAM: DynamoDBWritePolicy   │write │ on-demand · SSE · PITR   │
                │ → 429   │   │ Cognito authorizer     │      └────────────────────────────┘      └──────────────────────────┘
                └─────────┘   │ throttle 100 rps/50 burst
@@ -81,7 +81,11 @@ Fetching a whole order is a single `Query` on `orderId`; a single line is a `Get
 
 ```
 template.yaml                 SAM template (all application infrastructure)
-samconfig.toml                Deploy defaults: stack name, region, capabilities
+samconfig.toml                Deploy config: "default" env (local, pinned profile) and "ci" env
+env.json                      Environment overrides for sam local
+scripts/local-setup.sh        DynamoDB Local in Docker for sam local
+scripts/measure_cold_start.sh Forces N cold starts and reports Init Duration
+events/power_tuning_input.json Lambda Power Tuning execution input
 src/create_order/app.py       CreateOrder Lambda handler
 events/create_order.json      Sample API Gateway-style event
 tests/unit/                   pytest + moto unit tests
@@ -151,6 +155,23 @@ curl -X POST "$API_URL/orders" -H "Authorization: $TOKEN" -H "Content-Type: appl
 | `401 {"message":"Unauthorized"}` | Missing, malformed or expired `Authorization` token (rejected by the Cognito authorizer — Lambda is never invoked) |
 | `403 {"message":"Missing Authentication Token"}` | Route/method not defined (e.g. `GET /orders` at this stage) — API Gateway's generic response for unknown routes |
 | `429` | Client IP exceeded 100 requests in 5 minutes (blocked by WAF before reaching API Gateway) |
+
+### Local development (SAM CLI + DynamoDB Local)
+
+Requires Docker. [`scripts/local-setup.sh`](scripts/local-setup.sh) starts DynamoDB Local on a
+Docker network and creates an `orders-local` table; [`env.json`](env.json) points the function at it.
+
+```bash
+scripts/local-setup.sh                         # start DynamoDB Local + create table
+sam build
+sam local invoke CreateOrderFunction -e events/create_order.json --env-vars env.json --docker-network sam-local
+sam local start-api --env-vars env.json --docker-network sam-local   # http://127.0.0.1:3000/orders
+scripts/local-setup.sh down                    # clean up
+```
+
+Notes: `sam local` only overrides environment variables that are declared in the template (hence
+the empty `DYNAMODB_ENDPOINT` on the function), it does **not** enforce the Cognito authorizer, and
+on an x86 machine the arm64 function runs under QEMU emulation.
 
 ## CI/CD (GitHub Actions + OIDC)
 
@@ -371,6 +392,94 @@ stats count(*), count_distinct(traceId), avg(durationNano)/1000000
 
 Also note: the first few requests right after the deploy that enabled stage tracing had Lambda
 spans but no API Gateway span — the stage setting takes a short while to propagate.
+
+### Lambda optimization: measure, then change (exercise 8)
+
+**1. Deployment package.** Already minimal: the function zip is **1.9 KB** (just `app.py`). boto3
+comes from the runtime and Powertools from a layer (8.7 MB, outside the package). Package size was
+not the bottleneck — so the work went into memory sizing and init code.
+
+**2. Memory — AWS Lambda Power Tuning.** Deployed from the Serverless Application Repository
+(stack `serverlessrepo-lambda-power-tuning`, permissions scoped to `orders-serverless-app-*`) and
+run with 50 invocations per memory size, `balanced` strategy, a real two-item order payload
+([input](events/power_tuning_input.json)):
+
+| Memory | Avg duration | Compute cost / invocation | vs 256 MB |
+|---|---|---|---|
+| 128 MB | 36.3 ms | $6.29e-8 | 116% |
+| 256 MB | 14.7 ms | **$5.44e-8** (cheapest) | 100% |
+| **512 MB** | **9.1 ms** | $6.80e-8 | 125% |
+| 1024 MB | 9.1 ms | $1.36e-7 | 250% |
+| 1769 MB | 9.4 ms | $2.35e-7 | 432% |
+| 3008 MB | 8.6 ms | $3.60e-7 | 661% |
+
+([visualization](https://lambda-power-tuning.show/#gAAAAQACAATpBsAL;+UURQgllakHaQBFBfIYRQYR5FkF02ghB;pBOHM2+laTNlB5IzZQcSNEdFfDQtCME0))
+
+- **128 MB is slower *and* more expensive** than 256 MB — it runs so much longer that it is billed more.
+- **512 MB is the knee**: 38% faster than 256 MB; above it, durations stop improving while cost climbs.
+- Chosen: **512 MB**. The extra compute is ~$0.014 per million invocations — negligible next to the
+  $0.20/M request charge — for a clearly faster function.
+
+**3. Cold start — does memory help init?** Measured with
+[`scripts/measure_cold_start.sh`](scripts/measure_cold_start.sh), which forces genuine cold starts
+(a configuration change discards warm environments) and reads `Init Duration` from the `REPORT` line:
+
+| Memory | Init (median, n=5–7) | First invoke | Total cold request |
+|---|---|---|---|
+| 128 MB | 548 ms | 299 ms | ~850 ms |
+| 256 MB | 705 ms | 158 ms | ~860 ms |
+| 512 MB | 702 ms | 92 ms | ~795 ms |
+| 1024 MB | 703 ms | 62 ms | ~765 ms |
+
+**Init does not get faster with more memory** — it stays ~550–700 ms across sizes; only the
+post-init work speeds up. So reducing init has to happen in code.
+
+**4. Where init time goes — measured inside Lambda.** A temporary probe build timed each
+module-level step over 5 cold starts (medians):
+
+| Step | ms |
+|---|---|
+| `import boto3` | ~205 |
+| `boto3.client("dynamodb")` (loads service model + endpoint rules) | ~129 |
+| `boto3.resource(...).Table(...)` on top of a client | ~23 |
+| Powertools `Logger` | ~75 |
+| Powertools `Tracer()` (default: patches every supported library) | ~94 |
+| `Tracer(patch_modules=["botocore"])` | ~80 |
+
+Conclusions:
+
+- Initialization already lives **outside the handler** (clients, table handle, Logger, Tracer are
+  module-level) — it is paid once per environment and reused by every warm invocation. Moving
+  it into the handler would make *every* request pay ~500 ms.
+- Most of init is boto3 itself (~335 ms) and is unavoidable for a function that talks to
+  DynamoDB. Switching `resource` → `client` would save only ~23 ms at the cost of hand-written
+  batching/retry code — not worth it.
+- **Applied:** `Tracer(patch_modules=["botocore"])` — patch only what is used (~14 ms saved, no
+  loss of DynamoDB subsegments).
+- The next lever would be **Lambda SnapStart** (snapshot of the initialized environment, supported
+  for Python 3.12+), which trades init time for snapshot caching/restore charges and requires
+  invoking a published version/alias.
+
+**Result (256 MB + default Tracer → 512 MB + botocore-only Tracer):**
+
+| | Before | After |
+|---|---|---|
+| Warm duration (Power Tuning avg) | 14.7 ms | **9.1 ms** |
+| First invoke after cold start | 158 ms | **92 ms** |
+| Total cold request (init + first invoke) | ~863 ms | **~622 ms** |
+
+Init durations vary a lot between samples (407–694 ms after the change), so the init share of
+the improvement is partly noise; the duration improvements from memory are consistent.
+
+### Local AWS_PROFILE pointed at a different account
+
+While preparing the cold-start measurements, an `aws lambda` call without `--profile` failed with
+*function not found* — in account `767397780656`. The shell had `AWS_PROFILE` set to an unrelated
+profile, and the CLI (and SAM) follow it. Since `samconfig.toml` had no `profile` (removed so CI
+would work), a local `sam deploy` would have deployed the whole stack into the wrong account. Fix:
+two SAM config environments — `default` (local) pins `profile = "default"`, `ci` has no profile
+and the workflow uses `--config-env ci`. Lesson: never rely on ambient AWS credentials; pin the
+profile locally and verify with `aws sts get-caller-identity`.
 
 ### GitHub OIDC: "Not authorized to perform sts:AssumeRoleWithWebIdentity"
 

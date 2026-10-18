@@ -1,0 +1,14 @@
+{
+  "lambdaARN": "arn:aws:lambda:us-east-1:977534234172:function:orders-serverless-app-CreateOrder",
+  "powerValues": [128, 256, 512, 1024, 1769, 3008],
+  "num": 50,
+  "parallelInvocation": false,
+  "strategy": "balanced",
+  "balancedWeight": 0.5,
+  "autoOptimize": false,
+  "payload": {
+    "httpMethod": "POST",
+    "path": "/orders",
+    "body": "{\"items\": [{\"itemId\": \"SKU-PT-1\", \"productName\": \"power-tuning\", \"quantity\": 2, \"unitPrice\": 24.99}, {\"itemId\": \"SKU-PT-2\", \"productName\": \"power-tuning\", \"quantity\": 1, \"unitPrice\": 49.50}]}"
+  }
+}

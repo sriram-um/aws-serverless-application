@@ -72,9 +72,15 @@ Resources:
       Description: Validates and saves orders to the Orders table
       CodeUri: src/create_order/
       Handler: app.lambda_handler
+      # Exercise 8: chosen with AWS Lambda Power Tuning (balanced strategy) - 38% faster
+      # than 256 MB for ~$0.014 more per 1M invocations; no further gain above 512 MB.
+      MemorySize: 512
       Environment:
         Variables:
           TABLE_NAME: !Ref OrdersTable
+          # Empty in AWS; set by env.json for local runs against DynamoDB Local (exercise 7).
+          # sam local only overrides variables that are declared here.
+          DYNAMODB_ENDPOINT: ''
       Policies:
         # Least privilege: PutItem/UpdateItem/BatchWriteItem/DeleteItem on this table only
         - DynamoDBWritePolicy:
