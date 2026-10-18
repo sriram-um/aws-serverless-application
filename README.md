@@ -20,8 +20,8 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 | 3 | REST API | API Gateway | ✅ Done |
 | 4 | Security | Cognito, WAF | ✅ Done |
 | 5 | Monitoring | CloudWatch, X-Ray | ✅ Done |
-| 6 | CI/CD | GitHub Actions (OIDC) | ⏳ Next |
-| 7 | Local development | SAM CLI, DynamoDB Local | ⬜ |
+| 6 | CI/CD | GitHub Actions (OIDC) | ✅ Done |
+| 7 | Local development | SAM CLI, DynamoDB Local | ⏳ Next |
 | 8 | Lambda optimization | Lambda, Power Tuning | ⬜ |
 | 9 | Direct integration | API Gateway → DynamoDB | ⬜ |
 | 10 | Caching | DAX, API Gateway cache | ⬜ |
@@ -185,6 +185,16 @@ aws cloudformation deploy --template-file infra/github-oidc.yaml \
 
 Then add two repository secrets (Settings → Secrets and variables → Actions) from that stack's
 outputs: `AWS_DEPLOY_ROLE_ARN` and `AWS_CFN_EXECUTION_ROLE_ARN`.
+
+**Traceable deployments.** The pipeline passes `AppVersion=${{ github.sha }}` to the stack; it is
+set as the `APP_VERSION` environment variable and Powertools adds it to every log line as
+`app_version`, so any log entry maps back to the exact commit that produced it.
+
+**Verified run:** a code change pushed to `main` → tests (13 s) → OIDC role assumed → build →
+deploy → smoke test, about 1 minute end to end. The Lambda's `CodeSha256` and `LastModified`
+changed, and new log lines carried the pushed commit SHA. When nothing in the code changes, SAM
+skips uploading the function (it compares content hashes), so documentation-only pushes deploy
+in seconds without touching Lambda.
 
 ## Design decisions
 
