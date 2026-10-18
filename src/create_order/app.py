@@ -10,6 +10,7 @@ from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.logging import correlation_paths
 
 logger = Logger()
+logger.append_keys(app_version=os.environ.get("APP_VERSION", "local"))  # git SHA set by CI
 tracer = Tracer()  # patches boto3, so DynamoDB calls appear as X-Ray subsegments
 
 TABLE_NAME = os.environ["TABLE_NAME"]

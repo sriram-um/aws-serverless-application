@@ -11,6 +11,10 @@ Parameters:
       Powertools for AWS Lambda (Python) layer, pinned. Latest is published at SSM
       /aws/service/powertools/python/arm64/python3.12/latest
     Default: arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-arm64:39
+  AppVersion:
+    Type: String
+    Description: Deployed version (the CI pipeline passes the git commit SHA)
+    Default: local
 
 Globals:
   Function:
@@ -27,6 +31,7 @@ Globals:
       Variables:
         POWERTOOLS_SERVICE_NAME: orders
         POWERTOOLS_LOG_LEVEL: INFO
+        APP_VERSION: !Ref AppVersion
     Tags:
       project: serverless-orders
 

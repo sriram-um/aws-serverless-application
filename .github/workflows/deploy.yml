@@ -73,6 +73,7 @@ jobs:
           --no-confirm-changeset
           --no-fail-on-empty-changeset
           --role-arn ${{ secrets.AWS_CFN_EXECUTION_ROLE_ARN }}
+          --parameter-overrides AppVersion=${{ github.sha }}
 
       - name: Smoke test - unauthenticated request must be rejected
         run: |
