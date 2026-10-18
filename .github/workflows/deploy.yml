@@ -61,16 +61,31 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # After scripts/teardown.sh the stack doesn't exist: skip the deploy instead of silently
+      # recreating billable infrastructure on every push (scripts/rebuild.sh recreates it)
+      - name: Check the deployment exists
+        run: |
+          if aws cloudformation describe-stacks --stack-name "$STACK_NAME" >/dev/null 2>&1; then
+            echo "DEPLOYED=true" >> "$GITHUB_ENV"
+          else
+            echo "DEPLOYED=false" >> "$GITHUB_ENV"
+            echo "::notice::Infrastructure is torn down - skipping deploy (run scripts/rebuild.sh to recreate it)"
+          fi
+
       - name: Validate template
+        if: env.DEPLOYED == 'true'
         run: sam validate --lint --config-env ci
 
       - name: Build DAX client layer (no bundled botocore)
+        if: env.DEPLOYED == 'true'
         run: bash scripts/build_dax_layer.sh
 
       - name: Build (packages the Lambda code)
+        if: env.DEPLOYED == 'true'
         run: sam build --config-env ci
 
       - name: Deploy (uploads code to S3 and updates the stack)
+        if: env.DEPLOYED == 'true'
         run: >
           sam deploy --config-env ci
           --no-confirm-changeset
@@ -79,7 +94,9 @@ jobs:
           --parameter-overrides AppVersion=${{ github.sha }}
 
       - name: Smoke test - unauthenticated request must be rejected
+        if: env.DEPLOYED == 'true'
         run: |
+          sleep 10   # a new API deployment takes a few seconds to propagate
           API_URL=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
             --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
           code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$API_URL/orders" -d '{}')

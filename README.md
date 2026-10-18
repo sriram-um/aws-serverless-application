@@ -1,15 +1,16 @@
 # Serverless Orders Application (AWS SAM)
 
 An orders backend built entirely on AWS serverless services and defined as code in a single
-[AWS SAM](https://docs.aws.amazon.com/serverless-application-model/) template. The project is built
-incrementally, one exercise at a time — each phase extends the same `template.yaml` and is deployed
+[AWS SAM](https://docs.aws.amazon.com/serverless-application-model/) template. The project was built
+incrementally, one exercise at a time. Each phase extended the same `template.yaml` and was deployed
 as an update to one CloudFormation stack (`orders-serverless-app`).
 
 | | |
 |---|---|
-| **IaC** | AWS SAM (CloudFormation transform) — one template, one stack |
+| **IaC** | AWS SAM (CloudFormation transform): one template, one stack |
 | **Runtime** | Python 3.12 on arm64 (Graviton) |
 | **Regions** | us-east-1 (primary), us-west-2 (Global Table replica) |
+| **Status** | **Decommissioned** to avoid running costs. Recreate any time with `scripts/rebuild.sh` ([Teardown and rebuild](#teardown-and-rebuild)) |
 
 ## Progress
 
@@ -21,54 +22,67 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 | 4 | Security | Cognito, WAF | ✅ Done |
 | 5 | Monitoring | CloudWatch, X-Ray | ✅ Done |
 | 6 | CI/CD | GitHub Actions (OIDC) | ✅ Done |
-| 7 | Local development | SAM CLI, DynamoDB Local | ⏸ Tooling ready, local run pending (Docker issue) |
+| 7 | Local development | SAM CLI, DynamoDB Local | ⏸ Tooling ready; local run not verified (Docker Desktop failed on this machine) |
 | 8 | Lambda optimization | Lambda, Power Tuning | ✅ Done |
 | 9 | Direct integration | API Gateway → DynamoDB | ✅ Done |
-| 10 | Caching | DAX, API Gateway cache | 🟡 Built, DAX verified; API cache test pending |
+| 10 | Caching | DAX, API Gateway cache | 🟡 Built, DAX measured; API Gateway cache hit rate still open |
 | 11 | Disaster recovery | DynamoDB Global Tables | ✅ Done |
-| 12 | Cost estimate | AWS Pricing Calculator | ✅ Done — [docs/cost-estimate.md](docs/cost-estimate.md) |
-| 13 | Analytics API | DynamoDB Streams, Lambda | ⬜ |
+| 12 | Cost estimate | AWS Pricing Calculator | ✅ Done ([docs/cost-estimate.md](docs/cost-estimate.md)) |
+| 13 | Analytics API | DynamoDB Streams, Lambda | ✅ Done |
 
-## Architecture (current)
+## Architecture
 
 ```
-                    ┌──────────────────────┐
-                    │ Cognito User Pool    │ 1. sign in → ID token (JWT)
-          ┌────────►│ admin-created users  │
-          │         └──────────┬───────────┘
-          │                    │ validates JWT
-  client ─┴──► ┌─────────┐   ┌─▼──────────────────────┐      ┌────────────────────────────┐      ┌──────────────────────────┐
-  HTTPS        │ AWS WAF │──►│ API Gateway (REST)     │─────►│ Lambda: CreateOrder        │─────►│ DynamoDB: Orders         │
-  Authorization│ 100 req/│   │ stage: prod · REGIONAL │proxy │ python3.12 / arm64 / 512MB │batch │ PK orderId · SK itemId   │
-  : <IdToken>  │ 5min/IP │   │ POST /orders           │      │ IAM: DynamoDBWritePolicy   │write │ on-demand · SSE · PITR   │
-               │ → 429   │   │ GET /direct/orders/{id}│      └────────────────────────────┘      └─────────────▲────────────┘
-               └─────────┘   │ Cognito authorizer     │                                                        │
-                             │ throttle 100 rps/50 burst ──── direct "AWS" integration: dynamodb:Query ───────┘
-                             └────────────────────────┘     (role ApiDynamoDbReadRole, VTL mapping, no Lambda)
+                  ┌──────────────────┐ sign in → ID token (JWT, incl. cognito:groups)
+          ┌──────►│ Cognito User Pool│ group "admins" may read analytics
+          │       └────────┬─────────┘
+  client ─┴─► ┌────────┐ ┌─▼───────────────────────────┐
+  HTTPS       │AWS WAF │►│ API Gateway (REST, prod)     │
+  + IdToken   │100 req/│ │ Cognito authorizer on every  │
+              │5min/IP │ │ route · throttle 100/50      │
+              │ → 429  │ │ cache 300 s (EnableCaching)  │
+              └────────┘ └──┬────────┬─────────┬───────┬┘
+     POST /orders           │        │         │       │ GET /analytics/daily, /top-items
+              ┌─────────────▼─┐ ┌────▼──────┐  │  ┌────▼─────────────┐
+              │ λ CreateOrder │ │ λ GetOrder│  │  │ λ AnalyticsApi   │──► OrderStats (DynamoDB)
+              └──────┬────────┘ └───┬───────┘  │  └──────────────────┘       ▲
+                     │ BatchWrite   │ Query    │ GET /direct/orders/{id}     │ atomic counters,
+                     │              │ (via DAX │ "AWS" integration:          │ exactly-once
+                     ▼              ▼  if on)  ▼ dynamodb:Query, no Lambda   │
+              ┌──────────────────────────────────────────┐  stream  ┌─────┴──────────────┐
+              │ DynamoDB Global Table: OrdersGlobal      │ ───────► │ λ AnalyticsAggr.   │──► SQS DLQ
+              │ us-east-1 ⇄ us-west-2 (~0.5 s), PITR, KMS│ (INSERT) └────────────────────┘
+              └──────────────────────────────────────────┘
 ```
 
-Request paths:
+| Route | Backend | Notes |
+|---|---|---|
+| `POST /orders` | CreateOrder Lambda → `BatchWriteItem` | Validates the payload; `customerId` = token `sub` |
+| `GET /orders/{orderId}` | GetOrder Lambda → DynamoDB (or DAX) | Owner only; others get `404` |
+| `GET /direct/orders/{orderId}` | API Gateway → DynamoDB `Query` (no Lambda) | Owner filter in the request mapping template |
+| `GET /analytics/daily?from=&to=` | AnalyticsApi Lambda → OrderStats | `admins` group only (`403` otherwise) |
+| `GET /analytics/top-items?limit=` | AnalyticsApi Lambda → OrderStats | `admins` group only |
 
-- **Create** — **WAF** (rate limit per IP) → **API Gateway** (Cognito authorizer checks the JWT) →
-  **Lambda** (validates payload, reads `sub` claim as `customerId`) → **DynamoDB** `BatchWriteItem`.
-- **Read** — **WAF** → **API Gateway** (Cognito authorizer) → **DynamoDB** `Query` directly; a
-  request mapping template builds the query (filtered to the caller's `sub`) and a response
-  mapping template turns DynamoDB JSON into plain JSON. No Lambda involved.
+**Optional, off by default (`EnableCaching=true`):** DAX cluster (GetOrder reads through it), a VPC
+with DynamoDB gateway and X-Ray interface endpoints, and the API Gateway stage cache. All of these
+bill by the hour.
 
-**Observability:** X-Ray active tracing on the API stage and the Lambda function (one trace spans
-API Gateway → Lambda → DynamoDB), structured JSON logs via Powertools, and a CloudWatch dashboard
-(`orders-serverless-app-dashboard`) with:
+**Observability:** X-Ray active tracing (API Gateway → Lambda → DynamoDB), Powertools JSON logs with
+`app_version` = the deployed git SHA, and the CloudWatch dashboard `orders-serverless-app-dashboard`:
 
 | Widget | Metrics |
 |---|---|
 | API Gateway | `Count`, `4XXError`, `5XXError` (stage `prod`) |
-| Lambda CreateOrder | `Invocations`, `Errors`, `Throttles` |
-| Latency | API Gateway `Latency` / `IntegrationLatency` and Lambda `Duration` (p90) |
-| WAF | `AllowedRequests` vs `BlockedRequests` for `RateLimitPerIP` |
+| Lambda | CreateOrder / GetOrder `Invocations`, `Errors`, `Throttles` |
+| Latency | API Gateway `Latency` / `IntegrationLatency`, Lambda `Duration` (p90) |
+| WAF | `AllowedRequests` vs `BlockedRequests` (`RateLimitPerIP`) |
+| API cache | `CacheHitCount` vs `CacheMissCount` |
+| Analytics | aggregator invocations/errors, DLQ depth, stream `IteratorAge` |
 
 ## Data model
 
-One DynamoDB item per order line, so an order with N products is N items sharing the same `orderId`.
+**Orders** (`orders-serverless-app-OrdersGlobal`, global table): one item per order line, so an
+order with N products is N items sharing the same `orderId`.
 
 | Attribute | Type | Notes |
 |---|---|---|
@@ -77,27 +91,42 @@ One DynamoDB item per order line, so an order with N products is N items sharing
 | `productName` | S | |
 | `quantity` | N | Positive integer |
 | `unitPrice` | N | Stored as `Decimal` |
-| `customerId` | S | Cognito `sub` claim of the caller (`anonymous` for orders created before exercise 4) |
+| `customerId` | S | Cognito `sub` claim of the caller |
 | `status` | S | `CREATED` |
 | `createdAt` | S | ISO-8601 UTC timestamp |
 
-Fetching a whole order is a single `Query` on `orderId`; a single line is a `GetItem` on `orderId` + `itemId`.
+**OrderStats** (`orders-serverless-app-OrderStats`): aggregates written by the stream processor.
+
+| `statType` (PK) | `period` (SK) | Attributes |
+|---|---|---|
+| `DAILY` | `2026-10-18` | `orderCount`, `orderLines`, `unitsSold`, `revenue` |
+| `ITEM` | `<itemId>` | `unitsSold`, `revenue`, `productName` |
+| `EVENT` | `<stream eventID>` | dedupe marker, `expiresAt` (TTL 7 days) |
+| `ORDER` | `<orderId>` | "order already counted" marker, `expiresAt` |
 
 ## Repository layout
 
 ```
-template.yaml                 SAM template (all application infrastructure)
-samconfig.toml                Deploy config: "default" env (local, pinned profile) and "ci" env
-env.json                      Environment overrides for sam local
-scripts/local-setup.sh        DynamoDB Local in Docker for sam local
-scripts/measure_cold_start.sh Forces N cold starts and reports Init Duration
-events/power_tuning_input.json Lambda Power Tuning execution input
-src/create_order/app.py       CreateOrder Lambda handler
-events/create_order.json      Sample API Gateway-style event
-tests/unit/                   pytest + moto unit tests
-requirements-dev.txt          Test dependencies
-infra/github-oidc.yaml        One-time CI/CD bootstrap (OIDC provider + IAM roles)
-.github/workflows/deploy.yml  GitHub Actions: test → deploy → smoke test
+template.yaml                   SAM template (all application infrastructure)
+samconfig.toml                  Deploy config: "default" env (local, pinned profile) and "ci" env
+src/create_order/               CreateOrder Lambda
+src/get_order/                  GetOrder Lambda (DAX read-through when enabled)
+src/analytics_aggregator/       Stream processor -> OrderStats (exactly-once per record)
+src/analytics_api/              GET /analytics/* (admins group)
+tests/unit/                     pytest + moto (25 tests)
+scripts/rebuild.sh              Recreate the whole deployment + test users + smoke test
+scripts/teardown.sh             Delete everything billable and verify nothing is left
+scripts/smoke_test.sh           End-to-end checks of every route and the analytics pipeline
+scripts/build_dax_layer.sh      DAX client layer without bundled botocore (1.4 MB)
+scripts/measure_cold_start.sh   Forces N cold starts and reports Init Duration
+scripts/measure_replication.py  Global table replication lag
+scripts/local-setup.sh          DynamoDB Local in Docker for sam local
+events/                         Sample events (sam local / direct invoke / Power Tuning input)
+env.json                        Environment overrides for sam local
+docs/cost-estimate.md           Exercise 12
+docs/images/                    Power Tuning chart
+infra/github-oidc.yaml          One-time CI/CD bootstrap (OIDC provider + IAM roles)
+.github/workflows/deploy.yml    GitHub Actions: test → deploy → smoke test (skips if torn down)
 ```
 
 ## Getting started
@@ -247,6 +276,51 @@ deploy → smoke test, about 1 minute end to end. The Lambda's `CodeSha256` and 
 changed, and new log lines carried the pushed commit SHA. When nothing in the code changes, SAM
 skips uploading the function (it compares content hashes), so documentation-only pushes deploy
 in seconds without touching Lambda.
+
+## Teardown and rebuild
+
+The deployment is **decommissioned** when not in use. Everything is in code, so it can be recreated
+at any time:
+
+```bash
+SAM="/c/Program Files/Amazon/AWSSAMCLI/bin/sam.cmd"   # or just: SAM=sam  (if on PATH)
+SAM="$SAM" bash scripts/rebuild.sh          # ~5-8 min - recreates everything, creates test users, smoke test
+SAM="$SAM" bash scripts/teardown.sh --yes   # ~5-10 min - deletes everything billable (all order data!)
+```
+
+**`scripts/rebuild.sh`:**
+1. builds the DAX client layer and the SAM application, then deploys `orders-serverless-app`
+   (us-east-1 plus the Global Table replica in us-west-2) with **caching off**;
+2. reads the new API URL, user pool and app client from the stack outputs (nothing is hard-coded,
+   and all three change on every rebuild);
+3. creates `testuser@example.com` (in the `admins` group) and `testuser2@example.com` with random
+   passwords, and writes them with the API URL to `~/.orders-test-user.env` (outside the repo);
+4. runs [`scripts/smoke_test.sh`](scripts/smoke_test.sh): auth (401), validation (400), create
+   (201), both read routes with the ownership rule (200 / 404), analytics access (403 for
+   non-admins), and the stream pipeline (a new order shows up in `/analytics/daily`).
+
+**`scripts/teardown.sh --yes`** checks the AWS account, then:
+1. deletes the app stack: all Lambdas, the API, WAF, Cognito (users included), the dashboard,
+   OrderStats, the DLQ, the layers, and the **Orders global table with its us-west-2 replica**;
+2. deletes the Lambda Power Tuning stack and the log groups its functions created;
+3. lists stacks, tables (both regions), DAX clusters, VPCs, queues, functions, APIs, web ACLs,
+   user pools and log groups. Everything should come back empty.
+
+**Kept on purpose:** the CI bootstrap stack `aws-serverless-application-github-oidc` (IAM only,
+free), the GitHub repository secrets, and the shared SAM artifact bucket (a few KB). With these in
+place, the GitHub Actions pipeline keeps working after a rebuild.
+
+**CI while torn down:** the deploy job first checks whether the stack exists. After teardown,
+pushes to `main` still run the tests but **skip the deploy** (with a notice), so a commit never
+silently recreates billable infrastructure. Once `rebuild.sh` has recreated the stack, pushes
+deploy as before.
+
+**Optional extras after a rebuild:**
+- `sam deploy --parameter-overrides EnableCaching=true` adds DAX and the API cache. It bills
+  hourly; switch off with `EnableCaching=false`.
+- Lambda Power Tuning comes from SAR (see exercise 8 and
+  [`events/power_tuning_input.json`](events/power_tuning_input.json)).
+- `scripts/measure_replication.py` and `scripts/measure_cold_start.sh` repeat the measurements.
 
 ## Design decisions
 
@@ -681,6 +755,43 @@ existed in us-west-2, so the first-use key problem from exercise 1 did not come 
 
 So this exercise gives multi-region **data** durability with a sub-second RPO. Multi-region
 **availability** of the API is the next step and is left as future work.
+
+### Analytics API (exercise 13): event-driven aggregation
+
+**Flow:** every new order line is an `INSERT` on the Orders table's stream. The
+`AnalyticsAggregator` Lambda reads it in batches (up to 100 records, 5 s window, filtered to
+`INSERT` at the event source mapping, so other events don't even invoke it) and updates
+**OrderStats**. `GET /analytics/*` reads the aggregates, so it never scans orders.
+
+**Exactly-once counting.** Stream delivery is *at least once*: a failed batch is retried and can
+deliver records again. Each record is applied in one DynamoDB transaction that:
+- puts an `EVENT#<eventID>` marker with `attribute_not_exists` (a redelivered record fails the
+  condition and the whole transaction is skipped), and
+- `ADD`s revenue/units/lines to the `DAILY#<date>` and `ITEM#<itemId>` counters.
+
+Orders are counted once per `orderId` through an `ORDER#<orderId>` marker, on whichever line arrives
+first. Markers expire after 7 days via TTL. A unit test redelivers the same record and checks that
+nothing is counted twice.
+
+**Failure handling.** `ReportBatchItemFailures` (only failed records are retried),
+`BisectBatchOnFunctionError`, 3 retries, then an **SQS dead-letter queue** (its depth is on the
+dashboard). Replication probes and other non-order items are ignored.
+
+**Access control.** These are store-wide sales figures, not per-customer data. The Lambda requires
+the Cognito group `admins` in the token's `cognito:groups` claim; other signed-in users get `403`.
+
+**Pitfall 1: `StartingPosition: LATEST` silently skipped orders.** The first deployment used
+`LATEST`. Orders created about a minute after the deploy were never counted: the mapping reported
+`Enabled` but showed *"No records processed"*. With `LATEST`, a new mapping only sees records
+written *after it starts polling*, which can be well after CloudFormation finishes. An order
+written later was aggregated within 13 s. Fix: **`TRIM_HORIZON`**, which reads the stream's full
+24 h retention. That's safe because of the eventID dedupe.
+
+**Pitfall 2: changing `StartingPosition` on a live stack fails.** CloudFormation replaces the
+event source mapping by creating the new one before deleting the old one, but Lambda allows only
+one mapping per function and stream: `409 ... provided mapping already exists`, followed by a
+rollback. In place, it takes two deploys (remove the event, then add it back). On a fresh deployment
+(`rebuild.sh`) the mapping is created directly with `TRIM_HORIZON`.
 
 ### The API was briefly public
 

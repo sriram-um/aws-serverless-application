@@ -1,0 +1,1 @@
+# Nothing to bundle: boto3 from the Lambda runtime, aws-lambda-powertools from the layer.

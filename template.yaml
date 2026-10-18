@@ -186,6 +186,45 @@ Resources:
                 cacheKeyParameters:
                   - method.request.path.orderId
                   - method.request.header.Authorization
+          /analytics/daily:
+            get:
+              summary: Revenue, orders and units per day (admins group only)
+              parameters:
+                - name: from
+                  in: query
+                  required: false
+                  schema:
+                    type: string
+                - name: to
+                  in: query
+                  required: false
+                  schema:
+                    type: string
+              responses:
+                '200':
+                  description: Daily statistics
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnalyticsApiFunction.Arn}/invocations'
+                passthroughBehavior: when_no_match
+          /analytics/top-items:
+            get:
+              summary: Best-selling items by units sold (admins group only)
+              parameters:
+                - name: limit
+                  in: query
+                  required: false
+                  schema:
+                    type: string
+              responses:
+                '200':
+                  description: Top items
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnalyticsApiFunction.Arn}/invocations'
+                passthroughBehavior: when_no_match
           /direct/orders/{orderId}:
             get:
               summary: Get an order straight from DynamoDB (no Lambda)
@@ -540,6 +579,131 @@ Resources:
       Tags:
         project: serverless-orders
 
+  # ---------------------------------------------------------------------------
+  # Exercise 13: Analytics API - Orders stream -> aggregator -> OrderStats -> GET /analytics/*
+  # ---------------------------------------------------------------------------
+  OrderStatsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-OrderStats'
+      BillingMode: PAY_PER_REQUEST
+      # statType: DAILY | ITEM | EVENT (dedupe marker) | ORDER (order-counted marker)
+      AttributeDefinitions:
+        - AttributeName: statType
+          AttributeType: S
+        - AttributeName: period
+          AttributeType: S
+      KeySchema:
+        - AttributeName: statType
+          KeyType: HASH
+        - AttributeName: period
+          KeyType: RANGE
+      TimeToLiveSpecification:   # dedupe markers expire after 7 days
+        AttributeName: expiresAt
+        Enabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: project
+          Value: serverless-orders
+
+  AnalyticsDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-analytics-dlq'
+      MessageRetentionPeriod: 1209600   # 14 days
+      SqsManagedSseEnabled: true
+
+  AnalyticsAggregatorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-AnalyticsAggregator'
+      Description: Orders stream (INSERT) -> OrderStats counters, exactly-once per record
+      CodeUri: src/analytics_aggregator/
+      Handler: app.lambda_handler
+      Timeout: 30
+      Environment:
+        Variables:
+          STATS_TABLE_NAME: !Ref OrderStatsTable
+          DYNAMODB_ENDPOINT: ''
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref OrderStatsTable
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AnalyticsDLQ.QueueName
+      Events:
+        OrdersStream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt OrdersGlobalTable.StreamArn
+            # TRIM_HORIZON, not LATEST: a new mapping with LATEST only sees records written after
+            # it starts polling (a minute or more after deploy), silently skipping orders made in
+            # between. Re-reading the 24 h stream is safe - the aggregator dedupes by eventID.
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 100
+            MaximumBatchingWindowInSeconds: 5
+            # Only new order lines; updates/deletes don't change sales figures
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT"]}'
+            FunctionResponseTypes:
+              - ReportBatchItemFailures   # retry only the failed records
+            BisectBatchOnFunctionError: true
+            MaximumRetryAttempts: 3
+            DestinationConfig:
+              OnFailure:
+                Type: SQS
+                Destination: !GetAtt AnalyticsDLQ.Arn
+
+  AnalyticsAggregatorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${AnalyticsAggregatorFunction}'
+      RetentionInDays: 14
+
+  AnalyticsApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-AnalyticsApi'
+      Description: GET /analytics/daily and /analytics/top-items (Cognito group 'admins')
+      CodeUri: src/analytics_api/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          STATS_TABLE_NAME: !Ref OrderStatsTable
+          ADMIN_GROUP: !Ref AdminsGroup
+          DYNAMODB_ENDPOINT: ''
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref OrderStatsTable
+      Events:
+        Daily:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OrdersApi
+            Path: /analytics/daily
+            Method: GET
+        TopItems:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OrdersApi
+            Path: /analytics/top-items
+            Method: GET
+
+  AnalyticsApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${AnalyticsApiFunction}'
+      RetentionInDays: 14
+
+  # Store-wide analytics are not per-customer data: only members of this group may read them
+  AdminsGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: admins
+      Description: May call the /analytics endpoints
+      UserPoolId: !Ref UserPool
+
   # Exercise 9: role API Gateway assumes for the direct DynamoDB integration (read-only, one table)
   ApiDynamoDbReadRole:
     Type: AWS::IAM::Role
@@ -723,6 +887,28 @@ Resources:
                     [ ".", "CacheMissCount", ".", ".", ".", ".", { "label": "Cache misses", "color": "#ff7f0e" } ]
                   ]
                 }
+              },
+              {
+                "type": "metric", "x": 0, "y": 20, "width": 12, "height": 6,
+                "properties": {
+                  "title": "Analytics aggregator - stream processing",
+                  "region": "${AWS::Region}", "view": "timeSeries", "stat": "Sum", "period": 60,
+                  "metrics": [
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${AnalyticsAggregatorFunction}", { "label": "Batches processed" } ],
+                    [ ".", "Errors", ".", ".", { "label": "Errors", "color": "#d62728" } ],
+                    [ "AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", "${AnalyticsDLQ.QueueName}", { "stat": "Maximum", "label": "Dead-letter queue depth", "color": "#9467bd" } ]
+                  ]
+                }
+              },
+              {
+                "type": "metric", "x": 12, "y": 20, "width": 12, "height": 6,
+                "properties": {
+                  "title": "Analytics aggregator - IteratorAge (ms, stream lag)",
+                  "region": "${AWS::Region}", "view": "timeSeries", "period": 60,
+                  "metrics": [
+                    [ "AWS/Lambda", "IteratorAge", "FunctionName", "${AnalyticsAggregatorFunction}", { "stat": "Maximum", "label": "Max iterator age" } ]
+                  ]
+                }
               }
             ]
           }
@@ -768,6 +954,12 @@ Outputs:
   DashboardUrl:
     Description: CloudWatch dashboard
     Value: !Sub 'https://${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#dashboards/dashboard/${OrdersDashboard}'
+  OrderStatsTableName:
+    Description: Analytics aggregates table
+    Value: !Ref OrderStatsTable
+  AnalyticsDlqUrl:
+    Description: Dead-letter queue for stream records the aggregator could not process
+    Value: !Ref AnalyticsDLQ
   CachingEnabled:
     Description: Whether DAX and the API Gateway cache are deployed
     Value: !Ref EnableCaching
