@@ -413,7 +413,11 @@ run with 50 invocations per memory size, `balanced` strategy, a real two-item or
 | 1769 MB | 9.4 ms | $2.35e-7 | 432% |
 | 3008 MB | 8.6 ms | $3.60e-7 | 661% |
 
-([visualization](https://lambda-power-tuning.show/#gAAAAQACAATpBsAL;+UURQgllakHaQBFBfIYRQYR5FkF02ghB;pBOHM2+laTNlB5IzZQcSNEdFfDQtCME0))
+[![AWS Lambda Power Tuning results for CreateOrder: invocation time drops steeply from 36 ms at 128 MB to 9 ms at 512 MB and stays flat beyond; invocation cost is lowest at 256 MB and climbs steeply above 512 MB](docs/images/power-tuning-createorder.png)](https://lambda-power-tuning.show/#gAAAAQACAATpBsAL;+UURQgllakHaQBFBfIYRQYR5FkF02ghB;pBOHM2+laTNlB5IzZQcSNEdFfDQtCME0)
+
+*Power Tuning's own chart (click for the interactive version). Red: average invocation time;
+blue: cost per invocation. The tool labels 256 MB "best cost" and 3008 MB "best time"; the
+`balanced` strategy picks **512 MB**, where the time curve flattens before the cost curve takes off.*
 
 - **128 MB is slower *and* more expensive** than 256 MB — it runs so much longer that it is billed more.
 - **512 MB is the knee**: 38% faster than 256 MB; above it, durations stop improving while cost climbs.
