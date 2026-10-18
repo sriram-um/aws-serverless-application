@@ -23,7 +23,7 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 | 6 | CI/CD | GitHub Actions (OIDC) | ✅ Done |
 | 7 | Local development | SAM CLI, DynamoDB Local | ⏸ Tooling ready, local run pending (Docker issue) |
 | 8 | Lambda optimization | Lambda, Power Tuning | ✅ Done |
-| 9 | Direct integration | API Gateway → DynamoDB | ⬜ |
+| 9 | Direct integration | API Gateway → DynamoDB | ✅ Done |
 | 10 | Caching | DAX, API Gateway cache | ⬜ |
 | 11 | Disaster recovery | DynamoDB Global Tables | ⬜ |
 | 12 | Cost estimate | AWS Pricing Calculator | ⬜ |
@@ -41,13 +41,19 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
   HTTPS        │ AWS WAF │──►│ API Gateway (REST)     │─────►│ Lambda: CreateOrder        │─────►│ DynamoDB: Orders         │
   Authorization│ 100 req/│   │ stage: prod · REGIONAL │proxy │ python3.12 / arm64 / 512MB │batch │ PK orderId · SK itemId   │
   : <IdToken>  │ 5min/IP │   │ POST /orders           │      │ IAM: DynamoDBWritePolicy   │write │ on-demand · SSE · PITR   │
-               │ → 429   │   │ Cognito authorizer     │      └────────────────────────────┘      └──────────────────────────┘
-               └─────────┘   │ throttle 100 rps/50 burst
-                             └────────────────────────┘
+               │ → 429   │   │ GET /direct/orders/{id}│      └────────────────────────────┘      └─────────────▲────────────┘
+               └─────────┘   │ Cognito authorizer     │                                                        │
+                             │ throttle 100 rps/50 burst ──── direct "AWS" integration: dynamodb:Query ───────┘
+                             └────────────────────────┘     (role ApiDynamoDbReadRole, VTL mapping, no Lambda)
 ```
 
-Request path: **WAF** (rate limit per IP) → **API Gateway** (Cognito authorizer checks the JWT) →
-**Lambda** (validates payload, reads `sub` claim as `customerId`) → **DynamoDB**.
+Request paths:
+
+- **Create** — **WAF** (rate limit per IP) → **API Gateway** (Cognito authorizer checks the JWT) →
+  **Lambda** (validates payload, reads `sub` claim as `customerId`) → **DynamoDB** `BatchWriteItem`.
+- **Read** — **WAF** → **API Gateway** (Cognito authorizer) → **DynamoDB** `Query` directly; a
+  request mapping template builds the query (filtered to the caller's `sub`) and a response
+  mapping template turns DynamoDB JSON into plain JSON. No Lambda involved.
 
 **Observability:** X-Ray active tracing on the API stage and the Lambda function (one trace spans
 API Gateway → Lambda → DynamoDB), structured JSON logs via Powertools, and a CloudWatch dashboard
@@ -153,8 +159,33 @@ curl -X POST "$API_URL/orders" -H "Authorization: $TOKEN" -H "Content-Type: appl
 | `201 {"orderId", "itemCount", "total"}` | Order saved |
 | `400 {"message"}` | Invalid JSON, empty/oversized `items`, missing `itemId`, duplicate `itemId`, non-positive quantity, negative or non-numeric price |
 | `401 {"message":"Unauthorized"}` | Missing, malformed or expired `Authorization` token (rejected by the Cognito authorizer — Lambda is never invoked) |
-| `403 {"message":"Missing Authentication Token"}` | Route/method not defined (e.g. `GET /orders` at this stage) — API Gateway's generic response for unknown routes |
+| `403 {"message":"Missing Authentication Token"}` | Route/method not defined — API Gateway's generic response for unknown routes |
 | `429` | Client IP exceeded 100 requests in 5 minutes (blocked by WAF before reaching API Gateway) |
+
+**Reading an order** (`GET /direct/orders/{orderId}`, served by API Gateway straight from DynamoDB):
+
+```bash
+curl "$API_URL/direct/orders/$ORDER_ID" -H "Authorization: $TOKEN"
+```
+
+```json
+{
+  "orderId": "d05749c5-3f20-451f-8db6-3c32852b8567",
+  "itemCount": 2,
+  "items": [
+    { "itemId": "SKU-9001", "productName": "Desk Lamp", "quantity": 1, "unitPrice": 34.5,
+      "status": "CREATED", "createdAt": "2026-10-18T09:41:58.794004+00:00" },
+    { "itemId": "SKU-9002", "productName": "LED Bulb", "quantity": 4, "unitPrice": 3.25,
+      "status": "CREATED", "createdAt": "2026-10-18T09:41:58.794004+00:00" }
+  ]
+}
+```
+
+| Response | When |
+|---|---|
+| `200` | The order exists **and belongs to the caller** |
+| `404 {"message": "order not found"}` | Unknown `orderId`, *or* the order belongs to another user (indistinguishable on purpose) |
+| `401` | No / invalid token |
 
 ### Local development (SAM CLI + DynamoDB Local)
 
@@ -247,6 +278,21 @@ in seconds without touching Lambda.
   at `/aws/service/powertools/python/arm64/python3.12/latest`.
 - **Dashboard as code.** The dashboard body is a `!Sub` JSON document in the template, so metric
   dimensions (API name, function name, WAF ACL) always match the deployed resources.
+- **Direct integration for reads.** `GET /direct/orders/{orderId}` is an API Gateway `AWS`
+  integration calling `dynamodb:Query` with its own role (`ApiDynamoDbReadRole`, `Query` on the
+  Orders table only). Reads have no business logic, so a Lambda would only add cost, cold
+  starts and code to maintain.
+- **Ownership enforced in the query.** The request template adds
+  `FilterExpression: customerId = :c` with `:c` = `$context.authorizer.claims.sub` (the verified
+  token), so users can only read their own orders. Another user's order returns the same `404` as a
+  non-existent one, which avoids leaking which order IDs exist.
+- **Injection-safe mapping.** The path parameter is passed through `$util.escapeJavaScript(...)`
+  before being placed into the JSON request, so a crafted `orderId` cannot break out of the string
+  and alter the query (tested — returns 404).
+- **Errors don't leak internals.** DynamoDB 4xx/5xx map to a generic `500 {"message": "internal error"}`;
+  an empty result sets `$context.responseOverride.status = 404`.
+- **API defined in OpenAPI** (`DefinitionBody` inline in `template.yaml`) — required for non-Lambda
+  integrations; both routes are declared there explicitly.
 - **`OpenApiVersion: '3.0.1'`** on the API stops SAM from creating its extra default `Stage` stage,
   leaving only `prod`.
 - **Explicit log group** with 14-day retention, instead of Lambda's default never-expire group.
@@ -500,6 +546,50 @@ Fix: match the `sub` condition to the received format, with the numeric owner an
 template parameters. Lesson: when OIDC federation fails, CloudTrail (`userIdentity.userName` on the
 failed event) shows the exact claims that were presented, which removes the guesswork. The new
 format is also strictly better security-wise — names can be re-registered, IDs cannot.
+
+### Direct integration (exercise 9): results and pitfalls
+
+**Security tests** (two Cognito users, order created by user 1):
+
+| Test | Result |
+|---|---|
+| User 1 reads own order | `200` with both items |
+| User 2 reads user 1's order | `404 order not found` |
+| Unknown `orderId` | `404` |
+| No token | `401` |
+| Injection attempt (`orderId` = `x","FilterExpression":"attribute_exists(orderId)`) | `404` — escaped, no effect |
+| Order created before Cognito (`customerId = anonymous`) | `404` — belongs to nobody |
+
+**Is it faster than Lambda? Not here.** Measured in the same session (20 requests each):
+
+| | Client round trip (median) | Inside API Gateway (span p50) | Backend call (p50) |
+|---|---|---|---|
+| `GET /direct/orders/{id}` → DynamoDB | 183 ms | 94 ms | DynamoDB `Query` 28 ms |
+| `POST /orders` → Lambda → DynamoDB | 156 ms | 62 ms | Lambda invoke 26 ms (of which `BatchWriteItem` 6.5 ms) |
+
+CloudWatch showed **21 Lambda invocations for 20 POSTs and 44 GETs** — the GETs never touched
+Lambda. Yet the direct route was ~30 ms slower: API Gateway's own call to DynamoDB (28 ms) is much
+slower than a warm Lambda's (6.5 ms, connection kept alive), and request/response mapping adds
+overhead. The value of direct integration is **no Lambda cost, no cold starts, no concurrency
+limit, and no code to maintain** — not raw latency. (Caching in exercise 10 is the latency lever.)
+
+**Pitfall 1 — SAM did not merge the Lambda route into the OpenAPI body.** After adding
+`DefinitionBody`, the deploy succeeded but `POST /orders` vanished from the API: SAM still created
+the Lambda invoke permission from the function's `Api` event, but did not add the path to the
+definition. Order creation was down for ~4–5 minutes. Fix: declare every route explicitly in the
+OpenAPI body (`aws_proxy` integration for the Lambda). Lesson: after changing how an API is
+defined, list the deployed routes (`aws apigateway get-export ... --export-type oas30`) before
+calling it done.
+
+**Pitfall 2 — `aws:SourceAccount` in the API Gateway role's trust policy breaks the integration.**
+Every call returned API Gateway's own `Internal server error`. `aws apigateway test-invoke-method`
+showed the cause in the execution log: *"API Gateway does not have permission to assume the
+provided role"*. API Gateway does not send `aws:SourceAccount` when assuming integration
+credentials, so the condition never matched. Fix: plain `apigateway.amazonaws.com` trust; the
+role's permissions (`Query` on one table) are the actual guard.
+
+**Pitfall 3 — new deployments take a few seconds to propagate.** The first request right after a
+successful deploy still hit the previous deployment and returned an "unknown route" error.
 
 ### The API was briefly public
 

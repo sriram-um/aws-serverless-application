@@ -104,6 +104,96 @@ Resources:
       StageName: prod
       # Setting OpenApiVersion stops SAM from also creating an extra default "Stage" stage
       OpenApiVersion: '3.0.1'
+      # Exercise 9: an OpenAPI body is needed for non-Lambda integrations. SAM applies the
+      # default Cognito authorizer to every path in it. Lambda routes are declared here
+      # explicitly too: with a DefinitionBody, SAM did not merge the function's Api event
+      # into the paths (it still creates the invoke permission from the event).
+      DefinitionBody:
+        openapi: '3.0.1'
+        info:
+          title: !Sub '${AWS::StackName}-api'
+          version: '1.0'
+        paths:
+          /orders:
+            post:
+              summary: Create an order (Lambda proxy -> CreateOrder)
+              responses:
+                '201':
+                  description: Order created
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateOrderFunction.Arn}/invocations'
+                passthroughBehavior: when_no_match
+          /direct/orders/{orderId}:
+            get:
+              summary: Get an order straight from DynamoDB (no Lambda)
+              parameters:
+                - name: orderId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+              responses:
+                '200':
+                  description: Order items
+                '404':
+                  description: Order not found (or not owned by the caller)
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:dynamodb:action/Query'
+                credentials: !GetAtt ApiDynamoDbReadRole.Arn
+                passthroughBehavior: never
+                requestTemplates:
+                  # Only the caller's own order: customerId must equal the verified Cognito sub.
+                  # Path parameter is escaped so it cannot break out of the JSON string.
+                  application/json: !Sub |
+                    {
+                      "TableName": "${OrdersTable}",
+                      "KeyConditionExpression": "orderId = :o",
+                      "FilterExpression": "customerId = :c",
+                      "ExpressionAttributeValues": {
+                        ":o": {"S": "$util.escapeJavaScript($input.params('orderId'))"},
+                        ":c": {"S": "$context.authorizer.claims.sub"}
+                      }
+                    }
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseTemplates:
+                      # DynamoDB JSON ({"S": ...}, {"N": ...}) -> plain JSON; 404 when empty
+                      application/json: |
+                        #set($items = $input.path('$.Items'))
+                        #if($items.size() == 0)
+                        #set($context.responseOverride.status = 404)
+                        {"message": "order not found"}
+                        #else
+                        {
+                          "orderId": "$util.escapeJavaScript($input.params('orderId'))",
+                          "itemCount": $items.size(),
+                          "items": [
+                        #foreach($i in $items)
+                            {
+                              "itemId": "$util.escapeJavaScript($i.itemId.S)",
+                              "productName": "$util.escapeJavaScript($i.productName.S)",
+                              "quantity": $i.quantity.N,
+                              "unitPrice": $i.unitPrice.N,
+                              "status": "$i.status.S",
+                              "createdAt": "$i.createdAt.S"
+                            }#if($foreach.hasNext),#end
+                        #end
+                          ]
+                        }
+                        #end
+                  '4\d{2}':
+                    statusCode: '500'
+                    responseTemplates:
+                      application/json: '{"message": "internal error"}'
+                  '5\d{2}':
+                    statusCode: '500'
+                    responseTemplates:
+                      application/json: '{"message": "internal error"}'
       EndpointConfiguration:
         Type: REGIONAL
       TracingEnabled: true
@@ -120,6 +210,32 @@ Resources:
           ThrottlingBurstLimit: 50
           ThrottlingRateLimit: 100
           MetricsEnabled: true
+
+  # Exercise 9: role API Gateway assumes for the direct DynamoDB integration (read-only, one table)
+  ApiDynamoDbReadRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Lets API Gateway query the Orders table directly (GET /direct/orders/{orderId})
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+            # No aws:SourceAccount/SourceArn condition: API Gateway does not send them when it
+            # assumes integration credentials, so such a condition makes every call fail (500).
+      Policies:
+        - PolicyName: query-orders
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: dynamodb:Query
+                Resource: !GetAtt OrdersTable.Arn
+      Tags:
+        - Key: project
+          Value: serverless-orders
 
   # ---------------------------------------------------------------------------
   # Exercise 4: Cognito User Pool (authorizer above) + WAF rate limiting
