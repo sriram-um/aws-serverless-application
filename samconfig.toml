@@ -1,0 +1,22 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "orders-serverless-app"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+# No "profile" here: locally the AWS CLI default profile is used; in GitHub Actions the
+# credentials come from the OIDC role via environment variables.
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+confirm_changeset = false
+fail_on_empty_changeset = false
+resolve_s3 = true
+s3_prefix = "orders-serverless-app"
+tags = "project=\"serverless-orders\""
