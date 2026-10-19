@@ -315,6 +315,18 @@ pushes to `main` still run the tests but **skip the deploy** (with a notice), so
 silently recreates billable infrastructure. Once `rebuild.sh` has recreated the stack, pushes
 deploy as before.
 
+**Proven end to end (2026-10-18/19):**
+
+| Run | Result | Time |
+|---|---|---|
+| `teardown.sh` (the incrementally built deployment) | App stack, global table + us-west-2 replica, Power Tuning stack and its log groups deleted; every check empty in both regions | ~5 min |
+| Push to `main` while torn down | Tests passed; *Check the deployment exists* → deploy steps **skipped** | 1 min |
+| `rebuild.sh` from nothing | New API `365gb63h15`, new user pool; replica `ACTIVE` in us-west-2; stream mapping `TRIM_HORIZON`; **10/10 smoke checks passed**; analytics showed exactly the smoke order (1 order, 2 units, $10) | **4 min 38 s** |
+| `teardown.sh` again | Decommissioned, nothing billable left | ~5 min |
+
+Rebuilding from scratch also cleared the exercise 13 stream-position issue: a fresh stack creates the
+mapping with `TRIM_HORIZON` directly, and the order created seconds after the deploy was counted.
+
 **Optional extras after a rebuild:**
 - `sam deploy --parameter-overrides EnableCaching=true` adds DAX and the API cache. It bills
   hourly; switch off with `EnableCaching=false`.
