@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Well-Architected review — results</title>
+<style>
+body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+       line-height: 1.6; color: #1f2328; max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1, h2, h3 { line-height: 1.25; }
+h1 { border-bottom: 2px solid #ff9900; padding-bottom: .3em; }
+h2 { border-bottom: 1px solid #d0d7de; padding-bottom: .3em; margin-top: 2em; }
+a { color: #0969da; text-decoration: none; } a:hover { text-decoration: underline; }
+code { background: #f3f4f6; padding: .1em .35em; border-radius: 4px; font-size: 90%; }
+pre { background: #161b22; color: #e6edf3; padding: 1em; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: #f6f8fa; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote { margin: 1em 0; padding: .5em 1em; border-left: 4px solid #ff9900; background: #fff8ec; }
+blockquote p { margin: .3em 0; }
+img { max-width: 100%; border: 1px solid #d0d7de; border-radius: 4px; }
+footer { margin-top: 3em; font-size: 85%; color: #656d76; border-top: 1px solid #d0d7de; padding-top: 1em; }
+</style>
+</head>
+<body>
+<h1 id="well-architected-review-results">Well-Architected review — results</h1>
+<p>What the review of <a href="https://github.com/sriram-um/aws-serverless-application">aws-serverless-application</a>
+found, using the process in <a href="01-how-to-do-a-review.html">How to do a review</a>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Workload</strong></td>
+<td><code>aws-serverless-application</code>: Orders API (API Gateway, Lambda, DynamoDB global table, Cognito, WAF, optional DAX), AWS SAM, GitHub Actions</td>
+</tr>
+<tr>
+<td><strong>Lenses</strong></td>
+<td>AWS Well-Architected Framework (2025-02-25) · Serverless Lens (2020-02-04)</td>
+</tr>
+<tr>
+<td><strong>Reviewed</strong></td>
+<td>2026-10-24, against <code>main</code> @ <code>a25f479</code>, plus read-only checks of the AWS account</td>
+</tr>
+<tr>
+<td><strong>Milestone</strong></td>
+<td><code>v1.0-baseline</code> (#1)</td>
+</tr>
+<tr>
+<td><strong>Evidence</strong></td>
+<td>Every answer, with file/line evidence or the gap: <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/answers/wellarchitected.json"><code>answers/wellarchitected.json</code></a>, <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/answers/serverless.json"><code>answers/serverless.json</code></a></td>
+</tr>
+<tr>
+<td><strong>Official reports</strong></td>
+<td>PDF reports from the tool are generated with <code>scripts/wa_review.py report</code> and kept local — they contain the private account findings. Published: <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/reports/baseline-status.txt">risk counts</a> and <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/reports/baseline-risks.json">per-question risks</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-summary">1. Summary</h2>
+<p><img alt="Stacked bars per pillar. Framework lens, 57 questions: 28 high, 16 medium, 12 no risk, 1 not applicable; reliability has the most high risks (8), then operational excellence and security (7 each). Serverless Lens, 9 questions: 3 high, 2 medium, 4 no risk." src="images/baseline-risks.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Lens</th>
+<th>Questions</th>
+<th>High</th>
+<th>Medium</th>
+<th>No risk</th>
+<th>Not applicable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Framework</td>
+<td>57</td>
+<td><strong>28</strong></td>
+<td>16</td>
+<td>12</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Serverless Lens</td>
+<td>9</td>
+<td><strong>3</strong></td>
+<td>2</td>
+<td>4</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Pillar (Framework)</th>
+<th>High</th>
+<th>Medium</th>
+<th>No risk</th>
+<th>N/A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Operational excellence</td>
+<td>7</td>
+<td>3</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>7</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Reliability</td>
+<td>8</td>
+<td>3</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Performance efficiency</td>
+<td>1</td>
+<td>1</td>
+<td>3</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Cost optimization</td>
+<td>5</td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Sustainability</td>
+<td>0</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>In one sentence:</strong> the application itself is well built — data protection, compute sizing, API
+access control, cost-aware design and serverless performance have no risk — but almost nothing
+<em>around</em> it is in place yet: no alerts, account-level security controls to strengthen, no budget,
+no safe deployment strategy, and recovery that has never been tested.</p>
+<h2 id="2-what-the-review-confirmed-is-done-well">2. What the review confirmed is done well</h2>
+<p>These questions came back with <strong>no risk</strong>. Each is backed by evidence in the answers files.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Why it has no risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SEC — protect data at rest</td>
+<td>KMS encryption on the global table in both regions, SSE on OrderStats, the DLQ, DAX and the API cache — all declared in the template</td>
+</tr>
+<tr>
+<td>SEC — protect data in transit</td>
+<td>HTTPS-only API, TLS to DAX, SigV4 for every AWS call, Cognito JWTs</td>
+</tr>
+<tr>
+<td>Serverless SEC — control access to the API</td>
+<td>Cognito authorizer is the default for every route; ownership enforced from the token's <code>sub</code>; analytics limited to the <code>admins</code> group</td>
+</tr>
+<tr>
+<td>Serverless SEC — security boundaries</td>
+<td>Four single-purpose functions, each with its own role scoped to one table; GitHub OIDC instead of stored keys</td>
+</tr>
+<tr>
+<td>PERF — architecture selection, compute, data management</td>
+<td>arm64; memory chosen with Power Tuning (512 MB, 38% faster than 256 MB); key-value access and pre-computed aggregates instead of scans; measured DAX, direct integration and replication latency</td>
+</tr>
+<tr>
+<td>Serverless PERF / COST</td>
+<td>Init optimised and measured; direct API Gateway → DynamoDB integration for reads; 14-day log retention; stream filter so non-<code>INSERT</code> events never invoke Lambda</td>
+</tr>
+<tr>
+<td>REL — service architecture, network topology</td>
+<td>Small domain-focused functions; OpenAPI contract for every route; DAX VPC planned across two AZs</td>
+</tr>
+<tr>
+<td>COST — decommissioning, demand, cost of effort</td>
+<td><code>teardown.sh</code> removes everything billable and proves it; throttling and batching; everything scripted</td>
+</tr>
+<tr>
+<td>SUS — software, hardware</td>
+<td>Graviton, pay-per-request managed services, components with no use switched off</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-what-the-review-found">3. What the review found</h2>
+<p>The 31 high risk issues (28 + 3) fall into six themes.</p>
+<h3 id="a-nothing-alerts-anyone-7-hris">A. Nothing alerts anyone (7 HRIs)</h3>
+<p><em>OPS observability · OPS workload observability · OPS event response · OPS ready to support ·
+REL monitor resources · REL withstand component failures · Serverless OPS health</em></p>
+<p>There is a good CloudWatch dashboard, X-Ray tracing and structured logs — but <strong>not one
+CloudWatch alarm</strong> in the template. Lambda errors, API 5XX responses, throttles, messages in the
+dead-letter queue and stream lag are visible only to someone who happens to open the dashboard.
+API Gateway access logs are off, there are no KPIs/SLOs, and there's no playbook for "what do I do
+when X happens".</p>
+<h3 id="b-the-aws-accounts-security-baseline-needs-work-4-hris">B. The AWS account's security baseline needs work (4 HRIs)</h3>
+<p><em>SEC securely operate · SEC identities · SEC detect and investigate events · SEC incident response</em></p>
+<p>These came from read-only checks of the account (identity, logging and threat-detection
+settings), not from the repository. The specific results are <strong>kept private on purpose</strong> — a
+public list of an account's missing controls is a map for an attacker. What can be said: the most
+important findings of the whole review were here, about access to the account itself rather than
+the app, and they are first in the improvement plan. In addition, the app has no API Gateway
+access logs or WAF logs and no incident response plan, and the account is a single account shared
+by several projects.</p>
+<h3 id="c-changes-go-straight-to-production-5-hris">C. Changes go straight to production (5 HRIs)</h3>
+<p><em>OPS mitigate deployment risks · Serverless OPS lifecycle management · SEC application security ·
+SEC protect compute · Serverless SEC application security</em></p>
+<p>Tests and lint gate every deploy, but there is one environment (<code>prod</code>) in one account, every
+deploy shifts 100% of traffic at once (no Lambda aliases / canary), a failed smoke test doesn't
+roll back, and dependencies are never scanned (no Dependabot, no Amazon Inspector).</p>
+<h3 id="d-cost-is-designed-well-but-not-governed-5-hris">D. Cost is designed well but not governed (5 HRIs)</h3>
+<p><em>COST cloud financial management · COST govern usage · COST monitor usage · COST pricing models ·
+COST data transfer</em></p>
+<p>The design is cost-aware (toggles, teardown, estimate per scenario), but there is <strong>no AWS Budget
+or cost anomaly alert</strong> in the account, the <code>project</code> tag is not confirmed as a cost allocation
+tag, and pricing models and data transfer weren't analysed.</p>
+<h3 id="e-resilience-is-built-in-but-not-tested-6-hris">E. Resilience is built in but not tested (6 HRIs)</h3>
+<p><em>REL mitigate interaction failure · REL service quotas · REL back up data · REL fault isolation ·
+REL test reliability · REL plan for DR</em></p>
+<p>What exists: global table with &lt; 1 s RPO, PITR, a scripted rebuild proven in 4 m 38 s. What's
+missing: boto3 timeouts are longer than the function timeout, GetOrder has no fallback when DAX
+is down, no reserved concurrency (one route can starve the others), OrderStats has no backup or
+rebuild script, a PITR restore has never been tested, there is no RTO, and nothing was ever load
+tested.</p>
+<h3 id="f-things-a-team-would-have-written-down-4-hris">F. Things a team would have written down (4 HRIs)</h3>
+<p><em>OPS priorities · OPS organization · PERF process · SEC data classification</em></p>
+<p>No threat model, no performance KPIs or load test, no data classification. Partly expected for a
+one-person project — but a threat model and a one-page data classification are cheap and useful.</p>
+<h3 id="medium-risks-worth-knowing">Medium risks worth knowing</h3>
+<ul>
+<li><strong><code>POST /orders</code> is not idempotent</strong> — a client retry after a timeout creates a second order,
+  and order lines are written with <code>batch_writer</code> (not a transaction), so a failure mid-way can
+  leave a partial order (REL prevent interaction failure, Serverless REL resiliency).</li>
+<li><strong>WAF has only a rate-based rule</strong> — no AWS managed rule groups (SEC network protection).</li>
+<li><strong>The CloudFormation execution role has <code>AdministratorAccess</code></strong> (assumable only by
+  CloudFormation), with no permission guardrails (SEC permissions).</li>
+<li>No API usage plans / per-client quotas (Serverless REL inbound request rates).</li>
+</ul>
+<h2 id="4-what-a-generic-checklist-predicted-vs-what-the-review-found">4. What a generic checklist predicted vs. what the review found</h2>
+<p>Before the review, a generic "serverless Well-Architected" checklist predicted three issues. None
+of them was real for this repo:</p>
+<table>
+<thead>
+<tr>
+<th>Predicted</th>
+<th>Reality (evidence)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x86 Lambdas at the default 128 MB</td>
+<td>arm64 everywhere; 512 MB chosen with Power Tuning (<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml#L33-L38"><code>template.yaml</code></a>)</td>
+</tr>
+<tr>
+<td>Logs that never expire</td>
+<td>Explicit log groups with 14-day retention for every function</td>
+</tr>
+<tr>
+<td>Wildcard IAM, no DLQ on async work</td>
+<td>One table per role via SAM policy templates; stream consumer has retries, bisect and an SQS on-failure destination (<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml#L610-L656"><code>template.yaml</code></a>)</td>
+</tr>
+</tbody>
+</table>
+<p>…and it missed what actually matters: no alerts, gaps in the account's own security settings, no
+budget. <strong>Answer from the evidence, not from a checklist.</strong></p>
+<h2 id="5-improvement-plan">5. Improvement plan</h2>
+<p>Ordered by risk removed per unit of effort and cost. Costs are estimates for this account's
+traffic; "expected" means the HRI should drop once the change is in place and the answer updated —
+it will be measured in the next milestone, not assumed.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Change</th>
+<th>Where</th>
+<th>Effort</th>
+<th>Running cost</th>
+<th>Expected to address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Account security baseline</strong> — the private findings from theme B (identity, logging and threat-detection settings)</td>
+<td>Account</td>
+<td>~1 h</td>
+<td>$0 to a few $/month</td>
+<td>B (all 4), permissions</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>AWS Budget</strong> (e.g. $10/month, email at 80% and 100% forecast) + cost anomaly monitor; activate <code>project</code> as a cost allocation tag</td>
+<td>Account</td>
+<td>15 min</td>
+<td>$0</td>
+<td>D (financial management, govern, monitor)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>CloudWatch alarms → SNS email</strong>: Lambda <code>Errors</code> and <code>Throttles</code> per function, API <code>5XXError</code>, DLQ <code>ApproximateNumberOfMessagesVisible &gt; 0</code>, aggregator <code>IteratorAge</code></td>
+<td><code>template.yaml</code></td>
+<td>2 h</td>
+<td>~$0.10 per alarm/month (≈ $1)</td>
+<td>A (all 7)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>API Gateway access logs</strong> (JSON, 14 days); boto3 <code>connect/read_timeout</code> below the function timeout</td>
+<td><code>template.yaml</code>, <code>src/</code></td>
+<td>1 h</td>
+<td>cents</td>
+<td>A, E (mitigate interaction failure)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Idempotent <code>POST /orders</code></strong> (<code>Idempotency-Key</code> header + Powertools idempotency table) and <code>TransactWriteItems</code> for the order lines</td>
+<td><code>src/create_order</code>, <code>template.yaml</code></td>
+<td>½ day</td>
+<td>on-demand table, cents</td>
+<td>REL prevent interaction failure, Serverless REL resiliency</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Safe deployments</strong>: <code>AutoPublishAlias</code> + <code>DeploymentPreference: Canary10Percent5Minutes</code> with the alarms from #3 as rollback triggers; <strong>Dependabot</strong> for pip and GitHub Actions</td>
+<td><code>template.yaml</code>, <code>.github/</code></td>
+<td>½ day</td>
+<td>$0</td>
+<td>C (deployment risks, lifecycle, app security, protect compute)</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Reserved concurrency</strong> per function; DAX failure → fall back to DynamoDB</td>
+<td><code>template.yaml</code>, <code>src/get_order</code></td>
+<td>2 h</td>
+<td>$0</td>
+<td>E (fault isolation, mitigate interaction failure), Serverless REL inbound rates</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Backups and recovery</strong>: PITR on OrderStats (or a rebuild-from-Orders script), a PITR restore drill, a written RTO, <code>DeletionProtectionEnabled</code> on both tables</td>
+<td><code>template.yaml</code>, <code>scripts/</code>, README</td>
+<td>½ day</td>
+<td>PITR: cents</td>
+<td>E (back up data, plan for DR, test reliability)</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>WAF managed rule groups</strong> (Core rule set, Known bad inputs, IP reputation); optional Cognito TOTP MFA</td>
+<td><code>template.yaml</code></td>
+<td>1 h</td>
+<td>$1 per rule group/month (≈ $3)</td>
+<td>SEC network protection</td>
+</tr>
+<tr>
+<td>10</td>
+<td>One-page <strong>threat model</strong> and <strong>data classification</strong>; performance KPIs and a small load test</td>
+<td><code>docs/</code></td>
+<td>½ day</td>
+<td>load test: cents</td>
+<td>F</td>
+</tr>
+</tbody>
+</table>
+<h3 id="accepted-risks-deliberately-not-fixed">Accepted risks (deliberately not fixed)</h3>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Why it's accepted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single AWS account, no Organization</td>
+<td>Portfolio account; multi-account is the production answer and is noted as such</td>
+</tr>
+<tr>
+<td>API tier only in us-east-1 (data is multi-region)</td>
+<td>Region failover of the API needs a second Cognito pool and Route 53 failover — documented future work (README exercise 11)</td>
+</tr>
+<tr>
+<td>No chaos engineering / game days / support plan</td>
+<td>Out of proportion for a demo workload</td>
+</tr>
+<tr>
+<td>Single-node DAX</td>
+<td>Only deployed for demos (<code>EnableCaching=false</code> by default)</td>
+</tr>
+<tr>
+<td>Organizational culture questions</td>
+<td>Not applicable to a one-person project (marked N/A with a reason)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-what-i-learned-about-the-process">6. What I learned about the process</h2>
+<ol>
+<li><strong>The tool doesn't look at anything.</strong> It never scans your account or code — every answer
+   comes from you. The real work is collecting evidence; the tool turns it into a risk view and a
+   report.</li>
+<li><strong>The most serious findings weren't in the repository.</strong> They came from a handful of
+   read-only CLI calls against the account. A code-only review would have missed them.</li>
+<li><strong>Decide what to publish.</strong> Findings about the account's own security settings stay private;
+   the public write-up names the theme, not the specific gaps.</li>
+<li><strong>A first review shows lots of high risks — that's normal.</strong> The Framework is written for
+   organizations running production systems. A question is high risk when an <em>important</em> best
+   practice is missing, even if most of the others are in place: "mitigate interaction failure"
+   has 4 of 7 practices and is still high risk (no timeouts below the function timeout, no
+   graceful degradation). The count matters less than the prioritised list it produces.</li>
+<li><strong>"Not applicable" is a precise tool.</strong> Marking 18 <em>choices</em> that can't exist here (VPN to
+   on-premises, load balancers, accelerators…) as not applicable, each with a reason, moved
+   high risks from 30 to 28. Using it for real gaps ("we have no budget") would just hide risk.</li>
+<li><strong>Answers as code pay off.</strong> 66 answers in two JSON files can be reviewed in a pull request,
+   re-applied in seconds, and diffed between milestones. The tool's console stays the place to
+   <em>read</em> the review.</li>
+<li><strong>CLI gotchas:</strong> list commands return 10 items by default and the CLI doesn't page through this
+   service automatically (47 of 57 questions silently missing); boto3 has no paginators for it;
+   the PDF report arrives base64-encoded and needs whitespace stripped on Windows.</li>
+</ol>
+<h2 id="7-next-step">7. Next step</h2>
+<p>Work through the improvement plan in small pull requests. After each one, update the affected
+answers in <code>answers/*.json</code>, run <code>scripts/wa_review.py apply</code>, and when a group is done save a new
+milestone (<code>v1.1-…</code>) and regenerate the chart with <code>scripts/risk_chart.py</code> to compare against this
+baseline.</p>
+<footer>Generated from <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/02-review-results.md">02-review-results.md</a> · <a href="https://github.com/sriram-um/aws-serverless-application">sriram-um/aws-serverless-application</a></footer>
+</body>
+</html>

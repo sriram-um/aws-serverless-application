@@ -29,6 +29,7 @@ as an update to one CloudFormation stack (`orders-serverless-app`).
 | 11 | Disaster recovery | DynamoDB Global Tables | ✅ Done |
 | 12 | Cost estimate | AWS Pricing Calculator | ✅ Done ([docs/cost-estimate.md](docs/cost-estimate.md)) |
 | 13 | Analytics API | DynamoDB Streams, Lambda | ✅ Done |
+| — | Well-Architected review | AWS Well-Architected Tool (Framework + Serverless Lens) | ✅ Baseline milestone saved; improvement plan open ([well-architected-review/](well-architected-review/)) |
 
 ## Architecture
 
@@ -127,6 +128,7 @@ docs/cost-estimate.md           Exercise 12
 docs/images/                    Power Tuning chart
 infra/github-oidc.yaml          One-time CI/CD bootstrap (OIDC provider + IAM roles)
 .github/workflows/deploy.yml    GitHub Actions: test → deploy → smoke test (skips if torn down)
+well-architected-review/        Well-Architected review: how-to guide, answers as code, results, reports
 ```
 
 ## Getting started
@@ -333,6 +335,26 @@ mapping with `TRIM_HORIZON` directly, and the order created seconds after the de
 - Lambda Power Tuning comes from SAR (see exercise 8 and
   [`events/power_tuning_input.json`](events/power_tuning_input.json)).
 - `scripts/measure_replication.py` and `scripts/measure_cold_start.sh` repeat the measurements.
+
+## Well-Architected review
+
+The finished application was reviewed with the AWS Well-Architected Tool (Framework lens +
+Serverless Lens, 66 questions) against this repository and the AWS account. Everything is in
+[`well-architected-review/`](well-architected-review/):
+[how to do a review](well-architected-review/01-how-to-do-a-review.md) (step by step, console and
+CLI), the answers as JSON with file/line evidence, the official PDF reports, and the
+[results](well-architected-review/02-review-results.md).
+
+| Lens | High | Medium | No risk | N/A |
+|---|---|---|---|---|
+| Framework (57 questions) | 28 | 16 | 12 | 1 |
+| Serverless Lens (9 questions) | 3 | 2 | 4 | 0 |
+
+The application design had no risk on data protection, compute, API access control and
+cost-aware design; the high risks are around it: no CloudWatch alarms, account-level security
+settings to strengthen (details kept private), no budget, no canary deployments, untested restores. The
+[improvement plan](well-architected-review/02-review-results.md#5-improvement-plan) orders the
+fixes by effort and cost.
 
 ## Design decisions
 

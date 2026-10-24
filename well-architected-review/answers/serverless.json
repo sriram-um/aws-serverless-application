@@ -1,0 +1,87 @@
+{
+  "lens": "serverless",
+  "reviewed": "2026-10-24",
+  "evidenceBase": "https://github.com/sriram-um/aws-serverless-application (main @ a25f479)",
+  "questions": {
+    "cost_q1": {
+      "title": "How do you optimize your Serverless application's costs?",
+      "selected": [
+        "cost_cost_q1_a1",
+        "cost_cost_q1_a2",
+        "cost_cost_q1_a4",
+        "cost_cost_q1_a3"
+      ],
+      "notes": "Evidence: SDK clients created at module scope and reused; nothing bundled that the runtime/layer provides (package ~5 KB); Tracer patches only botocore (-14 ms init) - src/create_order/app.py L12-20. Log groups with 14-day retention for every function (template.yaml L400-404, L658-662, L693-697, L918-922). Cost-aware patterns: batch_writer for order lines, stream FilterCriteria so non-INSERT events never invoke the aggregator (template.yaml L645-648), analytics read pre-computed aggregates instead of scanning, GET /direct/orders skips Lambda entirely. Memory chosen with AWS Lambda Power Tuning (512 MB, balanced), arm64 for all functions (template.yaml L33-38, L104-106; README exercise 8)."
+    },
+    "ops_q1": {
+      "title": "How do you evaluate your Serverless application's health?",
+      "selected": [
+        "ops_ops_q1_a3",
+        "ops_ops_q1_a4"
+      ],
+      "notes": "Evidence: X-Ray active tracing on API and functions with an orderId annotation (template.yaml L41, L307; src/create_order/app.py L109). Powertools JSON logs with request id, correlation id, cold-start flag and app_version (git SHA). Dashboard with API Gateway, Lambda, WAF, DLQ and IteratorAge widgets (template.yaml L818-916).\nGap (a1): there are NO CloudWatch alarms - out-of-the-box metrics are graphed but nobody is alerted on errors, throttles, 5XX, DLQ depth or IteratorAge.\nGap (a2): no application/business metrics (e.g. OrdersCreated, order value) - Powertools Metrics (EMF) is not used."
+    },
+    "ops_q2": {
+      "title": "How do you approach application lifecycle management?",
+      "selected": [
+        "ops_ops_q2_a5"
+      ],
+      "notes": "Evidence: everything is IaC (one SAM template) and deployed by GitHub Actions with OIDC; behaviour switches are template parameters (EnableCaching, PowertoolsLayerArn pinned, AppVersion = git SHA) with samconfig.toml config envs (a5).\nGap (a1/a4): one stage (prod) in one account - no separate dev/test environments or accounts; CI tests run, but deploys go straight to the only environment.\nGap (a2): no per-branch/temporary stacks (rebuild.sh recreates the same stack name).\nGap (a3): no gradual rollout - no AutoPublishAlias/DeploymentPreference (canary/linear) with alarm-based rollback; every deploy shifts 100% of traffic at once.\nGap (a6): runtime python3.12 - no tracked review of the Lambda runtime deprecation date."
+    },
+    "perf_q1": {
+      "title": "How do you optimize your Serverless application's performance?",
+      "selected": [
+        "perf_perf_q1_a3",
+        "perf_perf_q1_a4",
+        "perf_perf_q1_a1",
+        "perf_perf_q1_a2",
+        "perf_perf_q1_a5"
+      ],
+      "notes": "Evidence: memory selected with Power Tuning (128-3008 MB, 50 invocations) - 512 MB was 38% faster than 256 MB (template.yaml L104-106). Direct API Gateway -> DynamoDB integration for reads, no Lambda (template.yaml L228-304). Cold start measured (scripts/measure_cold_start.sh) and init optimised (patch_modules, no bundled SDK; DAX client as a 1.4 MB --no-deps layer). Stream-based aggregation (batch 100, 5 s window) decouples analytics from the order write path (template.yaml L635-656). Caching: DAX read-through and API Gateway cache behind EnableCaching; analytics served from aggregates (README exercises 8-10, 13)."
+    },
+    "rel_q1": {
+      "title": "How do you regulate inbound request rates?",
+      "selected": [
+        "rel_rel_q1_a1"
+      ],
+      "notes": "Evidence: API Gateway stage throttling 100 req/s, burst 50 on every method (template.yaml L315-337); WAF rate-based rule 100 requests / 5 min / IP returning 429 (template.yaml L791-806).\nGap (a3): no Lambda reserved concurrency - one noisy route could consume the account's concurrency and starve the other functions; the DAX cluster (single node when enabled) has no protection beyond the stage throttle.\nGap (a2): no usage plans / API keys / per-client quotas - all authenticated clients share the stage limit."
+    },
+    "rel_q2": {
+      "title": "How do you build resiliency into your Serverless application?",
+      "selected": [
+        "rel_rel_q2_a1",
+        "rel_rel_q2_a3"
+      ],
+      "notes": "Evidence (a1): stream consumer uses ReportBatchItemFailures, BisectBatchOnFunctionError, MaximumRetryAttempts 3 and an SQS on-failure destination (14-day retention, SSE) (template.yaml L610-656); batch_writer retries unprocessed items; whole payload validated before any write.\nEvidence (a3): FilterCriteria drops non-INSERT events; the aggregator is exactly-once per record via a conditional EVENT#<eventID> marker in a transaction (src/analytics_aggregator/app.py; unit test redelivers a record).\nGap: POST /orders is NOT idempotent - a client retry after a timeout creates a second order (no idempotency key). Order lines are written with batch_writer, not a transaction, so a failure mid-way can leave a partial order.\nGap (a4): burst scaling not load tested.\nN/A (a2): no long-running transactions in this workload.",
+      "not_applicable_choices": {
+        "rel_rel_q2_a2": "No long-running transactions - each request is a single short write or read."
+      }
+    },
+    "sec_q1": {
+      "title": "How do you control access to your Serverless API?",
+      "selected": [
+        "sec_sec_q1_a3",
+        "sec_sec_q1_a2",
+        "sec_sec_q1_a1"
+      ],
+      "notes": "Evidence: Cognito user-pool authorizer is the DefaultAuthorizer for every route (template.yaml L308-314) - unauthenticated calls get 401 and never invoke Lambda (CI smoke test asserts 401). Regional endpoint with WAF web ACL and stage throttling. Access scoped by identity metadata: customerId comes from the verified sub claim (never the body); the direct integration filters by $context.authorizer.claims.sub so users only read their own orders (template.yaml L257-268); /analytics requires the Cognito group 'admins' (403 otherwise). Admin-only user creation, 12-char password policy, PreventUserExistenceErrors, 60-minute tokens (template.yaml L736-778)."
+    },
+    "sec_q2": {
+      "title": "How do you manage your Serverless application's security boundaries?",
+      "selected": [
+        "sec_sec_q2_a1",
+        "sec_sec_q2_a4",
+        "sec_sec_q2_a3"
+      ],
+      "notes": "Evidence: Lambda resource policies are generated by SAM and scoped to this API's execute-api ARN; API Gateway's direct-integration role can only dynamodb:Query the Orders table (template.yaml L708-731). Temporary credentials everywhere between components: Lambda execution roles, API Gateway integration role, DAX service role, GitHub OIDC for CI (no stored keys). Four small single-purpose functions, each with its own role scoped to one table (CreateOrder can write but not read).\nGap (a2): network controls exist only for the DAX option (private subnets, security groups allowing 9111/443 from the Lambda SG only); otherwise WAF is the only network-layer control and it has only a rate rule."
+    },
+    "sec_q3": {
+      "title": "How do you implement application Security in your workload?",
+      "selected": [
+        "sec_sec_q3_a4",
+        "sec_sec_q3_a5"
+      ],
+      "notes": "Evidence (a4): the code uses no secrets - all AWS access via IAM roles; test-user passwords are random and written outside the repo (~/.orders-test-user.env); staged files are scanned for keys before commits. Evidence (a5): CreateOrder validates the whole payload (types, ranges, max 25 items, duplicates, finite non-negative prices) before writing (src/create_order/app.py L35-69); the VTL template escapes the path parameter ($util.escapeJavaScript) - injection attempt tested, returns 404.\nGap (a3): no automated dependency scanning (no Dependabot / Amazon Inspector for Lambda); Powertools layer and DAX client versions are pinned but updated manually.\nGap (a1/a2): no scheduled security-awareness review; no runtime protection."
+    }
+  }
+}

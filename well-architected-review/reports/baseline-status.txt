@@ -1,0 +1,46 @@
+
+== AWS Well-Architected Framework (wellarchitected)  total: {'UNANSWERED': 0, 'HIGH': 28, 'MEDIUM': 16, 'NONE': 12, 'NOT_APPLICABLE': 1}
+   Operational Excellence       {'UNANSWERED': 0, 'HIGH': 7, 'MEDIUM': 3, 'NONE': 0, 'NOT_APPLICABLE': 1}
+   Security                     {'UNANSWERED': 0, 'HIGH': 7, 'MEDIUM': 2, 'NONE': 2, 'NOT_APPLICABLE': 0}
+   Reliability                  {'UNANSWERED': 0, 'HIGH': 8, 'MEDIUM': 3, 'NONE': 2, 'NOT_APPLICABLE': 0}
+   Performance Efficiency       {'UNANSWERED': 0, 'HIGH': 1, 'MEDIUM': 1, 'NONE': 3, 'NOT_APPLICABLE': 0}
+   Cost Optimization            {'UNANSWERED': 0, 'HIGH': 5, 'MEDIUM': 3, 'NONE': 3, 'NOT_APPLICABLE': 0}
+   Sustainability               {'UNANSWERED': 0, 'HIGH': 0, 'MEDIUM': 4, 'NONE': 2, 'NOT_APPLICABLE': 0}
+   HRI  costOptimization       How do you implement cloud financial management?
+   HRI  costOptimization       How do you govern usage?
+   HRI  costOptimization       How do you monitor your cost and usage?
+   HRI  costOptimization       How do you use pricing models to reduce cost?
+   HRI  costOptimization       How do you plan for data transfer charges?
+   HRI  operationalExcellence  How do you determine what your priorities are?
+   HRI  operationalExcellence  How do you structure your organization to support your business outcomes?
+   HRI  operationalExcellence  How do you implement observability in your workload?
+   HRI  operationalExcellence  How do you mitigate deployment risks?
+   HRI  operationalExcellence  How do you know that you are ready to support a workload?
+   HRI  operationalExcellence  How do you utilize workload observability in your organization?
+   HRI  operationalExcellence  How do you manage workload and operations events?
+   HRI  performance            What process do you use to support more performance efficiency for your workload?
+   HRI  reliability            How do you manage service quotas and constraints?
+   HRI  reliability            How do you design interactions in a distributed system to mitigate or withstand failures?
+   HRI  reliability            How do you monitor workload resources?
+   HRI  reliability            How do you back up data?
+   HRI  reliability            How do you use fault isolation to protect your workload?
+   HRI  reliability            How do you design your workload to withstand component failures?
+   HRI  reliability            How do you test reliability?
+   HRI  reliability            How do you plan for disaster recovery (DR)?
+   HRI  security               How do you securely operate your workload?
+   HRI  security               How do you manage identities for people and machines?
+   HRI  security               How do you detect and investigate security events?
+   HRI  security               How do you protect your compute resources?
+   HRI  security               How do you classify your data?
+   HRI  security               How do you anticipate, respond to, and recover from incidents?
+   HRI  security               How do you incorporate and validate the security properties of applications throughout the design, development, and deployment lifecycle?
+
+== Serverless Lens (serverless)  total: {'UNANSWERED': 0, 'HIGH': 3, 'MEDIUM': 2, 'NONE': 4, 'NOT_APPLICABLE': 0}
+   Operational Excellence       {'UNANSWERED': 0, 'HIGH': 2, 'MEDIUM': 0, 'NONE': 0, 'NOT_APPLICABLE': 0}
+   Security                     {'UNANSWERED': 0, 'HIGH': 1, 'MEDIUM': 0, 'NONE': 2, 'NOT_APPLICABLE': 0}
+   Reliability                  {'UNANSWERED': 0, 'HIGH': 0, 'MEDIUM': 2, 'NONE': 0, 'NOT_APPLICABLE': 0}
+   Performance Efficiency       {'UNANSWERED': 0, 'HIGH': 0, 'MEDIUM': 0, 'NONE': 1, 'NOT_APPLICABLE': 0}
+   Cost Optimization            {'UNANSWERED': 0, 'HIGH': 0, 'MEDIUM': 0, 'NONE': 1, 'NOT_APPLICABLE': 0}
+   HRI  operationalExcellence  How do you evaluate your Serverless application’s health?
+   HRI  operationalExcellence  How do you approach application lifecycle management?
+   HRI  security               How do you implement application Security in your workload?

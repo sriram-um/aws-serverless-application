@@ -1,0 +1,402 @@
+{
+  "wellarchitected": [
+    {
+      "pillar": "costOptimization",
+      "questionId": "cloud-financial-management",
+      "title": "How do you implement cloud financial management?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "govern-usage",
+      "title": "How do you govern usage?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "monitor-usage",
+      "title": "How do you monitor your cost and usage?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "decomissioning-resources",
+      "title": "How do you decommission resources?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "select-service",
+      "title": "How do you evaluate cost when you select services?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "type-size-number-resources",
+      "title": "How do you meet cost targets when you select resource type, size and number?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "pricing-model",
+      "title": "How do you use pricing models to reduce cost?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "data-transfer",
+      "title": "How do you plan for data transfer charges?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "manage-demand-resources",
+      "title": "How do you manage demand, and supply resources?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "evaluate-new-services",
+      "title": "How do you evaluate new services?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "costOptimization",
+      "questionId": "evaluate-cost-effort",
+      "title": "How do you evaluate the cost of effort?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "priorities",
+      "title": "How do you determine what your priorities are?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "ops-model",
+      "title": "How do you structure your organization to support your business outcomes?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "org-culture",
+      "title": "How does your organizational culture support your business outcomes?",
+      "risk": "NOT_APPLICABLE"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "observability",
+      "title": "How do you implement observability in your workload?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "dev-integ",
+      "title": "How do you reduce defects, ease remediation, and improve flow into production?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "mit-deploy-risks",
+      "title": "How do you mitigate deployment risks?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "ready-to-support",
+      "title": "How do you know that you are ready to support a workload?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "workload-observability",
+      "title": "How do you utilize workload observability in your organization?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "operations-health",
+      "title": "How do you understand the health of your operations?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "event-response",
+      "title": "How do you manage workload and operations events?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "evolve-ops",
+      "title": "How do you evolve operations?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "performance",
+      "questionId": "performing-architecture",
+      "title": "How do you select the appropriate cloud resources and architecture patterns for your workload?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "performance",
+      "questionId": "compute-hardware",
+      "title": "How do you select and use compute resources in your workload?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "performance",
+      "questionId": "data-management",
+      "title": "How do you store, manage, and access data in your workload?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "performance",
+      "questionId": "networking",
+      "title": "How do you select and configure networking resources in your workload?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "performance",
+      "questionId": "process-culture",
+      "title": "What process do you use to support more performance efficiency for your workload?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "manage-service-limits",
+      "title": "How do you manage service quotas and constraints?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "planning-network-topology",
+      "title": "How do you plan your network topology?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "service-architecture",
+      "title": "How do you design your workload service architecture?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "prevent-interaction-failure",
+      "title": "How do you design interactions in a distributed system to prevent failures?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "mitigate-interaction-failure",
+      "title": "How do you design interactions in a distributed system to mitigate or withstand failures?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "monitor-aws-resources",
+      "title": "How do you monitor workload resources?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "adapt-to-changes",
+      "title": "How do you design your workload to adapt to changes in demand?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "tracking-change-management",
+      "title": "How do you implement change?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "backing-up-data",
+      "title": "How do you back up data?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "fault-isolation",
+      "title": "How do you use fault isolation to protect your workload?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "withstand-component-failures",
+      "title": "How do you design your workload to withstand component failures?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "testing-resiliency",
+      "title": "How do you test reliability?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "planning-for-recovery",
+      "title": "How do you plan for disaster recovery (DR)?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "security",
+      "questionId": "securely-operate",
+      "title": "How do you securely operate your workload?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "security",
+      "questionId": "identities",
+      "title": "How do you manage identities for people and machines?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "security",
+      "questionId": "permissions",
+      "title": "How do you manage permissions for people and machines?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "security",
+      "questionId": "detect-investigate-events",
+      "title": "How do you detect and investigate security events?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "security",
+      "questionId": "network-protection",
+      "title": "How do you protect your network resources?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "security",
+      "questionId": "protect-compute",
+      "title": "How do you protect your compute resources?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "security",
+      "questionId": "data-classification",
+      "title": "How do you classify your data?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "security",
+      "questionId": "protect-data-rest",
+      "title": "How do you protect your data at rest?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "security",
+      "questionId": "protect-data-transit",
+      "title": "How do you protect your data in transit?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "security",
+      "questionId": "incident-response",
+      "title": "How do you anticipate, respond to, and recover from incidents?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "security",
+      "questionId": "application-security",
+      "title": "How do you incorporate and validate the security properties of applications throughout the design, development, and deployment lifecycle?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "sustainability",
+      "questionId": "sus_region",
+      "title": "How do you select Regions for your workload?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "sustainability",
+      "questionId": "sus_user",
+      "title": "How do you align cloud resources to your demand?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "sustainability",
+      "questionId": "sus_software",
+      "title": "How do you take advantage of software and architecture patterns to support your sustainability goals?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "sustainability",
+      "questionId": "sus_data",
+      "title": "How do you take advantage of data management policies and patterns to support your sustainability goals?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "sustainability",
+      "questionId": "sus_hardware",
+      "title": "How do you select and use cloud hardware and services in your architecture to support your sustainability goals?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "sustainability",
+      "questionId": "sus_dev",
+      "title": "How do your organizational processes support your sustainability goals?",
+      "risk": "MEDIUM"
+    }
+  ],
+  "serverless": [
+    {
+      "pillar": "costOptimization",
+      "questionId": "cost_q1",
+      "title": "How do you optimize your Serverless application’s costs?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "ops_q1",
+      "title": "How do you evaluate your Serverless application’s health?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "operationalExcellence",
+      "questionId": "ops_q2",
+      "title": "How do you approach application lifecycle management?",
+      "risk": "HIGH"
+    },
+    {
+      "pillar": "performance",
+      "questionId": "perf_q1",
+      "title": "How do you optimize your Serverless application’s performance?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "rel_q1",
+      "title": "How do you regulate inbound request rates?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "reliability",
+      "questionId": "rel_q2",
+      "title": "How do you build resiliency into your Serverless application?",
+      "risk": "MEDIUM"
+    },
+    {
+      "pillar": "security",
+      "questionId": "sec_q1",
+      "title": "How do you control access to your Serverless API?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "security",
+      "questionId": "sec_q2",
+      "title": "How do you manage your Serverless application’s security boundaries?",
+      "risk": "NONE"
+    },
+    {
+      "pillar": "security",
+      "questionId": "sec_q3",
+      "title": "How do you implement application Security in your workload?",
+      "risk": "HIGH"
+    }
+  ]
+}

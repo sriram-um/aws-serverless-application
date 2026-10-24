@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to do an AWS Well-Architected review — step by step</title>
+<style>
+body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+       line-height: 1.6; color: #1f2328; max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1, h2, h3 { line-height: 1.25; }
+h1 { border-bottom: 2px solid #ff9900; padding-bottom: .3em; }
+h2 { border-bottom: 1px solid #d0d7de; padding-bottom: .3em; margin-top: 2em; }
+a { color: #0969da; text-decoration: none; } a:hover { text-decoration: underline; }
+code { background: #f3f4f6; padding: .1em .35em; border-radius: 4px; font-size: 90%; }
+pre { background: #161b22; color: #e6edf3; padding: 1em; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: #f6f8fa; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote { margin: 1em 0; padding: .5em 1em; border-left: 4px solid #ff9900; background: #fff8ec; }
+blockquote p { margin: .3em 0; }
+img { max-width: 100%; border: 1px solid #d0d7de; border-radius: 4px; }
+footer { margin-top: 3em; font-size: 85%; color: #656d76; border-top: 1px solid #d0d7de; padding-top: 1em; }
+</style>
+</head>
+<body>
+<h1 id="how-to-do-an-aws-well-architected-review-step-by-step">How to do an AWS Well-Architected review — step by step</h1>
+<p>A practical guide to running an AWS Well-Architected review against a <strong>real code repository</strong>,
+written while reviewing this project
+(<a href="https://github.com/sriram-um/aws-serverless-application">aws-serverless-application</a>: API Gateway,
+Lambda, DynamoDB, Cognito, WAF, SAM). No prior review experience is assumed.</p>
+<p><strong>Contents</strong></p>
+<ol>
+<li><a href="#1-what-a-well-architected-review-is">What a Well-Architected review is</a></li>
+<li><a href="#2-words-you-will-see">Words you will see</a></li>
+<li><a href="#3-before-you-start">Before you start</a></li>
+<li><a href="#4-step-by-step-in-the-aws-console">Step by step in the AWS console</a></li>
+<li><a href="#5-the-same-steps-with-the-aws-cli">The same steps with the AWS CLI</a></li>
+<li><a href="#6-how-to-answer-from-code-not-from-memory">How to answer from code, not from memory</a></li>
+<li><a href="#7-after-the-review-from-findings-to-pull-requests">After the review: from findings to pull requests</a></li>
+<li><a href="#8-pitfalls">Pitfalls</a></li>
+<li><a href="#9-checklist">Checklist</a></li>
+</ol>
+<hr />
+<h2 id="1-what-a-well-architected-review-is">1. What a Well-Architected review is</h2>
+<p>The <strong>AWS Well-Architected Framework</strong> is AWS's collection of best practices for building systems
+in the cloud. It is written as a set of <strong>questions</strong> — for example <em>"How do you manage permissions
+for people and machines?"</em> — each with a list of <strong>best practices</strong> you either follow or don't.</p>
+<p>A <strong>review</strong> means going through those questions for one system and answering honestly. The
+result is a list of <strong>risks</strong>: places where the system does not yet follow a best practice, ranked
+by how much that matters.</p>
+<p>The <strong>AWS Well-Architected Tool</strong> is a free page in the AWS console where you record the review:
+it shows you the questions, stores your answers, calculates the risks, and produces a PDF report and
+an improvement plan. It does <strong>not</strong> scan your account or your code — the answers come from you.
+That is why this guide spends a lot of time on <em>how to find the right answer</em> (section 6).</p>
+<p>The questions are grouped into <strong>six pillars</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Pillar</th>
+<th>Asks about</th>
+<th>Example question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Operational Excellence</strong> (OPS)</td>
+<td>Running and improving the system: deployments, monitoring, runbooks</td>
+<td>How do you mitigate deployment risks?</td>
+</tr>
+<tr>
+<td><strong>Security</strong> (SEC)</td>
+<td>Identities, permissions, data protection, detecting incidents</td>
+<td>How do you manage permissions for people and machines?</td>
+</tr>
+<tr>
+<td><strong>Reliability</strong> (REL)</td>
+<td>Surviving failures, backups, scaling, recovery</td>
+<td>How do you back up data?</td>
+</tr>
+<tr>
+<td><strong>Performance Efficiency</strong> (PERF)</td>
+<td>Choosing and sizing the right resources</td>
+<td>How do you select and use compute resources?</td>
+</tr>
+<tr>
+<td><strong>Cost Optimization</strong> (COST)</td>
+<td>Knowing and controlling what you spend</td>
+<td>How do you monitor your cost and usage?</td>
+</tr>
+<tr>
+<td><strong>Sustainability</strong> (SUS)</td>
+<td>Using no more resources (and energy) than needed</td>
+<td>How do you align cloud resources to your demand?</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Question numbers (e.g. <em>SEC 3</em>) and wording change slightly between Framework versions. Always use
+what the tool shows you; the IDs used by the CLI come from <code>list-answers</code> (section 5).</p>
+</blockquote>
+<h2 id="2-words-you-will-see">2. Words you will see</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Workload</strong></td>
+<td>The system you review — here: the Orders application (one SAM stack + CI/CD). One workload per review.</td>
+</tr>
+<tr>
+<td><strong>Lens</strong></td>
+<td>A set of questions. The <strong>Well-Architected Framework</strong> lens (the "core" lens) is always included; extra lenses add questions for a technology or industry.</td>
+</tr>
+<tr>
+<td><strong>Serverless Lens</strong></td>
+<td>AWS's extra lens for Lambda / API Gateway / DynamoDB / SQS / Step Functions architectures. Adds serverless-specific checks (concurrency, cold starts, async failure handling, …).</td>
+</tr>
+<tr>
+<td><strong>Choice</strong></td>
+<td>One best practice under a question. You tick the ones you actually do. Each question also has <strong>"None of these"</strong>.</td>
+</tr>
+<tr>
+<td><strong>HRI</strong> — high risk issue</td>
+<td>A question where important best practices are missing. Fix these first.</td>
+</tr>
+<tr>
+<td><strong>MRI</strong> — medium risk issue</td>
+<td>A question where some best practices are missing.</td>
+</tr>
+<tr>
+<td><strong>Not applicable</strong></td>
+<td>A question that doesn't apply to this workload. You must give a reason.</td>
+</tr>
+<tr>
+<td><strong>Milestone</strong></td>
+<td>A frozen, numbered snapshot of the whole review (all answers and risk counts) at a point in time — e.g. <em>baseline</em> before fixes and <em>after-fixes</em> later. Lets you show progress.</td>
+</tr>
+<tr>
+<td><strong>Improvement plan</strong></td>
+<td>The tool's list of missing best practices, ordered by risk, with links to AWS guidance.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-before-you-start">3. Before you start</h2>
+<h3 id="31-define-the-scope">3.1 Define the scope</h3>
+<p>Write down, in one or two sentences, what is in and out of the review. For this project:</p>
+<blockquote>
+<p><em>In scope:</em> the <code>orders-serverless-app</code> stack defined in <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml"><code>template.yaml</code></a>
+(API Gateway, Lambda, DynamoDB global table, Cognito, WAF, DAX option, analytics stream), its CI/CD
+(<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/.github/workflows/deploy.yml"><code>.github/workflows/deploy.yml</code></a>,
+<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/infra/github-oidc.yaml"><code>infra/github-oidc.yaml</code></a>) and the scripts in <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/scripts/"><code>scripts/</code></a>.
+<em>Also in scope:</em> the security and cost settings of the AWS account it runs in (root user,
+CloudTrail, GuardDuty, budgets), because several questions are about them.
+<em>Out of scope:</em> other projects in the same account.</p>
+</blockquote>
+<p>A review without a clear scope turns into a review of "everything", and most answers become "it
+depends".</p>
+<h3 id="32-gather-the-evidence">3.2 Gather the evidence</h3>
+<p>The tool asks questions; the answers are in your repository and your measurements. Collect:</p>
+<table>
+<thead>
+<tr>
+<th>Evidence</th>
+<th>Where it is in this repo</th>
+<th>Answers questions about</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Infrastructure as code</td>
+<td><a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml"><code>template.yaml</code></a></td>
+<td>IAM, encryption, backups, scaling, logging, networking</td>
+</tr>
+<tr>
+<td>Function code</td>
+<td><a href="https://github.com/sriram-um/aws-serverless-application/blob/main/src/"><code>src/</code></a></td>
+<td>Input validation, error handling, idempotency, logging/tracing</td>
+</tr>
+<tr>
+<td>Tests</td>
+<td><a href="https://github.com/sriram-um/aws-serverless-application/blob/main/tests/"><code>tests/</code></a></td>
+<td>Quality gates, change safety</td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td><a href="https://github.com/sriram-um/aws-serverless-application/blob/main/.github/workflows/deploy.yml"><code>.github/workflows/deploy.yml</code></a>, <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/infra/github-oidc.yaml"><code>infra/github-oidc.yaml</code></a></td>
+<td>Deployment risk, credentials, automation</td>
+</tr>
+<tr>
+<td>Measurements</td>
+<td><a href="https://github.com/sriram-um/aws-serverless-application/blob/main/README.md#observations-and-lessons-learned"><code>README.md</code> — Observations</a></td>
+<td>Performance, sizing, latency, cold starts</td>
+</tr>
+<tr>
+<td>Cost model</td>
+<td><a href="https://github.com/sriram-um/aws-serverless-application/blob/main/docs/cost-estimate.md"><code>docs/cost-estimate.md</code></a></td>
+<td>Cost awareness, pricing model choices</td>
+</tr>
+<tr>
+<td>Runbooks / scripts</td>
+<td><a href="https://github.com/sriram-um/aws-serverless-application/blob/main/scripts/teardown.sh"><code>scripts/teardown.sh</code></a>, <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/scripts/rebuild.sh"><code>scripts/rebuild.sh</code></a>, <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/scripts/smoke_test.sh"><code>scripts/smoke_test.sh</code></a></td>
+<td>Recovery, repeatability, operations</td>
+</tr>
+<tr>
+<td>The AWS account itself (read-only CLI checks)</td>
+<td>Root user MFA and access keys, CloudTrail, GuardDuty, Access Analyzer, Security Hub, Config, budgets</td>
+<td>Account security, detection, cost monitoring</td>
+</tr>
+</tbody>
+</table>
+<p>If you can't point to evidence for a best practice, the honest answer is that you don't do it.</p>
+<h3 id="33-decide-who-answers">3.3 Decide who answers</h3>
+<p>In a company, a review is a meeting: the people who build and run the system answer, a reviewer
+(often an AWS Solutions Architect or a senior engineer) challenges the answers. For a personal
+project, you play both roles: answer, then re-read each answer and ask <em>"where is the proof?"</em>.</p>
+<h3 id="34-cost-and-access">3.4 Cost and access</h3>
+<ul>
+<li>The Well-Architected Tool is <strong>free</strong>. Creating a workload creates no AWS resources.</li>
+<li>The system you review does <strong>not</strong> need to be running — the review is about its design. (This
+  project was torn down when it was reviewed; the template and README still describe it.)</li>
+<li>You need IAM permissions for <code>wellarchitected:*</code> in the account (an admin user has them).</li>
+<li>Workloads are <strong>regional</strong> — create and find them in the same region (here <code>us-east-1</code>).</li>
+</ul>
+<h2 id="4-step-by-step-in-the-aws-console">4. Step by step in the AWS console</h2>
+<p>Console: <strong>AWS Well-Architected Tool</strong> →
+<a href="https://us-east-1.console.aws.amazon.com/wellarchitected/home?region=us-east-1">https://us-east-1.console.aws.amazon.com/wellarchitected/home?region=us-east-1</a></p>
+<h3 id="step-1-define-the-workload">Step 1 — Define the workload</h3>
+<ol>
+<li><strong>Workloads → Define workload.</strong></li>
+<li>Fill in the properties:
+   - <strong>Name:</strong> <code>aws-serverless-application</code>
+   - <strong>Description:</strong> what the system does, plus the repo URL.
+   - <strong>Review owner:</strong> your name/email.
+   - <strong>Environment:</strong> <em>Production</em> or <em>Pre-production</em> (this project: <em>Pre-production</em> — a portfolio
+     system, no real customers).
+   - <strong>Regions:</strong> the regions it runs in (<code>us-east-1</code>, <code>us-west-2</code> for the DR replica).
+   - Optional: architectural design link (the repo), industry, account IDs.</li>
+<li><strong>Next → Apply profile</strong> — skip (profiles prioritise questions for a business goal; optional).</li>
+<li><strong>Lenses:</strong> keep <strong>AWS Well-Architected Framework</strong> and add <strong>Serverless Lens</strong>.</li>
+<li><strong>Define workload.</strong></li>
+</ol>
+<h3 id="step-2-start-the-review">Step 2 — Start the review</h3>
+<p>Open the workload → <strong>Start reviewing</strong> → choose a lens (start with the Framework). The left
+panel lists the pillars and their questions.</p>
+<h3 id="step-3-answer-every-question">Step 3 — Answer every question</h3>
+<p>For each question:
+1. Read the question and the <strong>Info</strong> panel (it explains each best practice).
+2. Tick the choices you <strong>can prove</strong> from your evidence (section 6). Tick <strong>None of these</strong> if
+   none apply.
+3. If the question doesn't apply, tick <strong>Question does not apply to this workload</strong> and give a
+   reason (e.g. <em>"No EC2 instances — fully serverless"</em>).
+4. Write <strong>Notes</strong> with the evidence: file and line, measurement, or why a practice is missing.
+   Notes are what make the review useful later — and they appear in the PDF report.
+5. <strong>Save and continue.</strong></p>
+<p>Repeat for the Serverless Lens. Expect roughly 1–3 hours for the Framework lens the first time.</p>
+<h3 id="step-4-read-the-results">Step 4 — Read the results</h3>
+<ul>
+<li><strong>Overview tab:</strong> risk counts per pillar (high / medium / none / not applicable / unanswered).</li>
+<li><strong>Improvement plan tab:</strong> the missing best practices, highest risk first, each with an AWS
+  guidance link. This is your to-do list.</li>
+</ul>
+<h3 id="step-5-save-a-milestone">Step 5 — Save a milestone</h3>
+<p><strong>Save milestone</strong> → name it e.g. <code>v1.0-baseline</code>. A milestone can't be edited afterwards — it's
+your "before" picture.</p>
+<h3 id="step-6-generate-the-report">Step 6 — Generate the report</h3>
+<p><strong>Generate report</strong> on the lens page downloads a PDF of the answers, notes, risks and improvement
+plan — the artifact you share with others.</p>
+<h3 id="step-7-fix-update-save-a-new-milestone">Step 7 — Fix, update, save a new milestone</h3>
+<p>After fixing issues (section 7), update the affected answers and save a second milestone, e.g.
+<code>v1.1-after-fixes</code>. The <strong>Milestones</strong> tab compares risk counts between them.</p>
+<h2 id="5-the-same-steps-with-the-aws-cli">5. The same steps with the AWS CLI</h2>
+<p>Everything in the console can be scripted with <code>aws wellarchitected</code>. That makes the review
+<strong>repeatable</strong>: answers live in a file in the repository, next to the code they describe, and get
+reviewed in pull requests like any other change.</p>
+<blockquote>
+<p>On this machine every command needs <code>--profile default</code> (the shell's default profile points to a
+different account) and <code>--region us-east-1</code>. Shown once here, omitted below:
+<code>export AWS_PROFILE=default AWS_REGION=us-east-1</code></p>
+</blockquote>
+<p><strong>List the available lenses</strong> (find the Serverless Lens alias):</p>
+<pre><code class="language-bash">aws wellarchitected list-lenses \
+  --query 'LensSummaries[].[LensAlias,LensName,LensVersion]' --output table
+</code></pre>
+<p><strong>Define the workload</strong> (<code>--review-owner</code> and a region are required in practice, even though the
+docs list them as optional):</p>
+<pre><code class="language-bash">aws wellarchitected create-workload \
+  --workload-name aws-serverless-application \
+  --description &quot;Serverless Orders API (SAM). Repo: https://github.com/sriram-um/aws-serverless-application&quot; \
+  --environment PREPRODUCTION \
+  --aws-regions us-east-1 us-west-2 \
+  --review-owner &quot;Sriram Penumatcha&quot; \
+  --architectural-design https://github.com/sriram-um/aws-serverless-application \
+  --lenses wellarchitected serverless
+# -&gt; {&quot;WorkloadId&quot;: &quot;...&quot;, &quot;WorkloadArn&quot;: &quot;...&quot;}
+WORKLOAD_ID=&lt;WorkloadId from the output&gt;
+</code></pre>
+<blockquote>
+<p>⚠️ <strong>The list commands return only 10 items unless told otherwise</strong>, and the CLI does <em>not</em>
+page through the rest automatically for this service: a plain <code>list-answers</code> silently shows 10
+of 57 questions. Always ask for one pillar at a time with <code>--max-results 50</code> (no pillar has more
+than 13 questions), or follow <code>NextToken</code> yourself.</p>
+</blockquote>
+<p><strong>List the questions</strong> of a lens, pillar by pillar (IDs are needed to answer them):</p>
+<pre><code class="language-bash">for p in operationalExcellence security reliability performance costOptimization sustainability; do
+  aws wellarchitected list-answers --workload-id &quot;$WORKLOAD_ID&quot; --lens-alias wellarchitected \
+    --pillar-id $p --max-results 50 \
+    --query 'AnswerSummaries[].[PillarId,QuestionId,QuestionTitle]' --output text
+done
+</code></pre>
+<p><strong>See the choices of one question:</strong></p>
+<pre><code class="language-bash">aws wellarchitected get-answer --workload-id &quot;$WORKLOAD_ID&quot; --lens-alias wellarchitected \
+  --question-id &lt;QuestionId&gt; \
+  --query 'Answer.Choices[].[ChoiceId,Title]' --output table
+</code></pre>
+<p><strong>Answer a question</strong> (selected choices + evidence in the notes):</p>
+<pre><code class="language-bash">aws wellarchitected update-answer --workload-id &quot;$WORKLOAD_ID&quot; --lens-alias wellarchitected \
+  --question-id &lt;QuestionId&gt; \
+  --selected-choices &lt;ChoiceId1&gt; &lt;ChoiceId2&gt; \
+  --notes &quot;Per-function SAM policy templates scoped to one table: template.yaml#L113-L116&quot;
+</code></pre>
+<p>Mark a whole question not applicable: <code>--no-is-applicable --reason OUT_OF_SCOPE --notes "..."</code>.</p>
+<p>Mark single <strong>choices</strong> not applicable (e.g. "VPN to on-premises" in a serverless app). Use
+<code>--choice-updates</code> instead of <code>--selected-choices</code>:</p>
+<pre><code class="language-bash">aws wellarchitected update-answer --workload-id &quot;$WORKLOAD_ID&quot; --lens-alias wellarchitected \
+  --question-id planning-network-topology \
+  --choice-updates '{
+    &quot;rel_planning_network_topology_ha_conn_users&quot;: {&quot;Status&quot;: &quot;SELECTED&quot;},
+    &quot;rel_planning_network_topology_ha_conn_private_networks&quot;: {&quot;Status&quot;: &quot;NOT_APPLICABLE&quot;,
+      &quot;Reason&quot;: &quot;ARCHITECTURE_CONSTRAINTS&quot;, &quot;Notes&quot;: &quot;No on-premises network&quot;}
+  }'
+</code></pre>
+<p>This matters: the tool counts an unticked choice as <em>missing</em>. In this review, one question came
+back <strong>high risk</strong> only because of three choices that can't exist in this architecture. With them
+marked not applicable (and the reason written down), the same question had <strong>no risk</strong>.</p>
+<p><strong>Risk counts</strong> for a lens:</p>
+<pre><code class="language-bash">aws wellarchitected get-lens-review --workload-id &quot;$WORKLOAD_ID&quot; --lens-alias wellarchitected \
+  --query 'LensReview.{total:RiskCounts, pillars:PillarReviewSummaries[].[PillarName,RiskCounts]}'
+</code></pre>
+<p><strong>List the high risk issues</strong> (per pillar, see the warning above):</p>
+<pre><code class="language-bash">for p in operationalExcellence security reliability performance costOptimization sustainability; do
+  aws wellarchitected list-answers --workload-id &quot;$WORKLOAD_ID&quot; --lens-alias wellarchitected \
+    --pillar-id $p --max-results 50 \
+    --query 'AnswerSummaries[?Risk==`HIGH`].[PillarId,QuestionTitle]' --output text
+done
+</code></pre>
+<p><strong>Improvement plan</strong> (high and medium risks, each with a link to AWS guidance):</p>
+<pre><code class="language-bash">aws wellarchitected list-lens-review-improvements --workload-id &quot;$WORKLOAD_ID&quot; \
+  --lens-alias wellarchitected --max-results 100 \
+  --query 'ImprovementSummaries[].[Risk,PillarId,QuestionTitle,ImprovementPlanUrl]' --output text
+</code></pre>
+<p><strong>Save a milestone:</strong></p>
+<pre><code class="language-bash">aws wellarchitected create-milestone --workload-id &quot;$WORKLOAD_ID&quot; --milestone-name v1.0-baseline
+</code></pre>
+<p><strong>Download the PDF report</strong> (the API returns it base64-encoded):</p>
+<pre><code class="language-bash">aws wellarchitected get-lens-review-report --workload-id &quot;$WORKLOAD_ID&quot; \
+  --lens-alias wellarchitected \
+  --query 'LensReviewReport.Base64String' --output text \
+  | tr -d '[:space:]' | base64 -d &gt; baseline-wellarchitected.pdf
+</code></pre>
+<p>(<code>tr</code> removes the line ending the CLI adds on Windows; without it <code>base64</code> fails with
+<em>invalid input</em>.)</p>
+<p><strong>Compare with a milestone later:</strong> add <code>--milestone-number 1</code> to <code>get-lens-review</code>.</p>
+<p>In this project these calls are wrapped in <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/scripts/wa_review.py"><code>scripts/wa_review.py</code></a>, which
+reads the answers from <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/answers/"><code>answers/</code></a> — see the <a href="index.html">README</a>.</p>
+<h2 id="6-how-to-answer-from-code-not-from-memory">6. How to answer from code, not from memory</h2>
+<p>The tool can only be as accurate as your answers. The method that works:</p>
+<ol>
+<li><strong>Read the best practice, not just the question.</strong> Open the Info panel / the linked AWS page:
+   each choice describes a concrete practice ("Grant least privilege access").</li>
+<li><strong>Find the proof</strong> in the evidence from 3.2. Write down file + line or the measured number.</li>
+<li><strong>Tick only what you can prove</strong> for <em>this</em> workload. "We'd do that in production" is not done.</li>
+<li><strong>Write the gap in the notes</strong> when you don't tick something — that becomes the fix.</li>
+<li><strong>Re-read as a reviewer:</strong> for each ticked choice, ask "if someone asked for proof, could I show
+   it in under a minute?"</li>
+</ol>
+<h3 id="worked-example-security-how-do-you-manage-permissions-for-people-and-machines">Worked example — Security: <em>How do you manage permissions for people and machines?</em></h3>
+<table>
+<thead>
+<tr>
+<th>Best practice (choice)</th>
+<th>Evidence in this repo</th>
+<th>Tick?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grant least privilege access</td>
+<td>Each Lambda gets a SAM policy template scoped to one table, e.g. <code>DynamoDBWritePolicy</code> on the Orders table only (<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml#L113-L116"><code>template.yaml</code></a>); API Gateway's direct integration role allows only <code>dynamodb:Query</code> on one table (<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml#L708-L731"><code>template.yaml</code></a>)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Define permission guardrails for your organization</td>
+<td>No SCPs / permission boundaries — single account, out of scope</td>
+<td>❌ note it</td>
+</tr>
+<tr>
+<td>Manage access based on lifecycle</td>
+<td>Test users created by a script, deleted on teardown; no review process</td>
+<td>partly → ❌, note it</td>
+</tr>
+<tr>
+<td>Analyze public and cross-account access</td>
+<td>Can't be proven from the repo — needs an account-level check</td>
+<td>❌ until proven, note it</td>
+</tr>
+<tr>
+<td><em>(related evidence)</em> Machines use temporary credentials</td>
+<td>CI/CD uses a GitHub OIDC role restricted to this repo's <code>main</code> branch — no stored access keys (<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/infra/github-oidc.yaml"><code>infra/github-oidc.yaml</code></a>)</td>
+<td>supports the ✅ choices above</td>
+</tr>
+</tbody>
+</table>
+<p>The result is honest: some good practices proven, some gaps with a written reason — and those
+gaps are now concrete tasks.</p>
+<h3 id="a-quick-map-which-file-answers-which-kind-of-question">A quick map: which file answers which kind of question</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Look here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compute sizing, architecture (arm64/x86), timeouts</td>
+<td><code>Globals</code> and per-function <code>MemorySize</code> in <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml#L33-L51"><code>template.yaml</code></a>; Power Tuning results in the <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/README.md#lambda-optimization-measure-then-change-exercise-8">README</a></td>
+</tr>
+<tr>
+<td>Log retention, tracing</td>
+<td><code>AWS::Logs::LogGroup</code> resources, <code>Tracing: Active</code></td>
+</tr>
+<tr>
+<td>Monitoring and alerting</td>
+<td>Dashboards (<code>AWS::CloudWatch::Dashboard</code>) vs. <strong>alarms</strong> (<code>AWS::CloudWatch::Alarm</code>) — a dashboard nobody watches is not alerting</td>
+</tr>
+<tr>
+<td>Failure handling for async/stream work</td>
+<td>Event source mapping settings: retries, bisect, <code>DestinationConfig</code> / DLQ (<a href="https://github.com/sriram-um/aws-serverless-application/blob/main/template.yaml#L635-L656"><code>template.yaml</code></a>)</td>
+</tr>
+<tr>
+<td>Backup and DR</td>
+<td><code>PointInTimeRecoveryEnabled</code>, global table replicas, rebuild scripts</td>
+</tr>
+<tr>
+<td>Throttling / protecting from demand spikes</td>
+<td>API Gateway <code>MethodSettings</code> throttling, WAF rules, Lambda reserved concurrency</td>
+</tr>
+<tr>
+<td>Data protection</td>
+<td><code>SSESpecification</code>, TLS-only endpoints, token handling in code</td>
+</tr>
+<tr>
+<td>Deployment safety</td>
+<td>CI workflow: tests, lint, smoke test; aliases/canary (<code>DeploymentPreference</code>)</td>
+</tr>
+<tr>
+<td>Cost awareness</td>
+<td>Cost estimate doc, budgets/alerts, tags, on/off toggles for hourly resources</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-after-the-review-from-findings-to-pull-requests">7. After the review: from findings to pull requests</h2>
+<ol>
+<li><strong>Prioritise:</strong> all HRIs first, then MRIs that are cheap to fix. Use your pillar priorities —
+   for a personal project, <em>cost</em> and <em>security</em> usually come first.</li>
+<li><strong>One issue → one small change.</strong> Write the fix in the IaC/code, open a pull request, reference
+   the question in the title (e.g. <em>"REL: add CloudWatch alarms on Lambda errors and DLQ depth"</em>).</li>
+<li><strong>Verify the fix</strong> the same way as any change (tests, deploy, check it in the console).</li>
+<li><strong>Update the answer</strong> in the tool (or in the answers file) with the new evidence.</li>
+<li><strong>Save a new milestone</strong> and compare risk counts with the baseline.</li>
+<li><strong>Repeat regularly</strong> — at least yearly, or after a big architecture change.</li>
+</ol>
+<p>Not every risk must be fixed. Accepting a risk is a valid decision if it is written down with the
+reason (e.g. <em>"single-node DAX: demo only, never production"</em>).</p>
+<h2 id="8-pitfalls">8. Pitfalls</h2>
+<table>
+<thead>
+<tr>
+<th>Pitfall</th>
+<th>Why it's a problem</th>
+<th>Do this instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Answering from a generic checklist or a blog post</td>
+<td>It guesses problems you may not have (e.g. "you probably use x86 and 128 MB") and misses the ones you do</td>
+<td>Check every claim against the code before writing it down</td>
+</tr>
+<tr>
+<td>Ticking choices to make the HRI count go down</td>
+<td>The report looks good, the system isn't better — and a reviewer will ask for proof</td>
+<td>Tick only what you can show; record gaps</td>
+</tr>
+<tr>
+<td>Treating the tool as a scanner</td>
+<td>It never looks at your account or code</td>
+<td>The evidence step (3.2) is the real work</td>
+</tr>
+<tr>
+<td>Confusing a dashboard with alerting</td>
+<td>Dashboards need someone looking at them</td>
+<td>Alarms with a notification target</td>
+</tr>
+<tr>
+<td>Copying fixes that don't apply</td>
+<td>e.g. <code>EventInvokeConfig</code> only affects <strong>asynchronous</strong> invocations; API Gateway calls are synchronous and stream triggers use event source mapping settings</td>
+<td>Understand how each function is invoked first</td>
+</tr>
+<tr>
+<td>Wrong lens alias in the CLI</td>
+<td><code>--lens-alias wellarchitected</code> only covers the Framework lens</td>
+<td>Run commands per lens; get aliases from <code>list-lenses</code></td>
+</tr>
+<tr>
+<td>Wrong region/account</td>
+<td>Workloads are regional; this machine has two AWS profiles</td>
+<td>Pin <code>--region</code> and <code>--profile</code>; check <code>aws sts get-caller-identity</code></td>
+</tr>
+<tr>
+<td>Leaving impossible choices unticked</td>
+<td>The tool reads them as missing best practices and inflates the risk (e.g. "load balancing" in an API Gateway app)</td>
+<td>Mark the <em>choice</em> not applicable with a reason; never tick it as done</td>
+</tr>
+<tr>
+<td>Marking real gaps "not applicable" to lower the count</td>
+<td>Hides real risk — "we don't have a budget" is a gap, not N/A</td>
+<td>N/A only when the thing can't exist in this architecture</td>
+</tr>
+<tr>
+<td>Trusting a plain <code>list-answers</code></td>
+<td>Returns 10 items by default and the CLI doesn't auto-page this service — 47 of 57 questions silently missing</td>
+<td><code>--pillar-id</code> + <code>--max-results 50</code>; in boto3 follow <code>NextToken</code> by hand (there are <strong>no paginators</strong> for <code>wellarchitected</code>) — see <code>scripts/wa_review.py</code></td>
+</tr>
+<tr>
+<td>Reviewing only the repo</td>
+<td>Questions about account security (root user, CloudTrail, GuardDuty, budgets) can't be answered from code</td>
+<td>Run read-only checks: <code>aws iam get-account-summary</code>, <code>cloudtrail describe-trails</code>, <code>guardduty list-detectors</code>, <code>budgets describe-budgets</code></td>
+</tr>
+<tr>
+<td>One giant review session</td>
+<td>Fatigue → "None of these" everywhere</td>
+<td>One pillar at a time; save as you go</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-checklist">9. Checklist</h2>
+<ul>
+<li>☐ Scope written down (3.1)</li>
+<li>☐ Evidence collected, with file paths (3.2)</li>
+<li>☐ Workload defined with the Framework lens + Serverless Lens</li>
+<li>☐ Every question answered or marked not applicable with a reason</li>
+<li>☐ Notes contain evidence for every ticked choice and the gap for every unticked one</li>
+<li>☐ Baseline milestone saved; PDF reports downloaded</li>
+<li>☐ HRIs turned into a prioritised improvement plan</li>
+<li>☐ Fixes delivered as small pull requests, answers updated, new milestone saved</li>
+</ul>
+<hr />
+<p><strong>Further reading:</strong>
+<a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html">AWS Well-Architected Framework</a> ·
+<a href="https://docs.aws.amazon.com/wellarchitected/latest/serverless-applications-lens/welcome.html">Serverless Applications Lens</a> ·
+<a href="https://docs.aws.amazon.com/wellarchitected/latest/userguide/intro.html">Well-Architected Tool user guide</a> ·
+<a href="https://docs.aws.amazon.com/cli/latest/reference/wellarchitected/">AWS CLI <code>wellarchitected</code> reference</a></p>
+<p>Next: <a href="02-review-results.html">the results of reviewing this repository</a>.</p>
+<footer>Generated from <a href="https://github.com/sriram-um/aws-serverless-application/blob/main/well-architected-review/01-how-to-do-a-review.md">01-how-to-do-a-review.md</a> · <a href="https://github.com/sriram-um/aws-serverless-application">sriram-um/aws-serverless-application</a></footer>
+</body>
+</html>

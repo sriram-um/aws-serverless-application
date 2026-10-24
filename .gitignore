@@ -7,3 +7,9 @@ __pycache__/
 env.local.json
 .playwright-mcp/
 layers/dax/python/
+
+# Well-Architected PDF reports contain private account findings - keep local
+well-architected-review/reports/*.pdf
+# Personal LinkedIn post and its image - local only
+well-architected-review/post.md
+well-architected-review/images/post-*.png

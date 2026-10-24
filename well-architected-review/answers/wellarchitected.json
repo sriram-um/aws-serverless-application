@@ -1,0 +1,539 @@
+{
+  "lens": "wellarchitected",
+  "reviewed": "2026-10-24",
+  "evidenceBase": "https://github.com/sriram-um/aws-serverless-application (main @ a25f479) + read-only checks of account 977534234172 on 2026-10-24",
+  "questions": {
+    "priorities": {
+      "title": "How do you determine what your priorities are?",
+      "selected": [
+        "ops_priorities_ext_cust_needs",
+        "ops_priorities_eval_tradeoffs"
+      ],
+      "notes": "Evidence: requirements come from the exercise sheet, turned into a phased plan (README Progress); trade-offs are written down per decision (README 'Design decisions': caching as a cost toggle, direct integration vs Lambda, single-node DAX, global table migration).\nGap: no threat model, no written governance/compliance requirements (none apply to a portfolio project, but that was never evaluated explicitly)."
+    },
+    "ops-model": {
+      "title": "How do you structure your organization to support your business outcomes?",
+      "selected": [
+        "ops_ops_model_def_resource_owners",
+        "ops_ops_model_def_proc_owners",
+        "ops_ops_model_def_activity_owners",
+        "ops_ops_model_req_add_chg_exception"
+      ],
+      "notes": "Single-maintainer portfolio project: the repository owner owns all resources, scripts and operations; every resource is tagged project=serverless-orders. Changes are requested and reviewed through GitHub pull requests (CI runs tests on PRs).\nGap: no formal mechanism for ownership/responsibilities - not needed for one person, required for a team.",
+      "not_applicable_choices": {
+        "ops_ops_model_def_neg_team_agreements": "Single maintainer - no teams to agree responsibilities between."
+      }
+    },
+    "org-culture": {
+      "title": "How does your organizational culture support your business outcomes?",
+      "not_applicable": "OUT_OF_SCOPE",
+      "notes": "Single-person portfolio project: there is no organization, team or executive sponsor to evaluate."
+    },
+    "observability": {
+      "title": "How do you implement observability in your workload?",
+      "selected": [
+        "ops_observability_application_telemetry",
+        "ops_observability_dependency_telemetry",
+        "ops_observability_dist_trace"
+      ],
+      "notes": "Evidence: structured JSON logs (Powertools Logger) with correlation id and git SHA; API Gateway, Lambda, WAF, SQS metrics; X-Ray active tracing with DynamoDB calls as subsegments (template.yaml L40-41, L307).\nGap: no KPIs/SLOs defined (e.g. p99 latency, order success rate); no user-experience telemetry (no CloudWatch Synthetics canary / RUM); API Gateway access logs are not enabled."
+    },
+    "dev-integ": {
+      "title": "How do you reduce defects, ease remediation, and improve flow into production?",
+      "selected": [
+        "ops_dev_integ_version_control",
+        "ops_dev_integ_test_val_chg",
+        "ops_dev_integ_conf_mgmt_sys",
+        "ops_dev_integ_build_mgmt_sys",
+        "ops_dev_integ_share_design_stds",
+        "ops_dev_integ_code_quality",
+        "ops_dev_integ_freq_sm_rev_chg",
+        "ops_dev_integ_auto_integ_deploy"
+      ],
+      "notes": "Evidence: Git + GitHub; 25 pytest/moto unit tests on every push and PR; sam validate --lint (cfn-lint) before deploy; SAM parameters + samconfig config envs; GitHub Actions builds and deploys on push to main (.github/workflows/deploy.yml); shared standards in PORTFOLIO-PLAYBOOK.md; one small commit per exercise.\nGap: single environment (no dev/staging); no automated patch management (pinned Powertools layer and DAX client are bumped by hand, no Dependabot)."
+    },
+    "mit-deploy-risks": {
+      "title": "How do you mitigate deployment risks?",
+      "selected": [
+        "ops_mit_deploy_risks_plan_for_unsucessful_changes"
+      ],
+      "notes": "Evidence: CloudFormation change sets roll back automatically on failure; the whole stack can be recreated from code (scripts/rebuild.sh, proven 4m38s from nothing); CI smoke test after deploy (unauthenticated POST must return 401).\nGap: deployments are not tested in a pre-production environment; no safe deployment strategy (no Lambda aliases with CodeDeploy canary/linear via DeploymentPreference); a failing smoke test does not roll back automatically; the smoke test only checks the auth path."
+    },
+    "ready-to-support": {
+      "title": "How do you know that you are ready to support a workload?",
+      "selected": [
+        "ops_ready_to_support_personnel_capability",
+        "ops_ready_to_support_use_runbooks"
+      ],
+      "notes": "Evidence: the builder operates the system; runbooks as scripts and docs: scripts/rebuild.sh, scripts/teardown.sh, scripts/smoke_test.sh, README 'Teardown and rebuild' and the DR runbook table (exercise 11).\nGap: no operational readiness review before go-live; no playbooks for investigating issues (e.g. 5XX spike, DLQ messages); no AWS Support plan beyond Basic."
+    },
+    "workload-observability": {
+      "title": "How do you utilize workload observability in your organization?",
+      "selected": [
+        "ops_workload_observability_analyze_workload_metrics",
+        "ops_workload_observability_analyze_workload_logs",
+        "ops_workload_observability_analyze_workload_traces",
+        "ops_workload_observability_create_dashboards"
+      ],
+      "notes": "Evidence: CloudWatch dashboard as code (template.yaml L818-916); latency, cold start and trace analyses recorded in the README (Logs Insights on REPORT lines and the aws/spans log group).\nGap: NO actionable alerts - there is not a single AWS::CloudWatch::Alarm in the template, so errors, throttles, 5XX, DLQ depth and stream IteratorAge are only visible if someone opens the dashboard."
+    },
+    "operations-health": {
+      "title": "How do you understand the health of your operations?",
+      "selected": [
+        "ops_operations_health_no"
+      ],
+      "notes": "Gap: no operations goals/KPIs (deploy frequency, change failure rate, time to restore) are measured, communicated or reviewed."
+    },
+    "event-response": {
+      "title": "How do you manage workload and operations events?",
+      "selected": [
+        "ops_event_response_dashboards"
+      ],
+      "notes": "Evidence: status is visible on the CloudWatch dashboard.\nGap: no event/incident/problem process, no process per alert (there are no alerts), no prioritisation or escalation paths, no customer communication plan, no automated responses (e.g. EventBridge rule on DLQ messages)."
+    },
+    "evolve-ops": {
+      "title": "How do you evolve operations?",
+      "selected": [
+        "ops_evolve_ops_process_cont_imp",
+        "ops_evolve_ops_perform_rca_process",
+        "ops_evolve_ops_feedback_loops",
+        "ops_evolve_ops_knowledge_management",
+        "ops_evolve_ops_validate_insights",
+        "ops_evolve_ops_share_lessons_learned"
+      ],
+      "notes": "Evidence: per-phase loop with a README update after every exercise; root causes of real problems documented with fixes (KMS first-use failure, OIDC sub mismatch, StartingPosition LATEST skipping orders, the API being briefly public); lessons fed into the shared PORTFOLIO-PLAYBOOK.md gotchas table; changes validated with before/after measurements (Power Tuning, cold start).\nGap: no regular operations-metrics review, no defined drivers or allocated time for improvement."
+    },
+    "performing-architecture": {
+      "title": "How do you select the appropriate cloud resources and architecture patterns for your workload?",
+      "selected": [
+        "perf_architecture_understand_cloud_services_and_features",
+        "perf_architecture_evaluate_trade_offs",
+        "perf_architecture_guidance_architecture_patterns_best_practices",
+        "perf_architecture_factor_cost_into_architectural_decisions",
+        "perf_architecture_use_policies_and_reference_architectures",
+        "perf_architecture_use_benchmarking",
+        "perf_architecture_use_data_driven_approach"
+      ],
+      "notes": "Evidence: serverless managed services throughout; decisions and trade-offs in README 'Design decisions'; cost in docs/cost-estimate.md (caching scenario A vs B); the playbook makes this project the reference architecture for later ones; benchmarks drive choices: direct integration vs Lambda latency, DAX vs DynamoDB reads, replication lag (median 539 ms), Power Tuning for memory."
+    },
+    "compute-hardware": {
+      "title": "How do you select and use compute resources in your workload?",
+      "selected": [
+        "perf_compute_hardware_select_best_compute_options",
+        "perf_compute_hardware_collect_compute_related_metrics",
+        "perf_compute_hardware_scale_compute_resources_dynamically",
+        "perf_compute_hardware_understand_compute_configuration_features",
+        "perf_compute_hardware_configure_and_right_size_compute_resources"
+      ],
+      "notes": "Evidence: AWS Lambda on arm64 (Graviton) for all functions (template.yaml L33-38); Duration/Invocations/Errors/Throttles on the dashboard; Lambda scales automatically; memory right-sized with Power Tuning: 512 MB for CreateOrder/GetOrder, 256 MB default (template.yaml L104-106); init cost measured inside Lambda.\nN/A: hardware accelerators are not relevant.",
+      "not_applicable_choices": {
+        "perf_compute_hardware_compute_accelerators": "No ML/GPU workloads."
+      }
+    },
+    "data-management": {
+      "title": "How do you store, manage, and access data in your workload?",
+      "selected": [
+        "perf_data_use_purpose_built_data_store",
+        "perf_data_collect_record_data_store_performance_metrics",
+        "perf_data_evaluate_configuration_options_data_store",
+        "perf_data_implement_strategies_to_improve_query_performance",
+        "perf_data_access_patterns_caching"
+      ],
+      "notes": "Evidence: DynamoDB key-value model (orderId/itemId) for orders and a separate aggregates table for analytics, so reads are key lookups, never scans (template.yaml L59-92, L585-608); on-demand capacity, streams, TTL, global table evaluated and used; DAX and replication latency measured and recorded in the README; DAX read-through cache and API Gateway cache behind EnableCaching.\nGap: DynamoDB metrics (latency, throttles) are not on the dashboard."
+    },
+    "networking": {
+      "title": "How do you select and configure networking resources in your workload?",
+      "selected": [
+        "perf_networking_understand_how_networking_impacts_performance",
+        "perf_networking_evaluate_networking_features"
+      ],
+      "notes": "Evidence: regional API endpoint chosen deliberately (WAF and cache attach to the stage; CDN possible later); for DAX, a free gateway endpoint for DynamoDB and an interface endpoint for X-Ray instead of a NAT gateway; network impact measured (API Gateway service call ~28 ms vs ~7 ms SDK call; cross-region replication ~0.5 s).\nN/A: no dedicated connectivity/VPN, load balancers or custom protocols in a serverless API. Gap: region chosen by default (us-east-1), not by user location; no metric-driven network tuning.",
+      "not_applicable_choices": {
+        "perf_networking_choose_appropriate_dedicated_connectivity_or_vpn": "No on-premises network or VPN - public serverless API only.",
+        "perf_networking_load_balancing_distribute_traffic": "No load balancers - API Gateway and Lambda distribute traffic as managed services."
+      }
+    },
+    "process-culture": {
+      "title": "What process do you use to support more performance efficiency for your workload?",
+      "selected": [
+        "perf_process_culture_use_monitoring_solutions",
+        "perf_process_culture_workload_performance"
+      ],
+      "notes": "Evidence: CloudWatch dashboard and X-Ray; a written optimisation method (playbook 'Lambda optimization method': package size -> Power Tuning -> cold start -> init breakdown -> data-backed change only).\nGap: no performance KPIs, no regular metric reviews, no load test (Power Tuning ran 50 invocations, not a load test), no automated remediation, runtime/layer updates are manual."
+    },
+    "manage-service-limits": {
+      "title": "How do you manage service quotas and constraints?",
+      "selected": [
+        "rel_manage_service_limits_aware_quotas_and_constraints",
+        "rel_manage_service_limits_aware_fixed_limits"
+      ],
+      "notes": "Evidence: fixed limits handled in the design - max 25 lines per order (BatchWriteItem limit) enforced in validation (src/create_order/app.py L39-40); one event source mapping per function+stream (documented 409 pitfall); DAX cluster name <= 20 chars; stage throttle well below the account's API Gateway limit.\nGap: quotas are not monitored (Service Quotas / Trusted Advisor alarms), not managed across accounts/regions, and no headroom was checked for a failover to us-west-2."
+    },
+    "planning-network-topology": {
+      "title": "How do you plan your network topology?",
+      "selected": [
+        "rel_planning_network_topology_ha_conn_users",
+        "rel_planning_network_topology_ip_subnet_allocation"
+      ],
+      "notes": "Evidence: public entry point is API Gateway (regional, managed across AZs); the optional DAX VPC uses 10.20.0.0/16 with two /24 private subnets in two AZs, leaving room to grow (template.yaml L407-440).\nN/A: no on-premises connectivity, no multiple VPCs to connect (hub-and-spoke and non-overlapping ranges don't apply).",
+      "not_applicable_choices": {
+        "rel_planning_network_topology_ha_conn_private_networks": "No on-premises environment or private network connectivity.",
+        "rel_planning_network_topology_prefer_hub_and_spoke": "At most one VPC (optional DAX) - nothing to interconnect.",
+        "rel_planning_network_topology_non_overlap_ip": "At most one VPC, not connected to any other network."
+      }
+    },
+    "service-architecture": {
+      "title": "How do you design your workload service architecture?",
+      "selected": [
+        "rel_service_architecture_monolith_soa_microservice",
+        "rel_service_architecture_business_domains",
+        "rel_service_architecture_api_contracts"
+      ],
+      "notes": "Evidence: small single-purpose functions (CreateOrder, GetOrder, AnalyticsAggregator, AnalyticsApi) split by domain (orders vs analytics); the API contract is an OpenAPI 3.0.1 definition in the template with every route, parameter and response declared (template.yaml L143-304)."
+    },
+    "prevent-interaction-failure": {
+      "title": "How do you design interactions in a distributed system to prevent failures?",
+      "selected": [
+        "rel_prevent_interaction_failure_identify",
+        "rel_prevent_interaction_failure_loosely_coupled_system"
+      ],
+      "notes": "Evidence: synchronous request/response API and an asynchronous stream pipeline, both documented; analytics are loosely coupled to order creation through DynamoDB Streams (an aggregator failure never fails an order).\nGap: POST /orders is not idempotent - a client retry after a timeout creates a duplicate order (no Idempotency-Key header / Powertools idempotency utility). The stream consumer IS idempotent (eventID marker).\nGap: no constant-work design."
+    },
+    "mitigate-interaction-failure": {
+      "title": "How do you design interactions in a distributed system to mitigate or withstand failures?",
+      "selected": [
+        "rel_mitigate_interaction_failure_throttle_requests",
+        "rel_mitigate_interaction_failure_limit_retries",
+        "rel_mitigate_interaction_failure_fail_fast",
+        "rel_mitigate_interaction_failure_stateless"
+      ],
+      "notes": "Evidence: stage throttling + WAF rate limit; stream retries capped at 3 with bisect and a DLQ; boto3 standard retries; 10 s function timeout (30 s for the aggregator); all functions are stateless (state only in DynamoDB).\nGap: boto3 client connect/read timeouts are defaults (60 s) - longer than the 10 s function timeout; GetOrder has no fallback to DynamoDB if DAX is unreachable (no graceful degradation); no emergency levers (e.g. a flag to disable analytics or reject writes)."
+    },
+    "monitor-aws-resources": {
+      "title": "How do you monitor workload resources?",
+      "selected": [
+        "rel_monitor_aws_resources_monitor_resources",
+        "rel_monitor_aws_resources_notification_aggregation",
+        "rel_monitor_aws_resources_storage_analytics",
+        "rel_monitor_aws_resources_end_to_end"
+      ],
+      "notes": "Evidence: metrics for API Gateway (per method), Lambda, WAF, SQS DLQ, stream IteratorAge aggregated on a dashboard (sums, p90); Logs Insights used for analysis; end-to-end X-Ray traces API Gateway -> Lambda -> DynamoDB.\nGap: NO notifications (no CloudWatch alarms, no SNS topic) and no automated responses; monitoring scope never reviewed."
+    },
+    "adapt-to-changes": {
+      "title": "How do you design your workload to adapt to changes in demand?",
+      "selected": [
+        "rel_adapt_to_changes_autoscale_adapt",
+        "rel_adapt_to_changes_reactive_adapt_auto",
+        "rel_adapt_to_changes_proactive_adapt_auto"
+      ],
+      "notes": "Evidence: inherent to the managed serverless services used - Lambda concurrency, DynamoDB on-demand capacity and API Gateway scale automatically with demand and replace impaired capacity without action.\nGap: never load tested - the account's Lambda concurrency quota, the 100 req/s stage limit and the WAF rule were not validated under load."
+    },
+    "tracking-change-management": {
+      "title": "How do you implement change?",
+      "selected": [
+        "rel_tracking_change_management_planned_changemgmt",
+        "rel_tracking_change_management_functional_testing",
+        "rel_tracking_change_management_immutable_infrastructure",
+        "rel_tracking_change_management_automated_changemgmt"
+      ],
+      "notes": "Evidence: deployment runbook in the README and scripts; unit tests gate every deploy and a smoke test runs after it (CI), plus a 10-check smoke test in scripts/smoke_test.sh; each deploy publishes new immutable code packages through CloudFormation; changes deploy automatically from main.\nGap: no resiliency testing as part of deployment."
+    },
+    "backing-up-data": {
+      "title": "How do you back up data?",
+      "selected": [
+        "rel_backing_up_data_secured_backups_data",
+        "rel_backing_up_data_automated_backups_data"
+      ],
+      "notes": "Evidence: point-in-time recovery (continuous, 35 days) on the Orders table in both regions, encrypted with KMS (template.yaml L77-92); automatic, no manual steps.\nGap: OrderStats has no PITR and there is no script to rebuild it from Orders (the stream keeps only 24 h); a restore has never been tested (no periodic recovery test)."
+    },
+    "fault-isolation": {
+      "title": "How do you use fault isolation to protect your workload?",
+      "selected": [
+        "rel_fault_isolation_multiaz_region_system"
+      ],
+      "notes": "Evidence: all services are multi-AZ managed services; order data is replicated to us-west-2 (global table, RPO < 1 s).\nGap: the API tier exists in one region only; no bulkhead/cell design (one shared stage throttle, no reserved concurrency per function); the optional DAX cluster is a single node with no automated recovery (documented as demo-only)."
+    },
+    "withstand-component-failures": {
+      "title": "How do you design your workload to withstand component failures?",
+      "selected": [
+        "rel_withstand_component_failures_failover2good",
+        "rel_withstand_component_failures_auto_healing_system"
+      ],
+      "notes": "Evidence: AZ-level failover and healing are handled by the managed services (Lambda, API Gateway, DynamoDB); the us-west-2 replica is read/write.\nGap: failures are not detected (no alarms) and nobody is notified; region failover requires deploying the stack in us-west-2 (control-plane dependent, not statically stable); no availability target/SLA defined."
+    },
+    "testing-resiliency": {
+      "title": "How do you test reliability?",
+      "selected": [
+        "rel_testing_resiliency_rca_resiliency"
+      ],
+      "notes": "Evidence: post-incident analysis written for every real problem (README 'Observations and lessons learned', playbook gotchas).\nGap: no failure-investigation playbooks, no load/scalability test, no chaos experiments (e.g. AWS FIS) and no game days."
+    },
+    "planning-for-recovery": {
+      "title": "How do you plan for disaster recovery (DR)?",
+      "selected": [
+        "rel_planning_for_recovery_disaster_recovery",
+        "rel_planning_for_recovery_dr_tested"
+      ],
+      "notes": "Evidence: DR strategy for data = DynamoDB global table (us-east-1 + us-west-2) + PITR; the full stack is recreated from code - teardown -> rebuild -> 10/10 smoke checks proven on 2026-10-18/19 (4m38s). DR scenarios documented (README exercise 11 runbook).\nGap: RPO is measured (< 1 s) but no RTO is defined; region failover of the API tier was never exercised; no automated recovery; DR region config is not kept in sync (only the table exists there)."
+    },
+    "cloud-financial-management": {
+      "title": "How do you implement cloud financial management?",
+      "selected": [
+        "cost_cloud_financial_management_function",
+        "cost_cloud_financial_management_cost_awareness"
+      ],
+      "notes": "Evidence: the owner is responsible for cost; cost awareness built into the process - hourly-billed resources behind EnableCaching, decommissioned when idle, CI skips deploy while torn down, cost estimate per scenario (docs/cost-estimate.md).\nGap: NO AWS Budget exists in the account (checked 2026-10-24) and no cost anomaly monitor - cost is not monitored proactively or reported.",
+      "not_applicable_choices": {
+        "cost_cloud_financial_management_partnership": "Single-person project - no separate finance function."
+      }
+    },
+    "govern-usage": {
+      "title": "How do you govern usage?",
+      "selected": [
+        "cost_govern_usage_policies",
+        "cost_govern_usage_groups_roles",
+        "cost_govern_usage_track_lifecycle"
+      ],
+      "notes": "Evidence: written policy - billable-by-the-hour resources only behind a parameter toggle, demo then disable (playbook section 9); IAM group admins and a narrowly scoped CI deploy role; lifecycle tracked (README status 'Decommissioned', rebuild/teardown scripts).\nGap: no cost goals/targets, single account shared by several projects (no account structure), no cost controls (budget actions)."
+    },
+    "monitor-usage": {
+      "title": "How do you monitor your cost and usage?",
+      "selected": [
+        "cost_monitor_usage_define_attribution"
+      ],
+      "notes": "Evidence: every resource tagged project=serverless-orders (samconfig tags + resource tags).\nGap: tag not confirmed as an activated cost allocation tag; no Cost and Usage Report, budgets or Cost Explorer views configured; no unit metric (cost per order)."
+    },
+    "decomissioning-resources": {
+      "title": "How do you decommission resources?",
+      "selected": [
+        "cost_decomissioning_resources_track",
+        "cost_decomissioning_resources_implement_process",
+        "cost_decomissioning_resources_decommission",
+        "cost_decomissioning_resources_data_retention"
+      ],
+      "notes": "Evidence: scripts/teardown.sh deletes everything billable and then lists stacks, tables (both regions), clusters, VPCs, queues, functions, APIs, ACLs, pools and log groups to prove nothing is left; the project was decommissioned on 2026-10-19; retention enforced: logs 14 days, DLQ 14 days, dedupe markers TTL 7 days.\nGap: decommissioning is manual (no scheduled/automatic shutdown)."
+    },
+    "select-service": {
+      "title": "How do you evaluate cost when you select services?",
+      "selected": [
+        "cost_select_service_requirements",
+        "cost_select_service_analyze_all",
+        "cost_select_service_thorough_analysis",
+        "cost_select_service_select_for_cost",
+        "cost_select_service_licensing"
+      ],
+      "notes": "Evidence: docs/cost-estimate.md prices every component from the Price List API; per-component analysis (API Gateway detailed metrics $10.50, WAF $6.67, dashboard $3); choices made for cost: arm64, on-demand DynamoDB, direct integration instead of Lambda for reads, gateway endpoint instead of NAT, caching off by default; only open-source software (Powertools, DAX client).\nGap: no analysis of cost at different usage levels over time."
+    },
+    "type-size-number-resources": {
+      "title": "How do you meet cost targets when you select resource type, size and number?",
+      "selected": [
+        "cost_type_size_number_resources_cost_modeling",
+        "cost_type_size_number_resources_data",
+        "cost_type_size_number_resources_metrics"
+      ],
+      "notes": "Evidence: cost model with two scenarios (caching off ~= $31.70/month, on ~= $90/month at 100k orders); memory sized from Power Tuning data (cost vs speed, balanced); Lambda, DynamoDB on-demand and API Gateway size themselves automatically from demand."
+    },
+    "pricing-model": {
+      "title": "How do you use pricing models to reduce cost?",
+      "selected": [
+        "cost_pricing_model_no"
+      ],
+      "notes": "Gap: all components use on-demand list prices; on-demand vs provisioned DynamoDB capacity, Compute Savings Plans and region price differences were not analysed (all small at current volume).",
+      "not_applicable_choices": {
+        "cost_pricing_model_third_party": "No third-party software or agreements.",
+        "cost_pricing_model_master_analysis": "Standalone account, no AWS Organization / management account."
+      }
+    },
+    "data-transfer": {
+      "title": "How do you plan for data transfer charges?",
+      "selected": [
+        "cost_data_transfer_optimized_components",
+        "cost_data_transfer_implement_services"
+      ],
+      "notes": "Evidence: DynamoDB gateway VPC endpoint (free) instead of a NAT gateway for the DAX VPC; no NAT gateways at all.\nGap: data transfer not modelled in the cost estimate (cross-region replication traffic to us-west-2 is included in replicated writes only)."
+    },
+    "manage-demand-resources": {
+      "title": "How do you manage demand, and supply resources?",
+      "selected": [
+        "cost_manage_demand_resources_cost_analysis",
+        "cost_manage_demand_resources_buffer_throttle",
+        "cost_manage_demand_resources_dynamic"
+      ],
+      "notes": "Evidence: traffic profile analysed for the estimate (~0.4 req/s average); throttling at the stage and WAF; stream batching (100 records / 5 s) buffers analytics work; all compute and storage supplied on demand."
+    },
+    "evaluate-new-services": {
+      "title": "How do you evaluate new services?",
+      "selected": [
+        "cost_evaluate_new_services_review_process"
+      ],
+      "notes": "Evidence: this Well-Architected review and its documented process (well-architected-review/01-how-to-do-a-review.md).\nGap: this is the first review - no regular review cadence yet."
+    },
+    "evaluate-cost-effort": {
+      "title": "How do you evaluate the cost of effort?",
+      "selected": [
+        "cost_evaluate_cost_effort_automations_operations"
+      ],
+      "notes": "Evidence: build, deploy, rebuild, teardown, smoke tests and cold-start/replication measurements are scripted (scripts/, CI workflow)."
+    },
+    "securely-operate": {
+      "title": "How do you securely operate your workload?",
+      "selected": [
+        "sec_securely_operate_reduce_management_scope",
+        "sec_securely_operate_automate_security_controls"
+      ],
+      "notes": "Evidence: fully managed serverless services (no servers, OS or patching to manage); security controls are deployed from IaC (default authorizer, WAF, encryption, least-privilege roles).\nGap: one AWS account shared by several projects (no multi-account structure); account-level hardening gaps found (account-level settings were checked read-only on 2026-10-24; the specific findings are kept private and are not published in this repository.); no threat model, control objectives or regular review of new security services."
+    },
+    "identities": {
+      "title": "How do you manage identities for people and machines?",
+      "selected": [
+        "sec_identities_secrets",
+        "sec_identities_groups_attributes"
+      ],
+      "notes": "Evidence: no secrets in code or repo; machines use roles (Lambda, API Gateway, CI via GitHub OIDC); IAM group admins; Cognito group admins for analytics.\nGap: Cognito users have no MFA; no periodic credential audit/rotation process. Account-level settings were checked read-only on 2026-10-24; the specific findings are kept private and are not published in this repository."
+    },
+    "permissions": {
+      "title": "How do you manage permissions for people and machines?",
+      "selected": [
+        "sec_permissions_define",
+        "sec_permissions_least_privileges"
+      ],
+      "notes": "Evidence: each function has a SAM policy template scoped to one table (template.yaml L113-116, L367-379, L629-633, L676-678); API Gateway role = dynamodb:Query on one table (L708-731); CI deploy role can only drive change sets on this stack and pass one role, trust pinned to repo id + main (infra/github-oidc.yaml).\nGap: the CloudFormation execution role has AdministratorAccess (assumable only by CloudFormation); no guardrails (SCPs/permission boundaries), no analysis of public/cross-account access, no emergency access process, no regular permission reduction.",
+      "not_applicable_choices": {
+        "sec_permissions_share_securely": "No AWS Organization; no resources shared with other accounts.",
+        "sec_permissions_share_securely_third_party": "No resources shared with third parties."
+      }
+    },
+    "detect-investigate-events": {
+      "title": "How do you detect and investigate security events?",
+      "selected": [
+        "sec_detect_investigate_events_no"
+      ],
+      "notes": "Gap: API Gateway access logs and WAF logs are not enabled - application logs exist, but security events are neither captured centrally nor alerted on. Account-level detection services: account-level settings were checked read-only on 2026-10-24; the specific findings are kept private and are not published in this repository."
+    },
+    "network-protection": {
+      "title": "How do you protect your network resources?",
+      "selected": [
+        "sec_network_protection_create_layers",
+        "sec_network_protection_layered"
+      ],
+      "notes": "Evidence: layers = WAF -> API Gateway -> Lambda -> DynamoDB; the optional DAX cluster sits in private subnets with no internet route; security groups allow only TLS 9111 / 443 from the Lambda security group (template.yaml L491-521).\nGap: WAF has only a rate-based rule - no AWS managed rule groups (Core rule set, Known bad inputs, IP reputation), so no inspection-based protection; no automated network protection."
+    },
+    "protect-compute": {
+      "title": "How do you protect your compute resources?",
+      "selected": [
+        "sec_protect_compute_hardened_images",
+        "sec_protect_compute_reduce_manual_management",
+        "sec_protect_compute_auto_protection"
+      ],
+      "notes": "Evidence: AWS-managed Lambda runtime (python3.12), patched by AWS; no servers or interactive access; all changes through CI/CD.\nGap: no vulnerability scanning of code/dependencies (Amazon Inspector for Lambda, Dependabot) and no Lambda code signing."
+    },
+    "data-classification": {
+      "title": "How do you classify your data?",
+      "selected": [
+        "sec_data_classification_define_protection"
+      ],
+      "notes": "Evidence: protection follows sensitivity informally - order data is per-customer (ownership enforced by the token's sub), store-wide analytics are admin-only, user emails live only in Cognito.\nGap: no written classification scheme; order data has no lifecycle (kept forever); no automated classification."
+    },
+    "protect-data-rest": {
+      "title": "How do you protect your data at rest?",
+      "selected": [
+        "sec_protect_data_rest_key_mgmt",
+        "sec_protect_data_rest_encrypt",
+        "sec_protect_data_rest_automate_protection",
+        "sec_protect_data_rest_access_control"
+      ],
+      "notes": "Evidence: KMS (aws/dynamodb) for the Orders global table in both regions; SSE on OrderStats, SQS-managed SSE on the DLQ, DAX SSE, encrypted API cache entries - all declared in IaC (template.yaml L77-79, L604-605, L615, L576-577, L329); access only through per-table least-privilege roles.\nNote: AWS-managed keys - no customer-managed key policy or rotation control."
+    },
+    "protect-data-transit": {
+      "title": "How do you protect your data in transit?",
+      "selected": [
+        "sec_protect_data_transit_key_cert_mgmt",
+        "sec_protect_data_transit_encrypt",
+        "sec_protect_data_transit_authentication"
+      ],
+      "notes": "Evidence: API Gateway only serves HTTPS with AWS-managed certificates; DAX cluster endpoint encryption TLS (template.yaml L578); all AWS API calls are SigV4-signed over TLS; clients authenticate with Cognito JWTs."
+    },
+    "incident-response": {
+      "title": "How do you anticipate, respond to, and recover from incidents?",
+      "selected": [
+        "sec_incident_response_no"
+      ],
+      "notes": "Gap: no incident response plan or playbooks (e.g. leaked key, abusive client, data exposure), no forensic preparation, no simulations."
+    },
+    "application-security": {
+      "title": "How do you incorporate and validate the security properties of applications throughout the design, development, and deployment lifecycle?",
+      "selected": [
+        "sec_appsec_deploy_software_programmatically",
+        "sec_appsec_regularly_assess_security_properties_of_pipelines",
+        "sec_appsec_automate_testing_throughout_lifecycle"
+      ],
+      "notes": "Evidence: deployments only through CI/CD; pipeline security designed and documented (OIDC, no stored keys, trust pinned to immutable repo id and main branch, deploy role scoped to change sets); unit tests include security behaviour (ownership, validation, admin-only analytics) and the CI smoke test asserts 401.\nGap: no regular penetration testing (one manual injection test), no code reviews by a second person, no centralised/scanned dependency source."
+    },
+    "sus_region": {
+      "title": "How do you select Regions for your workload?",
+      "selected": [
+        "sus_sus_region_no"
+      ],
+      "notes": "Gap: us-east-1/us-west-2 were chosen as account defaults, not by business requirements combined with sustainability (carbon intensity) goals."
+    },
+    "sus_user": {
+      "title": "How do you align cloud resources to your demand?",
+      "selected": [
+        "sus_sus_user_a2",
+        "sus_sus_user_a4",
+        "sus_sus_user_a7"
+      ],
+      "notes": "Evidence: everything scales with demand (to zero when idle); unused assets are removed (caching off by default, whole project decommissioned when not in use); throttling and stream batching flatten demand.\nGap: no SLAs to align; placement not chosen by user location."
+    },
+    "sus_software": {
+      "title": "How do you take advantage of software and architecture patterns to support your sustainability goals?",
+      "selected": [
+        "sus_sus_software_a2",
+        "sus_sus_software_a3",
+        "sus_sus_software_a4",
+        "sus_sus_software_a6"
+      ],
+      "notes": "Evidence: analytics done asynchronously in batches; low-use components switched off (DAX/API cache) or removed; hot paths optimised with measurements (Power Tuning, init breakdown); data access via keys and pre-computed aggregates instead of scans.",
+      "not_applicable_choices": {
+        "sus_sus_software_a5": "Backend API only - no client devices or apps in scope."
+      }
+    },
+    "sus_data": {
+      "title": "How do you take advantage of data management policies and patterns to support your sustainability goals?",
+      "selected": [
+        "sus_sus_data_a3",
+        "sus_sus_data_a4",
+        "sus_sus_data_a6",
+        "sus_sus_data_a9"
+      ],
+      "notes": "Evidence: DynamoDB key design fits the access patterns; lifecycle via TTL (7-day markers) and 14-day log retention; redundant data removed by TTL and teardown; PITR only on Orders - OrderStats is derived data and not backed up.\nGap: no data classification policy; orders have no expiry.",
+      "not_applicable_choices": {
+        "sus_sus_data_a5": "No block storage or file systems - DynamoDB only.",
+        "sus_sus_data_a7": "No shared file systems - DynamoDB only."
+      }
+    },
+    "sus_hardware": {
+      "title": "How do you select and use cloud hardware and services in your architecture to support your sustainability goals?",
+      "selected": [
+        "sus_sus_hardware_a2",
+        "sus_sus_hardware_a3",
+        "sus_sus_hardware_a4"
+      ],
+      "notes": "Evidence: no provisioned servers - pay-per-request managed services only; Graviton (arm64) for every function; managed services throughout.",
+      "not_applicable_choices": {
+        "sus_sus_hardware_a5": "No hardware accelerators used."
+      }
+    },
+    "sus_dev": {
+      "title": "How do your organizational processes support your sustainability goals?",
+      "selected": [
+        "sus_sus_dev_a2",
+        "sus_sus_dev_a4"
+      ],
+      "notes": "Evidence: CI/CD lets improvements ship quickly; GitHub-hosted ephemeral runners (no idle build servers).\nGap: no sustainability goals defined; runtime/library updates are manual.",
+      "not_applicable_choices": {
+        "sus_sus_dev_a5": "Backend API only - no device testing."
+      }
+    }
+  }
+}

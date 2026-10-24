@@ -1,0 +1,2278 @@
+[
+  {
+    "pillar": "costOptimization",
+    "questionId": "cloud-financial-management",
+    "title": "How do you implement cloud financial management?",
+    "description": "Implementing Cloud Financial Management enables organizations to realize business value and financial success as they optimize their cost and usage and scale on AWS.",
+    "choices": [
+      {
+        "choiceId": "cost_cloud_financial_management_function",
+        "title": "Establish ownership of cost optimization",
+        "description": "Create a team (Cloud Business Office, Cloud Center of Excellence, or FinOps team) that is responsible for establishing and maintaining cost awareness across your organization. The owner of cost optimization can be individual or a team (requires people from finance, technology, and business teams) that understands the entire organization and cloud finance."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_partnership",
+        "title": "Establish a partnership between finance and technology",
+        "description": "Involve finance and technology teams in cost and usage discussions at all stages of your cloud journey. Teams regularly meet and discuss topics such as organizational goals and targets, current state of cost and usage, and financial and accounting practices."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_budget_forecast",
+        "title": "Establish cloud budgets and forecasts",
+        "description": "Adjust existing organizational budgeting and forecasting processes to be compatible with the highly variable nature of cloud costs and usage. Processes must be dynamic, using trend-based or business driver-based algorithms or a combination of both."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_cost_awareness",
+        "title": "Implement cost awareness in your organizational processes",
+        "description": "Implement cost awareness, create transparency, and accountability of costs into new or existing processes that impact usage, and leverage existing processes for cost awareness. Implement cost awareness into employee training."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_proactive_process",
+        "title": "Monitor cost proactively",
+        "description": "Implement tools and dashboards to monitor cost proactively for the workload. Regularly review the costs with configured tools or out of the box tools, do not just look at costs and categories when you receive notifications. Monitoring and analyzing costs proactively helps to identify positive trends and allows you to promote them throughout your organization."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_scheduled",
+        "title": "Keep up-to-date with new service releases",
+        "description": "Consult regularly with experts or AWS Partners to consider which services and features provide lower cost. Review AWS blogs and other information sources."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_quantify_value",
+        "title": "Quantify business value from cost optimization",
+        "description": "Quantifying business value from cost optimization allows you to understand the entire set of benefits to your organization. Because cost optimization is a necessary investment, quantifying business value allows you to explain the return on investment to stakeholders. Quantifying business value can help you gain more buy-in from stakeholders on future cost optimization investments, and provides a framework to measure the outcomes for your organization’s cost optimization activities."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_usage_report",
+        "title": "Report and notify on cost optimization",
+        "description": "Set up cloud budgets and configure mechanisms to detect anomalies in usage. Configure related tools for cost and usage alerts against pre-defined targets and receive notifications when any usage exceeds those targets. Have regular meetings to analyze the cost-effectiveness of your workloads and promote cost awareness."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_culture",
+        "title": "Create a cost-aware culture",
+        "description": "Implement changes or programs across your organization to create a cost-aware culture. It is recommended to start small, then as your capabilities increase and your organization’s use of the cloud increases, implement large and wide ranging programs."
+      },
+      {
+        "choiceId": "cost_cloud_financial_management_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "govern-usage",
+    "title": "How do you govern usage?",
+    "description": "Establish policies and mechanisms to ensure that appropriate costs are incurred while objectives are achieved. By employing a checks-and-balances approach, you can innovate without overspending.",
+    "choices": [
+      {
+        "choiceId": "cost_govern_usage_policies",
+        "title": "Develop policies based on your organization requirements",
+        "description": "Develop policies that define how resources are managed by your organization and inspect them periodically. Policies should cover the cost aspects of resources and workloads, including creation, modification, and decommissioning over a resource’s lifetime."
+      },
+      {
+        "choiceId": "cost_govern_usage_goal_target",
+        "title": "Implement goals and targets",
+        "description": "Implement both cost and usage goals and targets for your workload. Goals provide direction to your organization on expected outcomes, and targets provide specific measurable outcomes to be achieved for your workloads."
+      },
+      {
+        "choiceId": "cost_govern_usage_account_structure",
+        "title": "Implement an account structure",
+        "description": "Implement a structure of accounts that maps to your organization. This assists in allocating and managing costs throughout your organization."
+      },
+      {
+        "choiceId": "cost_govern_usage_controls",
+        "title": "Implement cost controls",
+        "description": "Implement controls based on organization policies and defined groups and roles. These certify that costs are only incurred as defined by organization requirements such as control access to regions or resource types."
+      },
+      {
+        "choiceId": "cost_govern_usage_groups_roles",
+        "title": "Implement groups and role",
+        "description": "Implement groups and roles that align to your policies and control who can create, modify, or decommission instances and resources in each group. For example, implement development, test, and production groups. This applies to AWS services and third-party solutions."
+      },
+      {
+        "choiceId": "cost_govern_usage_track_lifecycle",
+        "title": "Track project lifecycle",
+        "description": "Track, measure, and audit the lifecycle of projects, teams, and environments to avoid using and paying for unnecessary resources."
+      },
+      {
+        "choiceId": "cost_govern_usage_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "monitor-usage",
+    "title": "How do you monitor your cost and usage?",
+    "description": "Establish policies and procedures to monitor and appropriately allocate your costs. This allows you to measure and improve the cost efficiency of this workload.",
+    "choices": [
+      {
+        "choiceId": "cost_monitor_usage_detailed_source",
+        "title": "Configure detailed information sources",
+        "description": "Set up cost management and reporting tools for enhanced analysis and transparency of cost and usage data. Configure your workload to create log entries that facilitate the tracking and segregation of costs and usage."
+      },
+      {
+        "choiceId": "cost_monitor_usage_define_attribution",
+        "title": "Identify cost attribution categories",
+        "description": "Identify organization categories such as business units, departments or projects that could be used to allocate cost within your organization to the internal consuming entities. Use those categories to enforce spend accountability, create cost awareness and drive effective consumption behaviors."
+      },
+      {
+        "choiceId": "cost_monitor_usage_define_kpi",
+        "title": "Establish organization metrics",
+        "description": "Establish the organization metrics that are required for this workload. Example metrics of a workload are customer reports produced, or web pages served to customers."
+      },
+      {
+        "choiceId": "cost_monitor_usage_config_tools",
+        "title": "Configure billing and cost management tools",
+        "description": "Configure cost management tools in line with your organization policies to manage and optimize cloud spend. This includes services, tools, and resources to organize and track cost and usage data, enhance control through consolidated billing and access permission, improve planning through budgeting and forecasts, receive notifications or alerts, and further lower cost with resources and pricing optimizations."
+      },
+      {
+        "choiceId": "cost_monitor_usage_org_information",
+        "title": "Add organization information to cost and usage",
+        "description": "Define a tagging schema based on your organization, workload attributes, and cost allocation categories so that you can filter and search for resources or monitor cost and usage in cost management tools. Implement consistent tagging across all resources where possible by purpose, team, environment, or other criteria relevant to your business."
+      },
+      {
+        "choiceId": "cost_monitor_usage_allocate_outcome",
+        "title": "Allocate costs based on workload metrics",
+        "description": "Allocate the workload's costs based on usage metrics or business outcomes to measure workload cost efficiency. Implement a process to analyze the cost and usage data with analytics services, which can provide insight and charge back capability."
+      },
+      {
+        "choiceId": "cost_monitor_usage_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "decomissioning-resources",
+    "title": "How do you decommission resources?",
+    "description": "Implement change control and resource management from project inception to end-of-life. This ensures you shut down or terminate unused resources to reduce waste.",
+    "choices": [
+      {
+        "choiceId": "cost_decomissioning_resources_track",
+        "title": "Track resources over their life time",
+        "description": "Define and implement a method to track resources and their associations with systems over their lifetime. You can use tagging to identify the workload or function of the resource."
+      },
+      {
+        "choiceId": "cost_decomissioning_resources_implement_process",
+        "title": "Implement a decommissioning process",
+        "description": "Implement a process to identify and decommission unused resources."
+      },
+      {
+        "choiceId": "cost_decomissioning_resources_decommission",
+        "title": "Decommission resources",
+        "description": "Decommission resources triggered by events such as periodic audits, or changes in usage. Decommissioning is typically performed periodically and can be manual or automated."
+      },
+      {
+        "choiceId": "cost_decomissioning_resources_data_retention",
+        "title": "Enforce data retention policies",
+        "description": "Define data retention policies on supported resources to handle object deletion per your organizations’ requirements. Identify and delete unnecessary or orphaned resources and objects that are no longer required."
+      },
+      {
+        "choiceId": "cost_decomissioning_resources_decomm_automated",
+        "title": "Decommission resources automatically",
+        "description": "Design your workload to gracefully handle resource termination as you identify and decommission non-critical resources, resources that are not required, or resources with low utilization."
+      },
+      {
+        "choiceId": "cost_decomissioning_resources_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "select-service",
+    "title": "How do you evaluate cost when you select services?",
+    "description": "Amazon EC2, Amazon EBS, and Amazon S3 are building-block AWS services. Managed services, such as Amazon RDS and Amazon DynamoDB, are higher level, or application level, AWS services. By selecting the appropriate building blocks and managed services, you can optimize this workload for cost. For example, using managed services, you can reduce or remove much of your administrative and operational overhead, freeing you to work on applications and business-related activities.",
+    "choices": [
+      {
+        "choiceId": "cost_select_service_requirements",
+        "title": "Identify organization requirements for cost",
+        "description": "Work with team members to define the balance between cost optimization and other pillars, such as performance and reliability, for this workload."
+      },
+      {
+        "choiceId": "cost_select_service_analyze_all",
+        "title": "Analyze all components of this workload",
+        "description": "Verify every workload component is analyzed, regardless of current size or current costs. The review effort should reflect the potential benefit, such as current and projected costs."
+      },
+      {
+        "choiceId": "cost_select_service_thorough_analysis",
+        "title": "Perform a thorough analysis of each component",
+        "description": "Look at overall cost to the organization of each component. Calculate the total cost of ownership by factoring in cost of operations and management, especially when using managed services by cloud provider. The review effort should reflect potential benefit (for example, time spent analyzing is proportional to component cost)."
+      },
+      {
+        "choiceId": "cost_select_service_select_for_cost",
+        "title": "Select components of this workload to optimize cost in line with organization priorities",
+        "description": "Factor in cost when selecting all components for your workload. This includes using application level and managed services or serverless, containers, or event-driven architecture to reduce overall cost. Minimize license costs by using open-source software, software that does not have license fees, or alternatives to reduce spending."
+      },
+      {
+        "choiceId": "cost_select_service_analyze_over_time",
+        "title": "Perform cost analysis for different usage over time",
+        "description": "Workloads can change over time. Some services or features are more cost effective at different usage levels. By performing the analysis on each component over time and at projected usage, the workload remains cost-effective over its lifetime."
+      },
+      {
+        "choiceId": "cost_select_service_licensing",
+        "title": "Select software with cost effective licensing",
+        "description": "Open-source software eliminates software licensing costs, which can contribute significant costs to workloads. Where licensed software is required, avoid licenses bound to arbitrary attributes such as CPUs, look for licenses that are bound to output or outcomes. The cost of these licenses scales more closely to the benefit they provide."
+      },
+      {
+        "choiceId": "cost_select_service_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "type-size-number-resources",
+    "title": "How do you meet cost targets when you select resource type, size and number?",
+    "description": "Ensure that you choose the appropriate resource size and number of resources for the task at hand. You minimize waste by selecting the most cost effective type, size, and number.",
+    "choices": [
+      {
+        "choiceId": "cost_type_size_number_resources_cost_modeling",
+        "title": "Perform cost modeling",
+        "description": "Identify organization requirements (such as business needs and existing commitments) and perform cost modeling (overall costs) of the workload and each of its components. Perform benchmark activities for the workload under different predicted loads and compare the costs. The modeling effort should reflect the potential benefit. For example, time spent is proportional to component cost."
+      },
+      {
+        "choiceId": "cost_type_size_number_resources_data",
+        "title": "Select resource type, size, and number based on data",
+        "description": "Select resource size or type based on data about the workload and resource characteristics. For example, compute, memory, throughput, or write intensive. This selection is typically made using a previous (on-premises) version of the workload, using documentation, or using other sources of information about the workload."
+      },
+      {
+        "choiceId": "cost_type_size_number_resources_shared",
+        "title": "Consider using shared resources",
+        "description": "For already-deployed services at the organization level for multiple business units, consider using shared resources to increase utilization and reduce total cost of ownership (TCO). Using shared resources can be a cost-effective option to centralize the management and costs by using existing solutions, sharing components, or both. Manage common functions like monitoring, backups, and connectivity either within an account boundary or in a dedicated account. You can also reduce cost by implementing standardization, reducing duplication, and reducing complexity."
+      },
+      {
+        "choiceId": "cost_type_size_number_resources_metrics",
+        "title": "Select resource type, size, and number automatically based on metrics",
+        "description": "Use metrics from the currently running workload to select the right size and type to optimize for cost. Appropriately provision throughput, sizing, and storage for compute, storage, data, and networking services. This can be done with a feedback loop such as automatic scaling or by custom code in the workload."
+      },
+      {
+        "choiceId": "cost_type_size_number_resources_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "pricing-model",
+    "title": "How do you use pricing models to reduce cost?",
+    "description": "Use the pricing model that is most appropriate for your resources to minimize expense.",
+    "choices": [
+      {
+        "choiceId": "cost_pricing_model_analysis",
+        "title": "Perform pricing model analysis",
+        "description": "Analyze each component of the workload. Determine if the component and resources will be running for extended periods (for commitment discounts) or dynamic and short-running (for spot or on-demand). Perform an analysis on the workload using the recommendations in cost management tools and apply business rules to those recommendations to achieve high returns."
+      },
+      {
+        "choiceId": "cost_pricing_model_region_cost",
+        "title": "Choose Regions based on cost",
+        "description": "Resource pricing may be different in each Region. Identify Regional cost differences and only deploy in Regions with higher costs to meet latency, data residency and data sovereignty requirements. Factoring in Region cost helps you pay the lowest overall price for this workload."
+      },
+      {
+        "choiceId": "cost_pricing_model_third_party",
+        "title": "Select third-party agreements with cost-efficient terms",
+        "description": "Cost-efficient agreements and terms ensure the cost of these services scales with the benefits they provide. Select agreements and pricing that scale when they provide additional benefits to your organization."
+      },
+      {
+        "choiceId": "cost_pricing_model_implement_models",
+        "title": "Implement pricing models for all components of this workload",
+        "description": "Permanently running resources should utilize reserved capacity such as Savings Plans or Reserved Instances. Short-term capacity is configured to use Spot Instances, or Spot Fleet. On-Demand Instances are only used for short-term workloads that cannot be interrupted and do not run long enough for reserved capacity, between 25% to 75% of the period, depending on the resource type."
+      },
+      {
+        "choiceId": "cost_pricing_model_master_analysis",
+        "title": "Perform pricing model analysis at the management account level",
+        "description": "Check billing and cost management tools and see recommended discounts with commitments and reservations to perform regular analysis at the management account level."
+      },
+      {
+        "choiceId": "cost_pricing_model_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "data-transfer",
+    "title": "How do you plan for data transfer charges?",
+    "description": "Ensure that you plan and monitor data transfer charges so that you can make architectural decisions to minimize costs. A small yet effective architectural change can drastically reduce your operational costs over time.",
+    "choices": [
+      {
+        "choiceId": "cost_data_transfer_modeling",
+        "title": "Perform data transfer modeling",
+        "description": "Gather organization requirements and perform data transfer modeling of the workload and each of its components. This identifies the lowest cost point for its current data transfer requirements."
+      },
+      {
+        "choiceId": "cost_data_transfer_optimized_components",
+        "title": "Select components to optimize data transfer cost",
+        "description": "All components are selected, and architecture is designed to reduce data transfer costs. This includes using components such as wide-area-network (WAN) optimization and Multi-Availability Zone (AZ) configurations"
+      },
+      {
+        "choiceId": "cost_data_transfer_implement_services",
+        "title": "Implement services to reduce data transfer costs",
+        "description": "Implement services to reduce data transfer. For example, use edge locations or content delivery networks (CDN) to deliver content to end users, build caching layers in front of your application servers or databases, and use dedicated network connections instead of VPN for connectivity to the cloud."
+      },
+      {
+        "choiceId": "cost_data_transfer_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "manage-demand-resources",
+    "title": "How do you manage demand, and supply resources?",
+    "description": "For a workload that has balanced spend and performance, ensure that everything you pay for is used and avoid significantly underutilizing instances. A skewed utilization metric in either direction has an adverse impact on your organization, in either operational costs (degraded performance due to over-utilization), or wasted AWS expenditures (due to over-provisioning).",
+    "choices": [
+      {
+        "choiceId": "cost_manage_demand_resources_cost_analysis",
+        "title": "Perform an analysis on the workload demand",
+        "description": "Analyze the demand of the workload over time. Verify that the analysis covers seasonal trends and accurately represents operating conditions over the full workload lifetime. Analysis effort should reflect the potential benefit, for example, time spent is proportional to the workload cost."
+      },
+      {
+        "choiceId": "cost_manage_demand_resources_buffer_throttle",
+        "title": "Implement a buffer or throttle to manage demand",
+        "description": "Buffering and throttling modify the demand on your workload, smoothing out any peaks. Implement throttling when your clients perform retries. Implement buffering to store the request and defer processing until a later time. Verify that your throttles and buffers are designed so clients receive a response in the required time."
+      },
+      {
+        "choiceId": "cost_manage_demand_resources_dynamic",
+        "title": "Supply resources dynamically",
+        "description": "Resources are provisioned in a planned manner. This can be demand-based, such as through automatic scaling, or time-based, where demand is predictable and resources are provided based on time. These methods result in the least amount of over-provisioning or under-provisioning."
+      },
+      {
+        "choiceId": "cost_manage_demand_resources_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "evaluate-new-services",
+    "title": "How do you evaluate new services?",
+    "description": "As AWS releases new services and features, it's a best practice to review your existing architectural decisions to ensure they continue to be the most cost effective.",
+    "choices": [
+      {
+        "choiceId": "cost_evaluate_new_services_review_process",
+        "title": "Develop a workload review process",
+        "description": "Develop a process that defines the criteria and process for workload review. The review effort should reflect potential benefit. For example, core workloads or workloads with a value of over ten percent of the bill are reviewed quarterly or every six months, while workloads below ten percent are reviewed annually."
+      },
+      {
+        "choiceId": "cost_evaluate_new_services_review_workload",
+        "title": "Review and analyze this workload regularly",
+        "description": "Existing workloads are regularly reviewed based on each defined process to find out if new services can be adopted, existing services can be replaced, or workloads can be re-architected."
+      },
+      {
+        "choiceId": "cost_evaluate_new_services_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "costOptimization",
+    "questionId": "evaluate-cost-effort",
+    "title": "How do you evaluate the cost of effort?",
+    "description": "As AWS releases new services and features, it's a best practice to review the cost of the effort required to implement new services.",
+    "choices": [
+      {
+        "choiceId": "cost_evaluate_cost_effort_automations_operations",
+        "title": "Perform automation for operations",
+        "description": "Evaluate the operational costs on the cloud, focusing on quantifying the time and effort savings in administrative tasks, deployments, mitigating the risk of human errors, compliance, and other operations through automation. Assess the time and associated costs required for operational efforts and implement automation for administrative tasks to minimize manual effort wherever feasible."
+      },
+      {
+        "choiceId": "cost_evaluate_cost_effort_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "priorities",
+    "title": "How do you determine what your priorities are?",
+    "description": "Everyone needs to understand their part in enabling business success. Have shared goals in order to set priorities for resources. This will maximize the benefits of your efforts.",
+    "choices": [
+      {
+        "choiceId": "ops_priorities_ext_cust_needs",
+        "title": "Evaluate external customer needs",
+        "description": "Involve key stakeholders, including business, development, and operations teams, to determine where to focus efforts on external customer needs. This verifies that you have a thorough understanding of the operations support that is required to achieve your desired business outcomes."
+      },
+      {
+        "choiceId": "ops_priorities_int_cust_needs",
+        "title": "Evaluate internal customer needs",
+        "description": "Involve key stakeholders, including business, development, and operations teams, when determining where to focus efforts on internal customer needs. This will ensure that you have a thorough understanding of the operations support that is required to achieve business outcomes."
+      },
+      {
+        "choiceId": "ops_priorities_governance_reqs",
+        "title": "Evaluate governance requirements",
+        "description": "Governance is the set of policies, rules, or frameworks that a company uses to achieve its business goals. Governance requirements are generated from within your organization. They can affect the types of technologies you choose or influence the way you operate your workload. Incorporate organizational governance requirements into your workload. Conformance is the ability to demonstrate that you have implemented governance requirements."
+      },
+      {
+        "choiceId": "ops_priorities_compliance_reqs",
+        "title": "Evaluate compliance requirements",
+        "description": "Regulatory, industry, and internal compliance requirements are an important driver for defining your organization’s priorities. Your compliance framework may preclude you from using specific technologies or geographic locations. Apply due diligence if no external compliance frameworks are identified. Generate audits or reports that validate compliance."
+      },
+      {
+        "choiceId": "ops_priorities_eval_threat_landscape",
+        "title": "Evaluate threat landscape",
+        "description": "Evaluate threats to the business (for example, competition, business risk and liabilities, operational risks, and information security threats) and maintain current information in a risk registry. Include the impact of risks when determining where to focus efforts."
+      },
+      {
+        "choiceId": "ops_priorities_eval_tradeoffs",
+        "title": "Evaluate tradeoffs while managing benefits and risks",
+        "description": "Competing interests from multiple parties can make it challenging to prioritize efforts, build capabilities, and deliver outcomes aligned with business strategies. For example, you may be asked to accelerate speed-to-market for new features over optimizing IT infrastructure costs. This can put two interested parties in conflict with one another. In these situations, decisions need to be brought to a higher authority to resolve conflict. Data is required to remove emotional attachment from the decision-making process."
+      },
+      {
+        "choiceId": "ops_priorities_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "ops-model",
+    "title": "How do you structure your organization to support your business outcomes?",
+    "description": "Your teams must understand their part in achieving business outcomes. Teams need to understand their roles in the success of other teams, the role of other teams in their success, and have shared goals. Understanding responsibility, ownership, how decisions are made, and who has authority to make decisions will help focus efforts and maximize the benefits from your teams.",
+    "choices": [
+      {
+        "choiceId": "ops_ops_model_def_resource_owners",
+        "title": "Resources have identified owners",
+        "description": "Resources for your workload must have identified owners for change control, troubleshooting, and other functions. Owners are assigned for workloads, accounts, infrastructure, platforms, and applications. Ownership is recorded using tools like a central register or metadata attached to resources. The business value of components informs the processes and procedures applied to them."
+      },
+      {
+        "choiceId": "ops_ops_model_def_proc_owners",
+        "title": "Processes and procedures have identified owners",
+        "description": "Understand who has ownership of the definition of individual processes and procedures, why those specific process and procedures are used, and why that ownership exists. Understanding the reasons that specific processes and procedures are used enables identification of improvement opportunities."
+      },
+      {
+        "choiceId": "ops_ops_model_def_activity_owners",
+        "title": "Operations activities have identified owners responsible for their performance",
+        "description": "Understand who has responsibility to perform specific activities on defined workloads and why that responsibility exists. Understanding who has responsibility to perform activities informs who will conduct the activity, validate the result, and provide feedback to the owner of the activity."
+      },
+      {
+        "choiceId": "ops_ops_model_def_responsibilities_ownership",
+        "title": "Mechanisms exist to manage responsibilities and ownership",
+        "description": "Understand the responsibilities of your role and how you contribute to business outcomes, as this understanding informs the prioritization of your tasks and why your role is important. This helps team members recognize needs and respond appropriately. When team members know their role, they can establish ownership, identify improvement opportunities, and understand how to influence or make appropriate changes."
+      },
+      {
+        "choiceId": "ops_ops_model_req_add_chg_exception",
+        "title": "Mechanisms exist to request additions, changes, and exceptions",
+        "description": "You can make requests to owners of processes, procedures, and resources. Requests include additions, changes, and exceptions. These requests go through a change management process. Make informed decisions to approve requests where viable and determined to be appropriate after an evaluation of benefits and risks."
+      },
+      {
+        "choiceId": "ops_ops_model_def_neg_team_agreements",
+        "title": "Responsibilities between teams are predefined or negotiated",
+        "description": "Have defined or negotiated agreements between teams describing how they work with and support each other (for example, response times, service level objectives, or service-level agreements). Inter-team communications channels are documented. Understanding the impact of the teams’ work on business outcomes and the outcomes of other teams and organizations informs the prioritization of their tasks and helps them respond appropriately."
+      },
+      {
+        "choiceId": "ops_ops_model_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "org-culture",
+    "title": "How does your organizational culture support your business outcomes?",
+    "description": "Provide support for your team members so that they can be more effective in taking action and supporting your business outcome.",
+    "choices": [
+      {
+        "choiceId": "ops_org_culture_executive_sponsor",
+        "title": "Provide executive sponsorship",
+        "description": "At the highest level, senior leadership acts as the executive sponsor to clearly set expectations and direction for the organization's outcomes, including evaluating its success. The sponsor advocates and drives adoption of best practices and evolution of the organization."
+      },
+      {
+        "choiceId": "ops_org_culture_team_enc_escalation",
+        "title": "Escalation is encouraged",
+        "description": "Team members are encouraged by leadership to escalate issues and concerns to higher-level decision makers and stakeholders if they believe desired outcomes are at risk and expected standards are not met. This is a feature of the organization’s culture and is driven at all levels. Escalation should be done early and often so that risks can be identified and prevented from causing incidents. Leadership does not reprimand individuals for escalating an issue."
+      },
+      {
+        "choiceId": "ops_org_culture_effective_comms",
+        "title": "Communications are timely, clear, and actionable",
+        "description": "Leadership is responsible for the creation of strong and effective communications, especially when the organization adopts new strategies, technologies, or ways of working. Leaders should set expectations for all staff to work towards the company objectives. Devise communication mechanisms that create and maintain awareness among the teams responsible for running plans that are funded and sponsored by leadership. Make use of cross-organizational diversity, and listen attentively to multiple unique perspectives. Use this perspective to increase innovation, challenge your assumptions, and reduce the risk of confirmation bias. Foster inclusion, diversity, and accessibility within your teams to gain beneficial perspectives."
+      },
+      {
+        "choiceId": "ops_org_culture_team_emp_take_action",
+        "title": "Team members are empowered to take action when outcomes are at risk",
+        "description": "A cultural behavior of ownership instilled by leadership results in any employee feeling empowered to act on behalf of the entire company beyond their defined scope of role and accountability. Employees can act to proactively identify risks as they emerge and take appropriate action. Such a culture allows employees to make high value decisions with situational awareness."
+      },
+      {
+        "choiceId": "ops_org_culture_team_enc_experiment",
+        "title": "Experimentation is encouraged",
+        "description": "Experimentation is a catalyst for turning new ideas into products and features. It accelerates learning and keeps team members interested and engaged. Team members are encouraged to experiment often to drive innovation. Even when an undesired result occurs, there is value in knowing what not to do. Team members are not punished for successful experiments with undesired results."
+      },
+      {
+        "choiceId": "ops_org_culture_team_enc_learn",
+        "title": "Team members are encouraged to maintain and grow their skill sets",
+        "description": "Teams must grow their skill sets to adopt new technologies, and to support changes in demand and responsibilities in support of your workloads. Growth of skills in new technologies is frequently a source of team member satisfaction and supports innovation. Support your team members’ pursuit and maintenance of industry certifications that validate and acknowledge their growing skills. Cross train to promote knowledge transfer and reduce the risk of significant impact when you lose skilled and experienced team members with institutional knowledge. Provide dedicated structured time for learning."
+      },
+      {
+        "choiceId": "ops_org_culture_team_res_appro",
+        "title": "Resource teams appropriately",
+        "description": "Provision the right amount of proficient team members, and provide tools and resources to support your workload needs. Overburdening team members increases the risk of human error. Investments in tools and resources, such as automation, can scale the effectiveness of your team and help them support a greater number of workloads without requiring additional capacity."
+      },
+      {
+        "choiceId": "ops_org_culture_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "observability",
+    "title": "How do you implement observability in your workload?",
+    "description": "Implement observability in your workload so that you can understand its state and make data-driven decisions based on business requirements.",
+    "choices": [
+      {
+        "choiceId": "ops_observability_identify_kpis",
+        "title": "Identify key performance indicators",
+        "description": "Implementing observability in your workload starts with understanding its state and making data-driven decisions based on business requirements. One of the most effective ways to ensure alignment between monitoring activities and business objectives is by defining and monitoring key performance indicators (KPIs)."
+      },
+      {
+        "choiceId": "ops_observability_application_telemetry",
+        "title": "Implement application telemetry",
+        "description": "Application telemetry serves as the foundation for observability of your workload. It's crucial to emit telemetry that offers actionable insights into the state of your application and the achievement of both technical and business outcomes. From troubleshooting to measuring the impact of a new feature or ensuring alignment with business key performance indicators (KPIs), application telemetry informs the way you build, operate, and evolve your workload."
+      },
+      {
+        "choiceId": "ops_observability_customer_telemetry",
+        "title": "Implement user experience telemetry",
+        "description": "Gaining deep insights into customer experiences and interactions with your application is crucial. Real User Monitoring (RUM) and synthetic transactions serve as powerful tools for this purpose. While RUM provides data about real user interactions, synthetic transactions simulate user interactions, helping in detecting potential issues even before they impact real users."
+      },
+      {
+        "choiceId": "ops_observability_dependency_telemetry",
+        "title": "Implement dependency telemetry",
+        "description": "Dependency telemetry is essential for monitoring the health and performance of the external services and components your workload relies on. It provides valuable insights into reachability, timeouts, and other critical events related to dependencies such as DNS, databases, or third-party APIs. When you instrument your application to emit metrics, logs, and traces about these dependencies, you gain a clearer understanding of potential bottlenecks, performance issues, or failures that might impact your workload."
+      },
+      {
+        "choiceId": "ops_observability_dist_trace",
+        "title": "Implement distributed tracing",
+        "description": "Distributed tracing offers a way to monitor and visualize requests as they traverse through various components of a distributed system. By capturing trace data from multiple sources and analyzing it in a unified view, teams can better understand how requests flow, where bottlenecks exist, and where optimization efforts should focus."
+      },
+      {
+        "choiceId": "ops_telemetry_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "dev-integ",
+    "title": "How do you reduce defects, ease remediation, and improve flow into production?",
+    "description": "Adopt approaches that improve flow of changes into production, that enable refactoring, fast feedback on quality, and bug fixing. These accelerate beneficial changes entering production, limit issues deployed, and enable rapid identification and remediation of issues introduced through deployment activities.",
+    "choices": [
+      {
+        "choiceId": "ops_dev_integ_version_control",
+        "title": "Use version control",
+        "description": "Use version control to activate tracking of changes and releases."
+      },
+      {
+        "choiceId": "ops_dev_integ_test_val_chg",
+        "title": "Test and validate changes",
+        "description": "Every change deployed must be tested to avoid errors in production. This best practice is focused on testing changes from version control to artifact build. Besides application code changes, testing should include infrastructure, configuration, security controls, and operations procedures. Testing takes many forms, from unit tests to software component analysis (SCA). Move tests further to the left in the software integration and delivery process results in higher certainty of artifact quality."
+      },
+      {
+        "choiceId": "ops_dev_integ_conf_mgmt_sys",
+        "title": "Use configuration management systems",
+        "description": "Use configuration management systems to make and track configuration changes. These systems reduce errors caused by manual processes and reduce the level of effort to deploy changes."
+      },
+      {
+        "choiceId": "ops_dev_integ_build_mgmt_sys",
+        "title": "Use build and deployment management systems",
+        "description": "Use build and deployment management systems. These systems reduce errors caused by manual processes and reduce the level of effort to deploy changes."
+      },
+      {
+        "choiceId": "ops_dev_integ_patch_mgmt",
+        "title": "Perform patch management",
+        "description": "Perform patch management to gain features, address issues, and remain compliant with governance. Automate patch management to reduce errors caused by manual processes, scale, and reduce the level of effort to patch."
+      },
+      {
+        "choiceId": "ops_dev_integ_share_design_stds",
+        "title": "Share design standards",
+        "description": "Share best practices across teams to increase awareness and maximize the benefits of development efforts. Document them and keep them up to date as your architecture evolves. If shared standards are enforced in your organization, it’s critical that mechanisms exist to request additions, changes, and exceptions to standards. Without this option, standards become a constraint on innovation."
+      },
+      {
+        "choiceId": "ops_dev_integ_code_quality",
+        "title": "Implement practices to improve code quality",
+        "description": "Implement practices to improve code quality and minimize defects. Some examples include test-driven development, code reviews, standards adoption, and pair programming. Incorporate these practices into your continuous integration and delivery process."
+      },
+      {
+        "choiceId": "ops_dev_integ_multi_env",
+        "title": "Use multiple environments",
+        "description": "Use multiple environments to experiment, develop, and test your workload. Use increasing levels of controls as environments approach production to gain confidence your workload will operate as intended when deployed."
+      },
+      {
+        "choiceId": "ops_dev_integ_freq_sm_rev_chg",
+        "title": "Make frequent, small, reversible changes",
+        "description": "Frequent, small, and reversible changes reduce the scope and impact of a change. When used in conjunction with change management systems, configuration management systems, and build and delivery systems frequent, small, and reversible changes reduce the scope and impact of a change. This results in more effective troubleshooting and faster remediation with the option to roll back changes."
+      },
+      {
+        "choiceId": "ops_dev_integ_auto_integ_deploy",
+        "title": "Fully automate integration and deployment",
+        "description": "Automate build, deployment, and testing of the workload. This reduces errors caused by manual processes and reduces the effort to deploy changes."
+      },
+      {
+        "choiceId": "ops_dev_integ_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "mit-deploy-risks",
+    "title": "How do you mitigate deployment risks?",
+    "description": "Adopt approaches that provide fast feedback on quality and enable rapid recovery from changes that do not have desired outcomes. Using these practices mitigates the impact of issues introduced through the deployment of changes.",
+    "choices": [
+      {
+        "choiceId": "ops_mit_deploy_risks_plan_for_unsucessful_changes",
+        "title": "Plan for unsuccessful changes",
+        "description": "Plan to revert to a known good state, or remediate in the production environment if the deployment causes undesired outcome. Having a policy to establish such a plan helps all teams develop strategies to recover from failed changes. Some example strategies are deployment and rollback steps, change policies, feature flags, traffic isolation, and traffic shifting. A single release may include multiple related component changes. The strategy should provide the ability to withstand or recover from a failure of any component change."
+      },
+      {
+        "choiceId": "ops_mit_deploy_risks_test_val_chg",
+        "title": "Test deployments",
+        "description": "Test release procedures in pre-production by using the same deployment configuration, security controls, steps, and procedures as in production. Validate that all deployed steps are completed as expected, such as inspecting files, configurations, and services. Further test all changes with functional, integration, and load tests, along with any monitoring such as health checks. By doing these tests, you can identify deployment issues early with an opportunity to plan and mitigate them prior to production."
+      },
+      {
+        "choiceId": "ops_mit_deploy_risks_deploy_mgmt_sys",
+        "title": "Employ safe deployment strategies",
+        "description": "Safe production roll-outs control the flow of beneficial changes with an aim to minimize any perceived impact for customers from those changes. The safety controls provide inspection mechanisms to validate desired outcomes and limit the scope of impact from any defects introduced by the changes or from deployment failures. Safe roll-outs may include strategies such as feature-flags, one-box, rolling (canary releases), immutable, traffic splitting, and blue/green deployments."
+      },
+      {
+        "choiceId": "ops_mit_deploy_risks_auto_testing_and_rollback",
+        "title": "Automate testing and rollback",
+        "description": "To increase the speed, reliability, and confidence of your deployment process, have a strategy for automated testing and rollback capabilities in pre-production and production environments. Automate testing when deploying to production to simulate human and system interactions that verify the changes being deployed. Automate rollback to revert back to a previous known good state quickly. The rollback should be initiated automatically on pre-defined conditions such as when the desired outcome of your change is not achieved or when the automated test fails. Automating these two activities improves your success rate for your deployments, minimizes recovery time, and reduces the potential impact to the business."
+      },
+      {
+        "choiceId": "ops_mit_deploy_risks_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "ready-to-support",
+    "title": "How do you know that you are ready to support a workload?",
+    "description": "Evaluate the operational readiness of your workload, processes and procedures, and personnel to understand the operational risks related to your workload.",
+    "choices": [
+      {
+        "choiceId": "ops_ready_to_support_personnel_capability",
+        "title": "Ensure personnel capability",
+        "description": "Have a mechanism to validate that you have the appropriate number of trained personnel to support the workload. They must be trained on the platform and services that make up your workload. Provide them with the knowledge necessary to operate the workload. You must have enough trained personnel to support the normal operation of the workload and troubleshoot any incidents that occur. Have enough personnel so that you can rotate during on-call and vacations to avoid burnout."
+      },
+      {
+        "choiceId": "ops_ready_to_support_const_orr",
+        "title": "Ensure a consistent review of operational readiness",
+        "description": "Use Operational Readiness Reviews (ORRs) to validate that you can operate your workload. ORR is a mechanism developed at Amazon to validate that teams can safely operate their workloads. An ORR is a review and inspection process using a checklist of requirements. An ORR is a self-service experience that teams use to certify their workloads. ORRs include best practices from lessons learned from our years of building software."
+      },
+      {
+        "choiceId": "ops_ready_to_support_use_runbooks",
+        "title": "Use runbooks to perform procedures",
+        "description": "A runbook is a documented process to achieve a specific outcome. Runbooks consist of a series of steps that someone follows to get something done. Runbooks have been used in operations going back to the early days of aviation. In cloud operations, we use runbooks to reduce risk and achieve desired outcomes. At its simplest, a runbook is a checklist to complete a task."
+      },
+      {
+        "choiceId": "ops_ready_to_support_use_playbooks",
+        "title": "Use playbooks to investigate issues",
+        "description": "Playbooks are step-by-step guides used to investigate an incident. When incidents happen, playbooks are used to investigate, scope impact, and identify a root cause. Playbooks are used for a variety of scenarios, from failed deployments to security incidents. In many cases, playbooks identify the root cause that a runbook is used to mitigate. Playbooks are an essential component of your organization's incident response plans."
+      },
+      {
+        "choiceId": "ops_ready_to_support_informed_deploy_decisions",
+        "title": "Make informed decisions to deploy systems and changes",
+        "description": "Have processes in place for successful and unsuccessful changes to your workload. A pre-mortem is an exercise where a team simulates a failure to develop mitigation strategies. Use pre-mortems to anticipate failure and create procedures where appropriate. Evaluate the benefits and risks of deploying changes to your workload. Verify that all changes comply with governance."
+      },
+      {
+        "choiceId": "ops_ready_to_support_enable_support_plans",
+        "title": "Create support plans for production workloads",
+        "description": "Enable support for any software and services that your production workload relies on. Select an appropriate support level to meet your production service-level needs. Support plans for these dependencies are necessary in case there is a service disruption or software issue. Document support plans and how to request support for all service and software vendors. Implement mechanisms that verify that support points of contacts are kept up to date."
+      },
+      {
+        "choiceId": "ops_ready_to_support_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "workload-observability",
+    "title": "How do you utilize workload observability in your organization?",
+    "description": "Ensure optimal workload health by leveraging observability. Utilize relevant metrics, logs, and traces to gain a comprehensive view of your workload's performance and address issues efficiently.",
+    "choices": [
+      {
+        "choiceId": "ops_workload_observability_create_alerts",
+        "title": "Create actionable alerts",
+        "description": "Promptly detecting and responding to deviations in your application's behavior is crucial. Especially vital is recognizing when outcomes based on key performance indicators (KPIs) are at risk or when unexpected anomalies arise. Basing alerts on KPIs ensures that the signals you receive are directly tied to business or operational impact. This approach to actionable alerts promotes proactive responses and helps maintain system performance and reliability."
+      },
+      {
+        "choiceId": "ops_workload_observability_analyze_workload_metrics",
+        "title": "Analyze workload metrics",
+        "description": "After implementing application telemetry, regularly analyze the collected metrics. While latency, requests, errors, and capacity (or quotas) provide insights into system performance, it's vital to prioritize the review of business outcome metrics. This ensures you're making data-driven decisions aligned with your business objectives."
+      },
+      {
+        "choiceId": "ops_workload_observability_analyze_workload_logs",
+        "title": "Analyze workload logs",
+        "description": "Regularly analyzing workload logs is essential for gaining a deeper understanding of the operational aspects of your application. By efficiently sifting through, visualizing, and interpreting log data, you can continually optimize application performance and security."
+      },
+      {
+        "choiceId": "ops_workload_observability_analyze_workload_traces",
+        "title": "Analyze workload traces",
+        "description": "Analyzing trace data is crucial for achieving a comprehensive view of an application's operational journey. By visualizing and understanding the interactions between various components, performance can be fine-tuned, bottlenecks identified, and user experiences enhanced."
+      },
+      {
+        "choiceId": "ops_workload_observability_create_dashboards",
+        "title": "Create dashboards",
+        "description": "Dashboards are the human-centric view into the telemetry data of your workloads. While they provide a vital visual interface, they should not replace alerting mechanisms, but complement them. When crafted with care, not only can they offer rapid insights into system health and performance, but they can also present stakeholders with real-time information on business outcomes and the impact of issues."
+      },
+      {
+        "choiceId": "ops_workload_observability_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "operations-health",
+    "title": "How do you understand the health of your operations?",
+    "description": "Define, capture, and analyze operations metrics to gain visibility to the activities of operations teams so that you can take appropriate action.",
+    "choices": [
+      {
+        "choiceId": "ops_operations_health_measure_ops_goals_kpis",
+        "title": "Measure operations goals and KPIs with metrics",
+        "description": "Obtain goals and KPIs that define operations success from your organization and determine that metrics that reflect these. Set baselines as a point of reference and reevaluate regularly. Develop mechanisms to collect these metrics from teams for evaluation. The DevOps Research and Assessment (DORA) metrics provide a popular method to measure progress towards DevOps practices of software delivery."
+      },
+      {
+        "choiceId": "ops_operations_health_communicate_status_trends",
+        "title": "Communicate status and trends to ensure visibility into operation",
+        "description": "Knowing the state of your operations and its trending direction is necessary to identify when outcomes may be at risk, whether or not added work can be supported, or the effects that changes have had to your teams. During operations events, having status pages that users and operations teams can refer to for information can reduce pressure on communication channels and disseminate information proactively"
+      },
+      {
+        "choiceId": "ops_operations_health_review_ops_metrics_prioritize_improvement",
+        "title": "Review operations metrics and prioritize improvement",
+        "description": "Setting aside dedicated time and resources for reviewing the state of operations ensures that serving the day-to-day line of business remains a priority. Pull together operations leaders and stakeholders to regularly review metrics, reaffirm or modify goals and objectives, and prioritize improvements."
+      },
+      {
+        "choiceId": "ops_operations_health_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "event-response",
+    "title": "How do you manage workload and operations events?",
+    "description": "Prepare and validate procedures for responding to events to minimize their disruption to your workload.",
+    "choices": [
+      {
+        "choiceId": "ops_event_response_event_incident_problem_process",
+        "title": "Use a process for event, incident, and problem management",
+        "description": "The ability to efficiently manage events, incidents, and problems is key to maintaining workload health and performance. It's crucial to recognize and understand the differences between these elements to develop an effective response and resolution strategy. Establishing and following a well-defined process for each aspect helps your team swiftly and effectively handle any operational challenges that arise."
+      },
+      {
+        "choiceId": "ops_event_response_process_per_alert",
+        "title": "Have a process per alert",
+        "description": "Establishing a clear and defined process for each alert in your system is essential for effective and efficient incident management. This practice ensures that every alert leads to a specific, actionable response, improving the reliability and responsiveness of your operations."
+      },
+      {
+        "choiceId": "ops_event_response_prioritize_events",
+        "title": "Prioritize operational events based on business impact",
+        "description": "Responding promptly to operational events is critical, but not all events are equal. When you prioritize based on business impact, you also prioritize addressing events with the potential for significant consequences, such as safety, financial loss, regulatory violations, or damage to reputation."
+      },
+      {
+        "choiceId": "ops_event_response_define_escalation_paths",
+        "title": "Define escalation paths",
+        "description": "Establish clear escalation paths within your incident response protocols to facilitate timely and effective action. This includes specifying prompts for escalation, detailing the escalation process, and pre-approving actions to expedite decision-making and reduce mean time to resolution (MTTR)."
+      },
+      {
+        "choiceId": "ops_event_response_push_notify",
+        "title": "Define a customer communication plan for service-impacting events",
+        "description": "Effective communication during service impacting events is critical to maintain trust and transparency with customers. A well-defined communication plan helps your organization quickly and clearly share information, both internally and externally, during incidents."
+      },
+      {
+        "choiceId": "ops_event_response_dashboards",
+        "title": "Communicate status through dashboards",
+        "description": "Use dashboards as a strategic tool to convey real-time operational status and key metrics to different audiences, including internal technical teams, leadership, and customers. These dashboards offer a centralized, visual representation of system health and business performance, enhancing transparency and decision-making efficiency."
+      },
+      {
+        "choiceId": "ops_event_response_auto_event_response",
+        "title": "Automate responses to events",
+        "description": "Automating event responses is key for fast, consistent, and error-free operational handling. Create streamlined processes and use tools to automatically manage and respond to events, minimizing manual interventions and enhancing operational effectiveness."
+      },
+      {
+        "choiceId": "ops_event_response_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "operationalExcellence",
+    "questionId": "evolve-ops",
+    "title": "How do you evolve operations?",
+    "description": "Dedicate time and resources for continuous incremental improvement to evolve the effectiveness and efficiency of your operations.",
+    "choices": [
+      {
+        "choiceId": "ops_evolve_ops_process_cont_imp",
+        "title": "Have a process for continuous improvement",
+        "description": "Evaluate your workload against internal and external architecture best practices. Conduct frequent, intentional workload reviews. Prioritize improvement opportunities into your software development cadence."
+      },
+      {
+        "choiceId": "ops_evolve_ops_perform_rca_process",
+        "title": "Perform post-incident analysis",
+        "description": "Review customer-impacting events, and identify the contributing factors and preventative actions. Use this information to develop mitigations to limit or prevent recurrence. Develop procedures for prompt and effective responses. Communicate contributing factors and corrective actions as appropriate, tailored to target audiences."
+      },
+      {
+        "choiceId": "ops_evolve_ops_feedback_loops",
+        "title": "Implement feedback loops",
+        "description": "Feedback loops provide actionable insights that drive decision making. Build feedback loops into your procedures and workloads. This helps you identify issues and areas that need improvement. They also validate investments made in improvements. These feedback loops are the foundation for continuously improving your workload."
+      },
+      {
+        "choiceId": "ops_evolve_ops_knowledge_management",
+        "title": "Perform knowledge management",
+        "description": "Knowledge management helps team members find the information to perform their job. In learning organizations, information is freely shared which empowers individuals. The information can be discovered or searched. Information is accurate and up to date. Mechanisms exist to create new information, update existing information, and archive outdated information. The most common example of a knowledge management platform is a content management system like a wiki."
+      },
+      {
+        "choiceId": "ops_evolve_ops_drivers_for_imp",
+        "title": "Define drivers for improvement",
+        "description": "Identify drivers for improvement to help you evaluate and prioritize opportunities based on data and feedback loops. Explore improvement opportunities in your systems and processes, and automate where appropriate."
+      },
+      {
+        "choiceId": "ops_evolve_ops_validate_insights",
+        "title": "Validate insights",
+        "description": "Review your analysis results and responses with cross-functional teams and business owners. Use these reviews to establish common understanding, identify additional impacts, and determine courses of action. Adjust responses as appropriate."
+      },
+      {
+        "choiceId": "ops_evolve_ops_metrics_review",
+        "title": "Perform operations metrics reviews",
+        "description": "Regularly perform retrospective analysis of operations metrics with cross-team participants from different areas of the business. Use these reviews to identify opportunities for improvement, potential courses of action, and to share lessons learned. Look for opportunities to improve in all of your environments (for example, development, test, and production)."
+      },
+      {
+        "choiceId": "ops_evolve_ops_share_lessons_learned",
+        "title": "Document and share lessons learned",
+        "description": "Document and share lessons learned from the operations activities so that you can use them internally and across teams. You should share what your teams learn to increase the benefit across your organization. Share information and resources to prevent avoidable errors and ease development efforts, and focus on delivery of desired features."
+      },
+      {
+        "choiceId": "ops_evolve_ops_allocate_time_for_imp",
+        "title": "Allocate time to make improvements",
+        "description": "Dedicate time and resources within your processes to make continuous incremental improvements possible."
+      },
+      {
+        "choiceId": "ops_evolve_ops_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "performance",
+    "questionId": "performing-architecture",
+    "title": "How do you select the appropriate cloud resources and architecture patterns for your workload?",
+    "description": "The optimal solution for a particular workload varies, and solutions often combine multiple approaches. Well-Architected workloads use multiple solutions and allow different features to improve performance.",
+    "choices": [
+      {
+        "choiceId": "perf_architecture_understand_cloud_services_and_features",
+        "title": "Learn about and understand available cloud services and features",
+        "description": "Continually learn about and discover available services and configurations that help you make better architectural decisions and improve performance efficiency in your workload architecture."
+      },
+      {
+        "choiceId": "perf_architecture_evaluate_trade_offs",
+        "title": "Evaluate how trade-offs impact customers and architecture efficiency",
+        "description": "When evaluating performance-related improvements, determine which choices impact your customers and workload efficiency. For example, if using a key-value data store increases system performance, it is important to evaluate how the eventually consistent nature of this change will impact customers."
+      },
+      {
+        "choiceId": "perf_architecture_guidance_architecture_patterns_best_practices",
+        "title": "Use guidance from your cloud provider or an appropriate partner to learn about architecture patterns and best practices",
+        "description": "Use cloud company resources such as documentation, solutions architects, professional services, or appropriate partners to guide your architectural decisions. These resources help you review and improve your architecture for optimal performance."
+      },
+      {
+        "choiceId": "perf_architecture_factor_cost_into_architectural_decisions",
+        "title": "Factor cost into architectural decisions",
+        "description": "Factor cost into your architectural decisions to improve resource utilization and performance efficiency of your cloud workload. When you are aware of the cost implications of your cloud workload, you are more likely to leverage efficient resources and reduce wasteful practices."
+      },
+      {
+        "choiceId": "perf_architecture_use_policies_and_reference_architectures",
+        "title": "Use policies and reference architectures",
+        "description": "Use internal policies and existing reference architectures when selecting services and configurations to be more efficient when designing and implementing your workload."
+      },
+      {
+        "choiceId": "perf_architecture_use_benchmarking",
+        "title": "Use benchmarking to drive architectural decisions",
+        "description": "Benchmark the performance of an existing workload to understand how it performs on the cloud and drive architectural decisions based on that data."
+      },
+      {
+        "choiceId": "perf_architecture_use_data_driven_approach",
+        "title": "Use a data-driven approach for architectural choices",
+        "description": "Define a clear, data-driven approach for architectural choices to verify that the right cloud services and configurations are used to meet your specific business needs."
+      },
+      {
+        "choiceId": "perf_performing_architecture_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "performance",
+    "questionId": "compute-hardware",
+    "title": "How do you select and use compute resources in your workload?",
+    "description": "The optimal compute choice for a particular workload can vary based on application design, usage patterns, and configuration settings. Architectures may use different compute choices for various components and allow different features to improve performance. Selecting the wrong compute choice for an architecture can lead to lower performance efficiency.",
+    "choices": [
+      {
+        "choiceId": "perf_compute_hardware_select_best_compute_options",
+        "title": "Select the best compute options for your workload",
+        "description": "Selecting the most appropriate compute option for your workload allows you to improve performance, reduce unnecessary infrastructure costs, and lower the operational efforts required to maintain your workload."
+      },
+      {
+        "choiceId": "perf_compute_hardware_collect_compute_related_metrics",
+        "title": "Collect compute-related metrics",
+        "description": "Record and track compute-related metrics to better understand how your compute resources are performing and improve their performance and their utilization."
+      },
+      {
+        "choiceId": "perf_compute_hardware_scale_compute_resources_dynamically",
+        "title": "Scale your compute resources dynamically",
+        "description": "Use the elasticity of the cloud to scale your compute resources up or down dynamically to match your needs and avoid over- or under-provisioning capacity for your workload."
+      },
+      {
+        "choiceId": "perf_compute_hardware_understand_compute_configuration_features",
+        "title": "Understand the available compute configuration and features",
+        "description": "Understand the available configuration options and features for your compute service to help you provision the right amount of resources and improve performance efficiency."
+      },
+      {
+        "choiceId": "perf_compute_hardware_configure_and_right_size_compute_resources",
+        "title": "Configure and right-size compute resources",
+        "description": "Configure and right-size compute resources to match your workload’s performance requirements and avoid under- or over-utilized resources."
+      },
+      {
+        "choiceId": "perf_compute_hardware_compute_accelerators",
+        "title": "Use optimized hardware-based compute accelerators",
+        "description": "Use hardware accelerators to perform certain functions more efficiently than CPU-based alternatives."
+      },
+      {
+        "choiceId": "perf_compute_hardware_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "performance",
+    "questionId": "data-management",
+    "title": "How do you store, manage, and access data in your workload?",
+    "description": "The optimal data management solution for a particular system varies based on the kind of data type (block, file, or object), access patterns (random or sequential), required throughput, frequency of access (online, offline, archival), frequency of update (WORM, dynamic), and availability and durability constraints. Well-Architected workloads use purpose-built data stores which allow different features to improve performance.",
+    "choices": [
+      {
+        "choiceId": "perf_data_use_purpose_built_data_store",
+        "title": "Use purpose-built data store that best support your data access and storage requirements",
+        "description": "Understand data characteristics (like shareable, size, cache size, access patterns, latency, throughput, and persistence of data) to select the right purpose-built data stores (storage or database) for your workload."
+      },
+      {
+        "choiceId": "perf_data_collect_record_data_store_performance_metrics",
+        "title": "Collect and record data store performance metrics",
+        "description": "Track and record relevant performance metrics for your data store to understand how your data management solutions are performing. These metrics can help you optimize your data store, verify that your workload requirements are met, and provide a clear overview on how the workload performs."
+      },
+      {
+        "choiceId": "perf_data_evaluate_configuration_options_data_store",
+        "title": "Evaluate available configuration options for data store",
+        "description": "Understand and evaluate the various features and configuration options available for your data stores to optimize storage space and performance for your workload."
+      },
+      {
+        "choiceId": "perf_data_implement_strategies_to_improve_query_performance",
+        "title": "Implement strategies to improve query performance in data store",
+        "description": "Implement strategies to optimize data and improve data query to enable more scalability and efficient performance for your workload."
+      },
+      {
+        "choiceId": "perf_data_access_patterns_caching",
+        "title": "Implement data access patterns that utilize caching",
+        "description": "Implement access patterns that can benefit from caching data for fast retrieval of frequently accessed data."
+      },
+      {
+        "choiceId": "perf_data_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "performance",
+    "questionId": "networking",
+    "title": "How do you select and configure networking resources in your workload?",
+    "description": "The optimal networking solution for a workload varies based on latency, throughput requirements, jitter, and bandwidth. Physical constraints, such as user or on-premises resources, determine location options. These constraints can be offset with edge locations or resource placement.",
+    "choices": [
+      {
+        "choiceId": "perf_networking_understand_how_networking_impacts_performance",
+        "title": "Understand how networking impacts performance",
+        "description": "Analyze and understand how network-related decisions impact your workload to provide efficient performance and improved user experience."
+      },
+      {
+        "choiceId": "perf_networking_evaluate_networking_features",
+        "title": "Evaluate available networking features",
+        "description": "Evaluate networking features in the cloud that may increase performance. Measure the impact of these features through testing, metrics, and analysis. For example, take advantage of network-level features that are available to reduce latency, network distance, or jitter."
+      },
+      {
+        "choiceId": "perf_networking_choose_appropriate_dedicated_connectivity_or_vpn",
+        "title": "Choose appropriate dedicated connectivity or VPN for your workload",
+        "description": "When hybrid connectivity is required to connect on-premises and cloud resources, provision adequate bandwidth to meet your performance requirements. Estimate the bandwidth and latency requirements for your hybrid workload. These numbers will drive your sizing requirements."
+      },
+      {
+        "choiceId": "perf_networking_load_balancing_distribute_traffic",
+        "title": "Use load balancing to distribute traffic across multiple resources",
+        "description": "Distribute traffic across multiple resources or services to allow your workload to take advantage of the elasticity that the cloud provides. You can also use load balancing for offloading encryption termination to improve performance, reliability and manage and route traffic effectively."
+      },
+      {
+        "choiceId": "perf_networking_choose_network_protocols_improve_performance",
+        "title": "Choose network protocols to improve performance",
+        "description": "Make decisions about protocols for communication between systems and networks based on the impact to the workload’s performance."
+      },
+      {
+        "choiceId": "perf_networking_choose_workload_location_network_requirements",
+        "title": "Choose your workload's location based on network requirements",
+        "description": "Evaluate options for resource placement to reduce network latency and improve throughput, providing an optimal user experience by reducing page load and data transfer times."
+      },
+      {
+        "choiceId": "perf_networking_optimize_network_configuration_based_on_metrics",
+        "title": "Optimize network configuration based on metrics",
+        "description": "Use collected and analyzed data to make informed decisions about optimizing your network configuration."
+      },
+      {
+        "choiceId": "perf_networking_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "performance",
+    "questionId": "process-culture",
+    "title": "What process do you use to support more performance efficiency for your workload?",
+    "description": "When architecting workloads, there are principles and practices that you can adopt to help you better run efficient high-performing cloud workloads.",
+    "choices": [
+      {
+        "choiceId": "perf_process_culture_establish_key_performance_indicators",
+        "title": "Establish key performance indicators (KPIs) to measure workload health and performance",
+        "description": "Identify the KPIs that quantitatively and qualitatively measure workload performance. KPIs help you measure the health and performance of a workload related to a business goal."
+      },
+      {
+        "choiceId": "perf_process_culture_use_monitoring_solutions",
+        "title": "Use monitoring solutions to understand the areas where performance is most critical",
+        "description": "Understand and identify areas where increasing the performance of your workload will have a positive impact on efficiency or customer experience. For example, a website that has a large amount of customer interaction can benefit from using edge services to move content delivery closer to customers."
+      },
+      {
+        "choiceId": "perf_process_culture_workload_performance",
+        "title": "Define a process to improve workload performance",
+        "description": "Define a process to evaluate new services, design patterns, resource types, and configurations as they become available. For example, run existing performance tests on new instance offerings to determine their potential to improve your workload."
+      },
+      {
+        "choiceId": "perf_process_culture_review_metrics",
+        "title": "Review metrics at regular intervals",
+        "description": "As part of routine maintenance or in response to events or incidents, review which metrics are collected. Use these reviews to identify which metrics were essential in addressing issues and which additional metrics, if they were being tracked, could help identify, address, or prevent issues."
+      },
+      {
+        "choiceId": "perf_process_culture_load_test",
+        "title": "Load test your workload",
+        "description": "Load test your workload to verify it can handle production load and identify any performance bottleneck."
+      },
+      {
+        "choiceId": "perf_process_culture_automation_remediate_issues",
+        "title": "Use automation to proactively remediate performance-related issues",
+        "description": "Use key performance indicators (KPIs), combined with monitoring and alerting systems, to proactively address performance-related issues."
+      },
+      {
+        "choiceId": "perf_process_culture_keep_workload_and_services_up_to_date",
+        "title": "Keep your workload and services up-to-date",
+        "description": "Stay up-to-date on new cloud services and features to adopt efficient features, remove issues, and improve the overall performance efficiency of your workload."
+      },
+      {
+        "choiceId": "perf_process_culture_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "manage-service-limits",
+    "title": "How do you manage service quotas and constraints?",
+    "description": "For cloud-based workload architectures, there are service quotas (which are also referred to as service limits). These quotas exist to prevent accidentally provisioning more resources than you need and to limit request rates on API operations so as to protect services from abuse. There are also resource constraints, for example, the rate that you can push bits down a fiber-optic cable, or the amount of storage on a physical disk.",
+    "choices": [
+      {
+        "choiceId": "rel_manage_service_limits_aware_quotas_and_constraints",
+        "title": "Aware of service quotas and constraints",
+        "description": "Be aware of your default quotas and manage your quota increase requests for your workload architecture. Know which cloud resource constraints, such as disk or network, are potentially impactful."
+      },
+      {
+        "choiceId": "rel_manage_service_limits_limits_considered",
+        "title": "Manage service quotas across accounts and Regions",
+        "description": "If you are using multiple accounts or Regions, request the appropriate quotas in all environments in which your production workloads run."
+      },
+      {
+        "choiceId": "rel_manage_service_limits_aware_fixed_limits",
+        "title": "Accommodate fixed service quotas and constraints through architecture",
+        "description": "Be aware of unchangeable service quotas, service constraints, and physical resource limits. Design architectures for applications and services to prevent these limits from impacting reliability."
+      },
+      {
+        "choiceId": "rel_manage_service_limits_monitor_manage_limits",
+        "title": "Monitor and manage quotas",
+        "description": "Evaluate your potential usage and increase your quotas appropriately, allowing for planned growth in usage."
+      },
+      {
+        "choiceId": "rel_manage_service_limits_automated_monitor_limits",
+        "title": "Automate quota management",
+        "description": "Service quotas, also referred to as limits in AWS services, are the maximum values for the resources in your AWS account. Each AWS service defines a set of quotas and their default values. To provide your workload access to all the resources it needs, you might need to increase your service quota values."
+      },
+      {
+        "choiceId": "rel_manage_service_limits_suff_buffer_limits",
+        "title": "Ensure that a sufficient gap exists between the current quotas and the maximum usage to accommodate failover",
+        "description": "When a resource fails or is inaccessible, that resource might still be counted against a quota until it’s successfully terminated. Verify that your quotas cover the overlap of failed or inaccessible resources and their replacements. You should consider use cases like network failure, Availability Zone failure, or Regional failures when calculating this gap."
+      },
+      {
+        "choiceId": "rel_manage_service_limits_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "planning-network-topology",
+    "title": "How do you plan your network topology?",
+    "description": "Workloads often exist in multiple environments. These include multiple cloud environments (both publicly accessible and private) and possibly your existing data center infrastructure. Plans must include network considerations such as intra- and inter-system connectivity, public IP address management, private IP address management, and domain name resolution.",
+    "choices": [
+      {
+        "choiceId": "rel_planning_network_topology_ha_conn_users",
+        "title": "Use highly available network connectivity for your workload public endpoints",
+        "description": "Building highly available network connectivity to public endpoints of your workloads can help you reduce downtime due to loss of connectivity and improve the availability and SLA of your workload. To achieve this, use highly available DNS, content delivery networks (CDNs), API gateways, load balancing, or reverse proxies."
+      },
+      {
+        "choiceId": "rel_planning_network_topology_ha_conn_private_networks",
+        "title": "Provision redundant connectivity between private networks in the cloud and on-premises environments",
+        "description": "Implement redundancy in your connections between private networks in the cloud and on-premises environments to achieve connectivity resilience. This can be accomplished by deploying two or more links and traffic paths, preserving connectivity in the event of network failures."
+      },
+      {
+        "choiceId": "rel_planning_network_topology_ip_subnet_allocation",
+        "title": "Ensure IP subnet allocation accounts for expansion and availability",
+        "description": "Amazon VPC IP address ranges must be large enough to accommodate workload requirements, including factoring in future expansion and allocation of IP addresses to subnets across Availability Zones. This includes load balancers, EC2 instances, and container-based applications."
+      },
+      {
+        "choiceId": "rel_planning_network_topology_prefer_hub_and_spoke",
+        "title": "Prefer hub-and-spoke topologies over many-to-many mesh",
+        "description": "When connecting multiple private networks, such as Virtual Private Clouds (VPCs) and on-premises networks, opt for a hub-and-spoke topology over a meshed one. Unlike meshed topologies, where each network connects directly to the others and increases the complexity and management overhead, the hub-and-spoke architecture centralizes connections through a single hub. This centralization simplifies the network structure and enhances its operability, scalability, and control."
+      },
+      {
+        "choiceId": "rel_planning_network_topology_non_overlap_ip",
+        "title": "Enforce non-overlapping private IP address ranges in all private address spaces where they are connected",
+        "description": "The IP address ranges of each of your VPCs must not overlap when peered, connected via Transit Gateway, or connected over VPN. Avoid IP address conflicts between a VPC and on-premises environments or with other cloud providers that you use. You must also have a way to allocate private IP address ranges when needed. An IP address management (IPAM) system can help with automating this."
+      },
+      {
+        "choiceId": "rel_planning_network_topology_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "service-architecture",
+    "title": "How do you design your workload service architecture?",
+    "description": "Build highly scalable and reliable workloads using a service-oriented architecture (SOA) or a microservices architecture. Service-oriented architecture (SOA) is the practice of making software components reusable via service interfaces. Microservices architecture goes further to make components smaller and simpler.",
+    "choices": [
+      {
+        "choiceId": "rel_service_architecture_monolith_soa_microservice",
+        "title": "Choose how to segment your workload",
+        "description": "Workload segmentation is important when determining the resilience requirements of your application. Monolithic architecture should be avoided whenever possible. Instead, carefully consider which application components can be broken out into microservices. Depending on your application requirements, this may end up being a combination of a service-oriented architecture (SOA) with microservices where possible. Workloads that are capable of statelessness are more capable of being deployed as microservices."
+      },
+      {
+        "choiceId": "rel_service_architecture_business_domains",
+        "title": "Build services focused on specific business domains and functionality",
+        "description": "Service-oriented architectures (SOA) define services with well-delineated functions defined by business needs. Microservices use domain models and bounded context to draw service boundaries along business context boundaries. Focusing on business domains and functionality helps teams define independent reliability requirements for their services. Bounded contexts isolate and encapsulate business logic, allowing teams to better reason about how to handle failures."
+      },
+      {
+        "choiceId": "rel_service_architecture_api_contracts",
+        "title": "Provide service contracts per API",
+        "description": "Service contracts are documented agreements between API producers and consumers defined in a machine-readable API definition. A contract versioning strategy allows consumers to continue using the existing API and migrate their applications to a newer API when they are ready. Producer deployment can happen any time as long as the contract is followed. Service teams can use the technology stack of their choice to satisfy the API contract."
+      },
+      {
+        "choiceId": "rel_service_architecture_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "prevent-interaction-failure",
+    "title": "How do you design interactions in a distributed system to prevent failures?",
+    "description": "Distributed systems rely on communications networks to interconnect components, such as servers or services. Your workload must operate reliably despite data loss or latency in these networks. Components of the distributed system must operate in a way that does not negatively impact other components or the workload. These best practices prevent failures and improve mean time between failures (MTBF).",
+    "choices": [
+      {
+        "choiceId": "rel_prevent_interaction_failure_identify",
+        "title": "Identify the kind of distributed systems you depend on",
+        "description": "Distributed systems can be synchronous, asynchronous, or batch. Synchronous systems must process requests as quickly as possible and communicate with each other by making synchronous request and response calls using HTTP/S, REST, or remote procedure call (RPC) protocols. Asynchronous systems communicate with each other by exchanging data asynchronously through an intermediary service without coupling individual systems. Batch systems receive a large volume of input data, run automated data processes without human intervention, and generate output data."
+      },
+      {
+        "choiceId": "rel_prevent_interaction_failure_loosely_coupled_system",
+        "title": "Implement loosely coupled dependencies",
+        "description": "Dependencies such as queuing systems, streaming systems, workflows, and load balancers are loosely coupled. Loose coupling helps isolate behavior of a component from other components that depend on it, increasing resiliency and agility."
+      },
+      {
+        "choiceId": "rel_prevent_interaction_failure_idempotent",
+        "title": "Make mutating operations idempotent",
+        "description": "An idempotent service promises that each request is processed exactly once, such that making multiple identical requests has the same effect as making a single request. This makes it easier for a client to implement retries without fear that a request is erroneously processed multiple times. To do this, clients can issue API requests with an idempotency token, which is used whenever the request is repeated. An idempotent service API uses the token to return a response identical to the response that was returned the first time that the request was completed, even if the underlying state of the system has changed."
+      },
+      {
+        "choiceId": "rel_prevent_interaction_failure_constant_work",
+        "title": "Do constant work",
+        "description": "Systems can fail when there are large, rapid changes in load. For example, if your workload is doing a health check that monitors the health of thousands of servers, it should send the same size payload (a full snapshot of the current state) each time. Whether no servers are failing, or all of them, the health check system is doing constant work with no large, rapid changes."
+      },
+      {
+        "choiceId": "rel_prevent_interaction_failure_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "mitigate-interaction-failure",
+    "title": "How do you design interactions in a distributed system to mitigate or withstand failures?",
+    "description": "Distributed systems rely on communications networks to interconnect components (such as servers or services). Your workload must operate reliably despite data loss or latency over these networks. Components of the distributed system must operate in a way that does not negatively impact other components or the workload. These best practices enable workloads to withstand stresses or failures, more quickly recover from them, and mitigate the impact of such impairments. The result is improved mean time to recovery (MTTR).",
+    "choices": [
+      {
+        "choiceId": "rel_mitigate_interaction_failure_graceful_degradation",
+        "title": "Implement graceful degradation to transform applicable hard dependencies into soft dependencies",
+        "description": "Application components should continue to perform their core function even if dependencies become unavailable. They might be serving slightly stale data, alternate data, or even no data. This ensures overall system function is only minimally impeded by localized failures while delivering the central business value."
+      },
+      {
+        "choiceId": "rel_mitigate_interaction_failure_throttle_requests",
+        "title": "Throttle requests",
+        "description": "Throttle requests to mitigate resource exhaustion due to unexpected increases in demand. Requests below throttling rates are processed while those over the defined limit are rejected with a return a message indicating the request was throttled."
+      },
+      {
+        "choiceId": "rel_mitigate_interaction_failure_limit_retries",
+        "title": "Control and limit retry calls",
+        "description": "Use exponential backoff to retry requests at progressively longer intervals between each retry. Introduce jitter between retries to randomize retry intervals. Limit the maximum number of retries."
+      },
+      {
+        "choiceId": "rel_mitigate_interaction_failure_fail_fast",
+        "title": "Fail fast and limit queues",
+        "description": "When a service is unable to respond successfully to a request, fail fast. This allows resources associated with a request to be released, and permits a service to recover if it’s running out of resources. Failing fast is a well-established software design pattern that can be leveraged to build highly reliable workloads in the cloud. Queuing is also a well-established enterprise integration pattern that can smooth load and allow clients to release resources when asynchronous processing can be tolerated. When a service is able to respond successfully under normal conditions but fails when the rate of requests is too high, use a queue to buffer requests. However, do not allow a buildup of long queue backlogs that can result in processing stale requests that a client has already given up on."
+      },
+      {
+        "choiceId": "rel_mitigate_interaction_failure_client_timeouts",
+        "title": "Set client timeouts",
+        "description": "Set timeouts appropriately on connections and requests, verify them systematically, and do not rely on default values as they are not aware of workload specifics."
+      },
+      {
+        "choiceId": "rel_mitigate_interaction_failure_stateless",
+        "title": "Make systems stateless where possible",
+        "description": "Systems should either not require state, or should offload state such that between different client requests, there is no dependence on locally stored data on disk and in memory. This allows servers to be replaced at will without causing an availability impact."
+      },
+      {
+        "choiceId": "rel_mitigate_interaction_failure_emergency_levers",
+        "title": "Implement emergency levers",
+        "description": "Emergency levers are rapid processes that can mitigate availability impact on your workload."
+      },
+      {
+        "choiceId": "rel_mitigate_interaction_failure_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "monitor-aws-resources",
+    "title": "How do you monitor workload resources?",
+    "description": "Logs and metrics are powerful tools to gain insight into the health of your workload. You can configure your workload to monitor logs and metrics and send notifications when thresholds are crossed or significant events occur. Monitoring enables your workload to recognize when low-performance thresholds are crossed or failures occur, so it can recover automatically in response.",
+    "choices": [
+      {
+        "choiceId": "rel_monitor_aws_resources_monitor_resources",
+        "title": "Monitor all components for the workload (Generation)",
+        "description": "Monitor the components of the workload with Amazon CloudWatch or third-party tools. Monitor AWS services with AWS Health Dashboard."
+      },
+      {
+        "choiceId": "rel_monitor_aws_resources_notification_aggregation",
+        "title": "Define and calculate metrics (Aggregation)",
+        "description": "Collect metrics and logs from your workload components and calculate relevant aggregate metrics from them. These metrics provide broad and deep observability of your workload and can significantly improve your resilience posture."
+      },
+      {
+        "choiceId": "rel_monitor_aws_resources_notification_monitor",
+        "title": "Send notifications (Real-time processing and alarming)",
+        "description": "When organizations detect potential issues, they send real-time notifications and alerts to the appropriate personnel and systems in order to respond quickly and effectively to these issues."
+      },
+      {
+        "choiceId": "rel_monitor_aws_resources_automate_response_monitor",
+        "title": "Automate responses (Real-time processing and alarming)",
+        "description": "Use automation to take action when an event is detected, for example, to replace failed components."
+      },
+      {
+        "choiceId": "rel_monitor_aws_resources_storage_analytics",
+        "title": "Analyze logs",
+        "description": "Collect log files and metrics histories and analyze these for broader trends and workload insights."
+      },
+      {
+        "choiceId": "rel_monitor_aws_resources_review_monitoring",
+        "title": "Regularly review monitoring scope and metrics",
+        "description": "Frequently review how workload monitoring is implemented, and update it as your workload and its architecture evolves. Regular audits of your monitoring helps reduce the risk of missed or overlooked trouble indicators and further helps your workload meet its availability goals."
+      },
+      {
+        "choiceId": "rel_monitor_aws_resources_end_to_end",
+        "title": "Monitor end-to-end tracing of requests through your system",
+        "description": "Trace requests as they process through service components so product teams can more easily analyze and debug issues and improve performance."
+      },
+      {
+        "choiceId": "rel_monitor_aws_resources_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "adapt-to-changes",
+    "title": "How do you design your workload to adapt to changes in demand?",
+    "description": "A scalable workload provides elasticity to add or remove resources automatically so that they closely match the current demand at any given point in time.",
+    "choices": [
+      {
+        "choiceId": "rel_adapt_to_changes_autoscale_adapt",
+        "title": "Use automation when obtaining or scaling resources",
+        "description": "A cornerstone of reliability in the cloud is the programmatic definition, provisioning, and management of your infrastructure and resources. Automation helps you streamline resource provisioning, facilitate consistent and secure deployments, and scale resources across your entire infrastructure."
+      },
+      {
+        "choiceId": "rel_adapt_to_changes_reactive_adapt_auto",
+        "title": "Obtain resources upon detection of impairment to a workload",
+        "description": "Scale resources reactively when necessary if availability is impacted, to restore workload availability."
+      },
+      {
+        "choiceId": "rel_adapt_to_changes_proactive_adapt_auto",
+        "title": "Obtain resources upon detection that more resources are needed for a workload",
+        "description": "One of the most valuable features of cloud computing is the ability to provision resources dynamically."
+      },
+      {
+        "choiceId": "rel_adapt_to_changes_load_tested_adapt",
+        "title": "Load test your workload",
+        "description": "Adopt a load testing methodology to measure if scaling activity meets workload requirements."
+      },
+      {
+        "choiceId": "rel_adapt_to_changes_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "tracking-change-management",
+    "title": "How do you implement change?",
+    "description": "Controlled changes are necessary to deploy new functionality, and to ensure that the workloads and the operating environment are running known software and can be patched or replaced in a predictable manner. If these changes are uncontrolled, then it makes it difficult to predict the effect of these changes, or to address issues that arise because of them.",
+    "choices": [
+      {
+        "choiceId": "rel_tracking_change_management_planned_changemgmt",
+        "title": "Use runbooks for standard activities such as deployment",
+        "description": "Runbooks are the predefined procedures to achieve specific outcomes. Use runbooks to perform standard activities, whether done manually or automatically. Examples include deploying a workload, patching a workload, or making DNS modifications."
+      },
+      {
+        "choiceId": "rel_tracking_change_management_functional_testing",
+        "title": "Integrate functional testing as part of your deployment",
+        "description": "Use techniques such as unit tests and integration tests that validate required functionality. Unit testing is the process where you test the smallest functional unit of code to validate its behavior. Integration testing seeks to validate that each application feature works according to the software requirements. While unit tests focus on testing part of an application in isolation, integration tests consider side effects (for example, the effect of data being changed through a mutation operation). In either case, tests should be integrated into a deployment pipeline, and if success criteria are not met, the pipeline is halted or rolled back. These tests are run in a pre-production environment, which is staged prior to production in the pipeline."
+      },
+      {
+        "choiceId": "rel_tracking_change_management_resiliency_testing",
+        "title": "Integrate resiliency testing as part of your deployment",
+        "description": "Integrate resiliency testing by consciously introducing failures in your system to measure its capability in case of disruptive scenarios. Resilience tests are different from unit and function tests that are usually integrated in deployment cycles, as they focus on the identification of unanticipated failures in your system. While it is safe to start with resiliency testing integration in pre-production, set a goal to implement these tests in production as a part of your game days."
+      },
+      {
+        "choiceId": "rel_tracking_change_management_immutable_infrastructure",
+        "title": "Deploy using immutable infrastructure",
+        "description": "Immutable infrastructure is a model that mandates that no updates, security patches, or configuration changes happen in-place on production workloads. When a change is needed, the architecture is built onto new infrastructure and deployed into production."
+      },
+      {
+        "choiceId": "rel_tracking_change_management_automated_changemgmt",
+        "title": "Deploy changes with automation",
+        "description": "Deployments and patching are automated to eliminate negative impact."
+      },
+      {
+        "choiceId": "rel_tracking_change_management_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "backing-up-data",
+    "title": "How do you back up data?",
+    "description": "Back up data, applications, and configuration to meet your requirements for recovery time objectives (RTO) and recovery point objectives (RPO).",
+    "choices": [
+      {
+        "choiceId": "rel_backing_up_data_identified_backups_data",
+        "title": "Identify and back up all data that needs to be backed up, or reproduce the data from sources",
+        "description": "Understand and use the backup capabilities of the data services and resources used by the workload. Most services provide capabilities to back up workload data."
+      },
+      {
+        "choiceId": "rel_backing_up_data_secured_backups_data",
+        "title": "Secure and encrypt backups",
+        "description": "Control and detect access to backups using authentication and authorization. Prevent and detect if data integrity of backups is compromised using encryption."
+      },
+      {
+        "choiceId": "rel_backing_up_data_automated_backups_data",
+        "title": "Perform data backup automatically",
+        "description": "Configure backups to be taken automatically based on a periodic schedule informed by the Recovery Point Objective (RPO), or by changes in the dataset. Critical datasets with low data loss requirements need to be backed up automatically on a frequent basis, whereas less critical data where some loss is acceptable can be backed up less frequently."
+      },
+      {
+        "choiceId": "rel_backing_up_data_periodic_recovery_testing_data",
+        "title": "Perform periodic recovery of the data to verify backup integrity and processes",
+        "description": "Validate that your backup process implementation meets your Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO) by performing a recovery test."
+      },
+      {
+        "choiceId": "rel_backing_up_data_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "fault-isolation",
+    "title": "How do you use fault isolation to protect your workload?",
+    "description": "Fault isolation limits the impact of a component or system failure to a defined boundary. With proper isolation, components outside of the boundary are unaffected by the failure. Running your workload across multiple fault isolation boundaries can make it more resilient to failure.",
+    "choices": [
+      {
+        "choiceId": "rel_fault_isolation_multiaz_region_system",
+        "title": "Deploy the workload to multiple locations",
+        "description": "Distribute workload data and resources across multiple Availability Zones or, where necessary, across AWS Regions."
+      },
+      {
+        "choiceId": "rel_fault_isolation_use_bulkhead",
+        "title": "Use bulkhead architectures to limit scope of impact",
+        "description": "Implement bulkhead architectures (also known as cell-based architectures) to restrict the effect of failure within a workload to a limited number of components."
+      },
+      {
+        "choiceId": "rel_fault_isolation_single_az_system",
+        "title": "Automate recovery for components constrained to a single location",
+        "description": "If components of the workload can only run in a single Availability Zone or in an on-premises data center, implement the capability to do a complete rebuild of the workload within your defined recovery objectives."
+      },
+      {
+        "choiceId": "rel_fault_isolation_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "withstand-component-failures",
+    "title": "How do you design your workload to withstand component failures?",
+    "description": "Workloads with a requirement for high availability and low mean time to recovery (MTTR) must be architected for resiliency.",
+    "choices": [
+      {
+        "choiceId": "rel_withstand_component_failures_monitoring_health",
+        "title": "Monitor all components of the workload to detect failures",
+        "description": "Continually monitor the health of your workload so that you and your automated systems are aware of failures or degradations as soon as they occur. Monitor for key performance indicators (KPIs) based on business value."
+      },
+      {
+        "choiceId": "rel_withstand_component_failures_failover2good",
+        "title": "Fail over to healthy resources",
+        "description": "If a resource failure occurs, healthy resources should continue to serve requests. For location impairments (such as Availability Zone or AWS Region), ensure that you have systems in place to fail over to healthy resources in unimpaired locations."
+      },
+      {
+        "choiceId": "rel_withstand_component_failures_auto_healing_system",
+        "title": "Automate healing on all layers",
+        "description": "Upon detection of a failure, use automated capabilities to perform actions to remediate. Degradations may be automatically healed through internal service mechanisms or require resources to be restarted or removed through remediation actions."
+      },
+      {
+        "choiceId": "rel_withstand_component_failures_avoid_control_plane",
+        "title": "Rely on the data plane and not the control plane during recovery",
+        "description": "Control planes provide the administrative APIs used to create, read and describe, update, delete, and list (CRUDL) resources, while data planes handle day-to-day service traffic. When implementing recovery or mitigation responses to potentially resiliency-impacting events, focus on using a minimal number of control plane operations to recover, rescale, restore, heal, or failover the service. Data plane action should supersede any activity during these degradation events."
+      },
+      {
+        "choiceId": "rel_withstand_component_failures_static_stability",
+        "title": "Use static stability to prevent bimodal behavior",
+        "description": "Workloads should be statically stable and only operate in a single normal mode. Bimodal behavior is when your workload exhibits different behavior under normal and failure modes."
+      },
+      {
+        "choiceId": "rel_withstand_component_failures_notifications_sent_system",
+        "title": "Send notifications when events impact availability",
+        "description": "Notifications are sent upon the detection of thresholds breached, even if the event causing by the issue was automatically resolved."
+      },
+      {
+        "choiceId": "rel_withstand_component_failures_service_level_agreements",
+        "title": "Architect your product to meet availability targets and uptime service level agreements (SLAs)",
+        "description": "Architect your product to meet availability targets and uptime service level agreements (SLAs). If you publish or privately agree to availability targets or uptime SLAs, verify that your architecture and operational processes are designed to support them."
+      },
+      {
+        "choiceId": "rel_withstand_component_failures_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "testing-resiliency",
+    "title": "How do you test reliability?",
+    "description": "After you have designed your workload to be resilient to the stresses of production, testing is the only way to ensure that it will operate as designed, and deliver the resiliency you expect.",
+    "choices": [
+      {
+        "choiceId": "rel_testing_resiliency_playbook_resiliency",
+        "title": "Use playbooks to investigate failures",
+        "description": "Permit consistent and prompt responses to failure scenarios that are not well understood by documenting the investigation process in playbooks. Playbooks are the predefined steps performed to identify the factors contributing to a failure scenario. The results from any process step are used to determine the next steps to take until the issue is identified or escalated."
+      },
+      {
+        "choiceId": "rel_testing_resiliency_rca_resiliency",
+        "title": "Perform post-incident analysis",
+        "description": "Review customer-impacting events, and identify the contributing factors and preventative action items. Use this information to develop mitigations to limit or prevent recurrence. Develop procedures for prompt and effective responses. Communicate contributing factors and corrective actions as appropriate, tailored to target audiences. Have a method to communicate these causes to others as needed."
+      },
+      {
+        "choiceId": "rel_testing_resiliency_test_non_functional",
+        "title": "Test scalability and performance requirements",
+        "description": "Use techniques such as load testing to validate that the workload meets scaling and performance requirements. In the cloud, you can create a production-scale test environment for your workload on demand. Instead of reliance on a scaled-down test environment, which could lead to inaccurate predictions of production behaviors, you can use the cloud to provision a test environment that closely mirrors your expected production environment. This environment helps you test in a more accurate simulation of the real-world conditions your application faces."
+      },
+      {
+        "choiceId": "rel_testing_resiliency_failure_injection_resiliency",
+        "title": "Test resiliency using chaos engineering",
+        "description": "Run chaos experiments regularly in environments that are in or as close to production as possible to understand how your system responds to adverse conditions."
+      },
+      {
+        "choiceId": "rel_testing_resiliency_game_days_resiliency",
+        "title": "Conduct game days regularly",
+        "description": "Conduct game days to regularly exercise your procedures for responding to workload-impacting events and impairments. Involve the same teams who would be responsible for handling production scenarios. These exercises help enforce measures to prevent user impact caused by production events. When you practice your response procedures in realistic conditions, you can identify and address any gaps or weaknesses before a real event occurs."
+      },
+      {
+        "choiceId": "rel_testing_resiliency_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "reliability",
+    "questionId": "planning-for-recovery",
+    "title": "How do you plan for disaster recovery (DR)?",
+    "description": "Having backups and redundant workload components in place is the start of your DR strategy. RTO and RPO are your objectives for restoration of your workload. Set these based on business needs. Implement a strategy to meet these objectives, considering locations and function of workload resources and data. The probability of disruption and cost of recovery are also key factors that help to inform the business value of providing disaster recovery for a workload.",
+    "choices": [
+      {
+        "choiceId": "rel_planning_for_recovery_objective_defined_recovery",
+        "title": "Define recovery objectives for downtime and data loss",
+        "description": "Failures can impact your business in several ways. First, failures can cause service interruption (downtime). Second, failures can cause data to become lost, inconsistent, or stale. In order to guide how you respond and recover from failures, define a Recovery Time Objective (RTO) and Recovery Point Objective (RPO) for each workload. Recovery Time Objective (RTO) is the maximum acceptable delay between the interruption of service and restoration of service. Recovery Point Objective (RPO) is the maximum acceptable time after the last data recovery point."
+      },
+      {
+        "choiceId": "rel_planning_for_recovery_disaster_recovery",
+        "title": "Use defined recovery strategies to meet the recovery objectives",
+        "description": "Define a disaster recovery (DR) strategy that meets your workload's recovery objectives. Choose a strategy such as backup and restore, standby (active/passive), or active/active."
+      },
+      {
+        "choiceId": "rel_planning_for_recovery_dr_tested",
+        "title": "Test disaster recovery implementation to validate the implementation",
+        "description": "Regularly test failover to your recovery site to verify that it operates properly and that RTO and RPO are met."
+      },
+      {
+        "choiceId": "rel_planning_for_recovery_config_drift",
+        "title": "Manage configuration drift at the DR site or Region",
+        "description": "To perform a successful disaster recovery (DR) procedure, your workload must be able to resume normal operations in a timely manner with no relevant loss of functionality or data once the DR environment has been brought online. To achieve this goal, it's essential to maintain consistent infrastructure, data, and configurations between your DR environment and the primary environment."
+      },
+      {
+        "choiceId": "rel_planning_for_recovery_auto_recovery",
+        "title": "Automate recovery",
+        "description": "Implement tested and automated recovery mechanisms that are reliable, observable, and reproducible to reduce the risk and business impact of failure."
+      },
+      {
+        "choiceId": "rel_planning_for_recovery_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "securely-operate",
+    "title": "How do you securely operate your workload?",
+    "description": "To operate your workload securely, you must apply overarching best practices to every area of security. Take requirements and processes that you have defined in operational excellence at an organizational and workload level, and apply them to all areas. Staying up to date with AWS and industry recommendations and threat intelligence helps you evolve your threat model and control objectives. Automating security processes, testing, and validation allow you to scale your security operations.",
+    "choices": [
+      {
+        "choiceId": "sec_securely_operate_multi_accounts",
+        "title": "Separate workloads using accounts",
+        "description": "Establish common guardrails and isolation between environments (such as production, development, and test) and workloads through a multi-account strategy. Account-level separation is strongly recommended, as it provides a strong isolation boundary for security, billing, and access."
+      },
+      {
+        "choiceId": "sec_securely_operate_aws_account",
+        "title": "Secure account root user and properties",
+        "description": "The root user is the most privileged user in an AWS account, with full administrative access to all resources within the account, and in some cases cannot be constrained by security policies. Disabling programmatic access to the root user, establishing appropriate controls for the root user, and avoiding routine use of the root user helps reduce the risk of inadvertent exposure of the root credentials and subsequent compromise of the cloud environment."
+      },
+      {
+        "choiceId": "sec_securely_operate_control_objectives",
+        "title": "Identify and validate control objectives",
+        "description": "Based on your compliance requirements and risks identified from your threat model, derive and validate the control objectives and controls that you need to apply to your workload. Ongoing validation of control objectives and controls help you measure the effectiveness of risk mitigation."
+      },
+      {
+        "choiceId": "sec_securely_operate_updated_threats",
+        "title": "Stay up to date with security threats and recommendations",
+        "description": "Stay up to date with the latest threats and mitigations by monitoring industry threat intelligence publications and data feeds for updates. Evaluate managed service offerings that automatically update based on the latest threat data."
+      },
+      {
+        "choiceId": "sec_securely_operate_threat_model",
+        "title": "Identify and prioritize risks using a threat model",
+        "description": "Perform threat modeling to identify and maintain an up-to-date register of potential threats and associated mitigations for your workload. Prioritize your threats and adapt your security control mitigations to prevent, detect, and respond. Revisit and maintain this in the context of your workload, and the evolving security landscape."
+      },
+      {
+        "choiceId": "sec_securely_operate_reduce_management_scope",
+        "title": "Reduce security management scope",
+        "description": "Determine if you can reduce your security scope by using AWS services that shift management of certain controls to AWS (managed services). These services can help reduce your security maintenance tasks, such as infrastructure provisioning, software setup, patching, or backups."
+      },
+      {
+        "choiceId": "sec_securely_operate_automate_security_controls",
+        "title": "Automate deployment of standard security controls",
+        "description": "Apply modern DevOps practices as you develop and deploy security controls that are standard across your AWS environments.  Define standard security controls and configurations using Infrastructure as Code (IaC) templates, capture changes in a version control system, test changes as part of a CI/CD pipeline, and automate the deployment of changes to your AWS environments."
+      },
+      {
+        "choiceId": "sec_securely_operate_implement_services_features",
+        "title": "Evaluate and implement new security services and features regularly",
+        "description": "Evaluate and implement security services and features from AWS and AWS Partners that allow you to evolve the security posture of your workload. "
+      },
+      {
+        "choiceId": "sec_securely_operate_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "identities",
+    "title": "How do you manage identities for people and machines?",
+    "description": "There are two types of identities you need to manage when approaching operating secure AWS workloads. Understanding the type of identity you need to manage and grant access helps you ensure the right identities have access to the right resources under the right conditions. Human Identities: Your administrators, developers, operators, and end users require an identity to access your AWS environments and applications. These are members of your organization, or external users with whom you collaborate, and who interact with your AWS resources via a web browser, client application, or interactive command-line tools. Machine Identities: Your service applications, operational tools, and workloads require an identity to make requests to AWS services - for example, to read data. These identities include machines running in your AWS environment such as Amazon EC2 instances or AWS Lambda functions. You may also manage machine identities for external                               parties who need access. Additionally, you may also have machines outside of AWS that need access to your AWS environment.",
+    "choices": [
+      {
+        "choiceId": "sec_identities_enforce_mechanisms",
+        "title": "Use strong sign-in mechanisms",
+        "description": "Sign-ins (authentication using sign-in credentials) can present risks when not using mechanisms like multi-factor authentication (MFA), especially in situations where sign-in credentials have been inadvertently disclosed or are easily guessed. Use strong sign-in mechanisms to reduce these risks by requiring MFA and strong password policies."
+      },
+      {
+        "choiceId": "sec_identities_unique",
+        "title": "Use temporary credentials",
+        "description": "When doing any type of authentication, it’s best to use temporary credentials instead of long-term credentials to reduce or eliminate risks, such as credentials being inadvertently disclosed, shared, or stolen."
+      },
+      {
+        "choiceId": "sec_identities_secrets",
+        "title": "Store and use secrets securely",
+        "description": "A workload requires an automated capability to prove its identity to databases, resources, and third-party services. This is accomplished using secret access credentials, such as API access keys, passwords, and OAuth tokens. Using a purpose-built service to store, manage, and rotate these credentials helps reduce the likelihood that those credentials become compromised."
+      },
+      {
+        "choiceId": "sec_identities_identity_provider",
+        "title": "Rely on a centralized identity provider",
+        "description": "For workforce identities (employees and contractors), rely on an identity provider that allows you to manage identities in a centralized place. This makes it easier to manage access across multiple applications and systems, because you are creating, assigning, managing, revoking, and auditing access from a single location."
+      },
+      {
+        "choiceId": "sec_identities_audit",
+        "title": "Audit and rotate credentials periodically",
+        "description": "Audit and rotate credentials periodically to limit how long the credentials can be used to access your resources. Long-term credentials create many risks, and these risks can be reduced by rotating long-term credentials regularly."
+      },
+      {
+        "choiceId": "sec_identities_groups_attributes",
+        "title": "Employ user groups and attributes",
+        "description": "Defining permissions according to user groups and attributes helps reduce the number and complexity of policies, making it simpler to achieve the principle of least privilege. You can use user groups to manage the permissions for many people in one place based on the function they perform in your organization. Attributes, such as department, project, or location, can provide an additional layer of permission scope when people perform a similar function but for different subsets of resources."
+      },
+      {
+        "choiceId": "sec_identities_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "permissions",
+    "title": "How do you manage permissions for people and machines?",
+    "description": "Manage permissions to control access to people and machine identities that require access to AWS and your workload. Permissions control who can access what, and under what conditions.",
+    "choices": [
+      {
+        "choiceId": "sec_permissions_define",
+        "title": "Define access requirements",
+        "description": "Each component or resource of your workload needs to be accessed by administrators, end users, or other components. Have a clear definition of who or what should have access to each component, choose the appropriate identity type and method of authentication and authorization."
+      },
+      {
+        "choiceId": "sec_permissions_least_privileges",
+        "title": "Grant least privilege access",
+        "description": "Grant only the access that users require to perform specific actions on specific resources under specific conditions. Use group and identity attributes to dynamically set permissions at scale, rather than defining permissions for individual users. For example, you can allow a group of developers access to manage only resources for their project. This way, if a developer leaves the project, their access is automatically revoked without changing the underlying access policies."
+      },
+      {
+        "choiceId": "sec_permissions_define_guardrails",
+        "title": "Define permission guardrails for your organization",
+        "description": "Use permission guardrails to reduce the scope of available permissions that can be granted to principals. The permission policy evaluation chain includes your guardrails to determine the effective permissions of a principal when making authorization decisions. You can define guardrails using a layer-based approach. Apply some guardrails broadly across your entire organization and apply others granularly to temporary access sessions."
+      },
+      {
+        "choiceId": "sec_permissions_lifecycle",
+        "title": "Manage access based on lifecycle",
+        "description": "Monitor and adjust the permissions granted to your principals (users, roles, and groups) throughout their lifecycle within your organization. Adjust group memberships as users change roles, and remove access when a user leaves the organization."
+      },
+      {
+        "choiceId": "sec_permissions_emergency_process",
+        "title": "Establish emergency access process",
+        "description": "Create a process that allows for emergency access to your workloads in the unlikely event of an issue with your centralized identity provider."
+      },
+      {
+        "choiceId": "sec_permissions_share_securely",
+        "title": "Share resources securely within your organization",
+        "description": "As the number of workloads grows, you might need to share access to resources in those workloads or provision the resources multiple times across multiple accounts. You might have constructs to compartmentalize your environment, such as having development, testing, and production environments. However, having separation constructs does not limit you from being able to share securely. By sharing components that overlap, you can reduce operational overhead and allow for a consistent experience without guessing what you might have missed while creating the same resource multiple times."
+      },
+      {
+        "choiceId": "sec_permissions_continuous_reduction",
+        "title": "Reduce permissions continuously",
+        "description": "As your teams determine what access is required, remove unneeded permissions and establish review processes to achieve least privilege permissions. Continually monitor and remove unused identities and permissions for both human and machine access."
+      },
+      {
+        "choiceId": "sec_permissions_share_securely_third_party",
+        "title": "Share resources securely with a third party",
+        "description": "The security of your cloud environment doesn't stop at your organization. Your organization might rely on a third party to manage a portion of your data. The permission management for the third-party managed system should follow the practice of just-in-time access using the principle of least privilege with temporary credentials. By working closely with a third party, you can reduce the scope of impact and risk of unintended access together."
+      },
+      {
+        "choiceId": "sec_permissions_analyze_cross_account",
+        "title": "Analyze public and cross account access",
+        "description": "Continually monitor findings that highlight public and cross-account access. Reduce public access and cross-account access to only the specific resources that require this access."
+      },
+      {
+        "choiceId": "sec_permissions_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "detect-investigate-events",
+    "title": "How do you detect and investigate security events?",
+    "description": "Capture and analyze events from logs and metrics to gain visibility. Take action on security events and potential threats to help secure your workload.",
+    "choices": [
+      {
+        "choiceId": "sec_detect_investigate_events_app_service_logging",
+        "title": "Configure service and application logging",
+        "description": "Retain security event logs from services and applications. This is a fundamental principle of security for audit, investigations, and operational use cases, and a common security requirement driven by governance, risk, and compliance (GRC) standards, policies, and procedures."
+      },
+      {
+        "choiceId": "sec_detect_investigate_events_logs",
+        "title": "Capture logs, findings, and metrics in standardized locations",
+        "description": "Security teams rely on logs and findings to analyze events that may indicate unauthorized activity or unintentional changes. To streamline this analysis, capture security logs and findings in standardized locations.  This makes data points of interest available for correlation and can simplify tool integrations."
+      },
+      {
+        "choiceId": "sec_detect_investigate_events_noncompliant_resources",
+        "title": "Initiate remediation for non-compliant resources",
+        "description": "Your detective controls may alert on resources that are out of compliance with your configuration requirements. You can initiate programmatically-defined remediations, either manually or automatically, to fix these resources and help minimize potential impacts. When you define remediations programmatically, you can take prompt and consistent action."
+      },
+      {
+        "choiceId": "sec_detect_investigate_events_security_alerts",
+        "title": "Correlate and enrich security events",
+        "description": "Unexpected activity can generate multiple security alerts by different sources, requiring further correlation and enrichment to understand the full context. Implement automated correlation and enrichment of security alerts to help achieve more accurate incident identification and response."
+      },
+      {
+        "choiceId": "sec_detect_investigate_events_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "network-protection",
+    "title": "How do you protect your network resources?",
+    "description": "Any workload that has some form of network connectivity, whether it’s the internet or a private network, requires multiple layers of defense to help protect from external and internal network-based threats.",
+    "choices": [
+      {
+        "choiceId": "sec_network_protection_create_layers",
+        "title": "Create network layers",
+        "description": "Segment your network topology into different layers based on logical groupings of your workload components according to their data sensitivity and access requirements.  Distinguish between components that require inbound access from the internet, such as public web endpoints, and those that only need internal access, such as databases."
+      },
+      {
+        "choiceId": "sec_network_protection_layered",
+        "title": "Control traffic within your network layers",
+        "description": "Within the layers of your network, use further segmentation to restrict traffic only to the flows necessary for each workload. First, focus on controlling traffic between the internet or other external systems to a workload and your environment (north-south traffic). Afterwards, look at flows between different components and systems (east-west traffic)."
+      },
+      {
+        "choiceId": "sec_network_protection_inspection",
+        "title": "Implement inspection-based protection",
+        "description": "Set up traffic inspection points between your network layers to make sure data in transit matches the expected categories and patterns. Analyze traffic flows, metadata, and patterns to help identify, detect, and respond to events more effectively."
+      },
+      {
+        "choiceId": "sec_network_protection_auto_protect",
+        "title": "Automate network protection",
+        "description": "Automate the deployment of your network protections using DevOps practices, such as infrastructure as code (IaC) and CI/CD pipelines. These practices can help you track changes in your network protections through a version control system, reduce the time it takes to deploy changes, and help detect if your network protections drift from your desired configuration.  "
+      },
+      {
+        "choiceId": "sec_network_protection_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "protect-compute",
+    "title": "How do you protect your compute resources?",
+    "description": "Compute resources in your workload require multiple layers of defense to help protect from external and internal threats. Compute resources include EC2 instances, containers, AWS Lambda functions, database services, IoT devices, and more.",
+    "choices": [
+      {
+        "choiceId": "sec_protect_compute_vulnerability_management",
+        "title": "Perform vulnerability management",
+        "description": "Frequently scan and patch for vulnerabilities in your code, dependencies, and in your infrastructure to help protect against new threats."
+      },
+      {
+        "choiceId": "sec_protect_compute_hardened_images",
+        "title": "Provision compute from hardened images",
+        "description": "Provide fewer opportunities for unintended access to your runtime environments by deploying them from hardened images. Only acquire runtime dependencies, such as container images and application libraries, from trusted registries and verify their signatures. Create your own private registries to store trusted images and libraries for use in your build and deploy processes."
+      },
+      {
+        "choiceId": "sec_protect_compute_validate_software_integrity",
+        "title": "Validate software integrity",
+        "description": "Use cryptographic verification to validate the integrity of software artifacts (including images) your workload uses.  Cryptographically sign your software as a safeguard against unauthorized changes run within your compute environments."
+      },
+      {
+        "choiceId": "sec_protect_compute_reduce_manual_management",
+        "title": "Reduce manual management and interactive access",
+        "description": "Use automation to perform deployment, configuration, maintenance, and investigative tasks wherever possible. Consider manual access to compute resources in cases of emergency procedures or in safe (sandbox) environments, when automation is not available."
+      },
+      {
+        "choiceId": "sec_protect_compute_auto_protection",
+        "title": "Automate compute protection",
+        "description": "Automate compute protection operations to reduce the need for human intervention. Use automated scanning to detect potential issues within your compute resources, and remediate with automated programmatic responses or fleet management operations.  Incorporate automation in your CI/CD processes to deploy trustworthy workloads with up-to-date dependencies."
+      },
+      {
+        "choiceId": "sec_protect_compute_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "data-classification",
+    "title": "How do you classify your data?",
+    "description": "Classification provides a way to categorize data, based on criticality and sensitivity in order to help you determine appropriate protection and retention controls.",
+    "choices": [
+      {
+        "choiceId": "sec_data_classification_identify_data",
+        "title": "Understand your data classification scheme",
+        "description": "Understand the classification of data your workload is processing, its handling requirements, the associated business processes, where the data is stored, and who the data owner is. Your data classification and handling scheme should consider the applicable legal and compliance requirements of your workload and what data controls are needed. Understanding the data is the first step in the data classification journey. "
+      },
+      {
+        "choiceId": "sec_data_classification_define_protection",
+        "title": "Apply data protection controls based on data sensitivity",
+        "description": "Apply data protection controls that provide an appropriate level of control for each class of data defined in your classification policy. This practice can allow you to protect sensitive data from unauthorized access and use, while preserving the availability and use of data."
+      },
+      {
+        "choiceId": "sec_data_classification_lifecycle_management",
+        "title": "Define scalable data lifecycle management",
+        "description": "Understand your data lifecycle requirements as they relate to your different levels of data classification and handling.  This can include how data is handled when it first enters your environment, how data is transformed, and the rules for its destruction. Consider factors such as retention periods, access, auditing, and tracking provenance."
+      },
+      {
+        "choiceId": "sec_data_classification_auto_classification",
+        "title": "Automate identification and classification",
+        "description": "Automating the identification and classification of data can help you implement the correct controls. Using automation to augment manual determination reduces the risk of human error and exposure."
+      },
+      {
+        "choiceId": "sec_data_classification_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "protect-data-rest",
+    "title": "How do you protect your data at rest?",
+    "description": "Protect your data at rest by implementing multiple controls, to reduce the risk of unauthorized access or mishandling.",
+    "choices": [
+      {
+        "choiceId": "sec_protect_data_rest_key_mgmt",
+        "title": "Implement secure key management",
+        "description": "Secure key management includes the storage, rotation, access control, and monitoring of key material required to secure data at rest for your workload."
+      },
+      {
+        "choiceId": "sec_protect_data_rest_encrypt",
+        "title": "Enforce encryption at rest",
+        "description": "Encrypt private data at rest to maintain confidentiality and provide an additional layer of protection against unintended data disclosure or exfiltration. Encryption protects data so that it cannot be read or accessed without first being decrypted. Inventory and control unencrypted data to mitigate risks associated with data exposure."
+      },
+      {
+        "choiceId": "sec_protect_data_rest_automate_protection",
+        "title": "Automate data at rest protection",
+        "description": "Use automation to validate and enforce data at rest controls.  Use automated scanning to detect misconfiguration of your data storage solutions, and perform remediations through automated programmatic response where possible.  Incorporate automation in your CI/CD processes to detect data storage misconfigurations before they are deployed to production."
+      },
+      {
+        "choiceId": "sec_protect_data_rest_access_control",
+        "title": "Enforce access control",
+        "description": "To help protect your data at rest, enforce access control using mechanisms such as isolation and versioning. Apply least privilege and conditional access controls. Prevent granting public access to your data."
+      },
+      {
+        "choiceId": "sec_protect_data_rest_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "protect-data-transit",
+    "title": "How do you protect your data in transit?",
+    "description": "Protect your data in transit by implementing multiple controls to reduce the risk of unauthorized access or loss.",
+    "choices": [
+      {
+        "choiceId": "sec_protect_data_transit_key_cert_mgmt",
+        "title": "Implement secure key and certificate management",
+        "description": "Transport Layer Security (TLS) certificates are used to secure network communications and establish the identity of websites, resources, and workloads over the internet, as well as private networks."
+      },
+      {
+        "choiceId": "sec_protect_data_transit_encrypt",
+        "title": "Enforce encryption in transit",
+        "description": "Enforce your defined encryption requirements based on your organization’s policies, regulatory obligations and standards to help meet organizational, legal, and compliance requirements. Only use protocols with encryption when transmitting sensitive data outside of your virtual private cloud (VPC). Encryption helps maintain data confidentiality even when the data transits untrusted networks."
+      },
+      {
+        "choiceId": "sec_protect_data_transit_authentication",
+        "title": "Authenticate network communications",
+        "description": "Verify the identity of communications by using protocols that support authentication, such as Transport Layer Security (TLS) or IPsec. Design your workload to use secure, authenticated network protocols whenever communicating between services, applications, or to users. Using network protocols that support authentication and authorization provides stronger control over network flows and reduces the impact of unauthorized access."
+      },
+      {
+        "choiceId": "sec_protect_data_transit_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "incident-response",
+    "title": "How do you anticipate, respond to, and recover from incidents?",
+    "description": "Even with mature preventive and detective controls, your organization should implement mechanisms to respond to and mitigate the potential impact of security incidents. Your preparation strongly affects the ability of your teams to operate effectively during an incident, to isolate, contain and perform forensics on issues, and to restore operations to a known good state. Putting in place the tools and access ahead of a security incident, then routinely practicing incident response through game days, helps ensure that you can recover while minimizing business disruption.",
+    "choices": [
+      {
+        "choiceId": "sec_incident_response_identify_personnel",
+        "title": "Identify key personnel and external resources",
+        "description": "Identify internal and external personnel, resources, and legal obligations that would help your organization respond to an incident."
+      },
+      {
+        "choiceId": "sec_incident_response_develop_management_plans",
+        "title": "Develop incident management plans",
+        "description": "The first document to develop for incident response is the incident response plan. The incident response plan is designed to be the foundation for your incident response program and strategy."
+      },
+      {
+        "choiceId": "sec_incident_response_prepare_forensic",
+        "title": "Prepare forensic capabilities",
+        "description": "Ahead of a security incident, consider developing forensics capabilities to support security event investigations."
+      },
+      {
+        "choiceId": "sec_incident_response_playbooks",
+        "title": "Develop and test security incident response playbooks",
+        "description": "A key part of preparing your incident response processes is developing playbooks. Incident response playbooks provide prescriptive guidance and steps to follow when a security event occurs. Having clear structure and steps simplifies the response and reduces the likelihood for human error."
+      },
+      {
+        "choiceId": "sec_incident_response_pre_provision_access",
+        "title": "Pre-provision access",
+        "description": "Verify that incident responders have the correct access pre-provisioned in AWS to reduce the time needed for investigation through to recovery."
+      },
+      {
+        "choiceId": "sec_incident_response_run_game_days",
+        "title": "Run simulations",
+        "description": "As organizations grow and evolve over time, so does the threat landscape, making it important to continually review your incident response capabilities. Running simulations (also known as game days) is one method that can be used to perform this assessment. Simulations use real-world security event scenarios designed to mimic a threat actor’s tactics, techniques, and procedures (TTPs) and allow an organization to exercise and evaluate their incident response capabilities by responding to these mock cyber events as they might occur in reality."
+      },
+      {
+        "choiceId": "sec_incident_response_establish_incident_framework",
+        "title": "Establish a framework for learning from incidents",
+        "description": "Implementing a lessons learned framework and root cause analysis capability will not only help improve incident response capabilities, but also help prevent the incident from recurring. By learning from each incident, you can help avoid repeating the same mistakes, exposures, or misconfigurations, not only improving your security posture, but also minimizing time lost to preventable situations."
+      },
+      {
+        "choiceId": "sec_incident_response_pre_deploy_tools",
+        "title": "Pre-deploy tools",
+        "description": "Verify that security personnel have the right tools pre-deployed to reduce the time for investigation through to recovery."
+      },
+      {
+        "choiceId": "sec_incident_response_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "security",
+    "questionId": "application-security",
+    "title": "How do you incorporate and validate the security properties of applications throughout the design, development, and deployment lifecycle?",
+    "description": "Training people, testing using automation, understanding dependencies, and validating the security properties of tools and applications help to reduce the likelihood of security issues in production workloads.",
+    "choices": [
+      {
+        "choiceId": "sec_appsec_perform_regular_penetration_testing",
+        "title": "Perform regular penetration testing",
+        "description": "Perform regular penetration testing of your software. This mechanism helps identify potential software issues that cannot be detected by automated testing or a manual code review. It can also help you understand the efficacy of your detective controls. Penetration testing should try to determine if the software can be made to perform in unexpected ways, such as exposing data that should be protected, or granting broader permissions than expected."
+      },
+      {
+        "choiceId": "sec_appsec_deploy_software_programmatically",
+        "title": "Deploy software programmatically",
+        "description": "Perform software deployments programmatically where possible. This approach reduces the likelihood that a deployment fails or an unexpected issue is introduced due to human error."
+      },
+      {
+        "choiceId": "sec_appsec_regularly_assess_security_properties_of_pipelines",
+        "title": "Regularly assess security properties of the pipelines",
+        "description": "Apply the principles of the Well-Architected Security Pillar to your pipelines, with particular attention to the separation of permissions. Regularly assess the security properties of your pipeline infrastructure. Effectively managing the security of the pipelines allows you to deliver the security of the software that passes through the pipelines."
+      },
+      {
+        "choiceId": "sec_appsec_train_for_application_security",
+        "title": "Train for application security",
+        "description": "Provide training to your team on secure development and operation practices, which helps them build secure and high-quality software. This practice helps your team to prevent, detect, and remediate security issues earlier in the development lifecycle. Consider training that covers threat modeling, secure coding practices, and using services for secure configurations and operations. Provide your team access to training through self-service resources, and regularly gather their feedback for continuous improvement."
+      },
+      {
+        "choiceId": "sec_appsec_automate_testing_throughout_lifecycle",
+        "title": "Automate testing throughout the development and release lifecycle",
+        "description": "Automate the testing for security properties throughout the development and release lifecycle. Automation makes it easier to consistently and repeatably identify potential issues in software prior to release, which reduces the risk of security issues in the software being provided."
+      },
+      {
+        "choiceId": "sec_appsec_manual_code_reviews",
+        "title": "Conduct code reviews",
+        "description": "Implement code reviews to helps verify the quality and security of software being developed. Code reviews involve having team members other than the original code author review the code for potential issues, vulnerabilities, and adherence to coding standards and best practices. This process helps catch errors, inconsistencies, and security flaws that might have been overlooked by the original developer. Use automated tools to assist with code reviews."
+      },
+      {
+        "choiceId": "sec_appsec_centralize_services_for_packages_and_dependencies",
+        "title": "Centralize services for packages and dependencies",
+        "description": "Provide centralized services for your teams to obtain software packages and other dependencies. This allows the validation of packages before they are included in the software that you write and provides a source of data for the analysis of the software being used in your organization."
+      },
+      {
+        "choiceId": "sec_appsec_build_program_that_embeds_security_ownership_in_teams",
+        "title": "Build a program that embeds security ownership in workload teams",
+        "description": "Build a program or mechanism that empowers builder teams to make security decisions about the software that they create. Your security team still needs to validate these decisions during a review, but embedding security ownership in builder teams allows for faster, more secure workloads to be built. This mechanism also promotes a culture of ownership that positively impacts the operation of the systems you build."
+      },
+      {
+        "choiceId": "sec_appsec_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "sustainability",
+    "questionId": "sus_region",
+    "title": "How do you select Regions for your workload?",
+    "description": "The choice of Region for your workload significantly affects its KPIs, including performance, cost, and carbon footprint. To effectively improve these KPIs, you should choose Regions for your workloads based on both business requirements and sustainability goals.",
+    "choices": [
+      {
+        "choiceId": "sus_sus_region_a2",
+        "title": "Choose Region based on both business requirements and sustainability goals",
+        "description": "Choose a Region for your workload based on both your business requirements and sustainability goals to optimize its KPIs, including performance, cost, and carbon footprint."
+      },
+      {
+        "choiceId": "sus_sus_region_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "sustainability",
+    "questionId": "sus_user",
+    "title": "How do you align cloud resources to your demand?",
+    "description": "The way users and applications consume your workloads and other resources can help you identify improvements to meet sustainability goals. Scale infrastructure to continually match demand and verify that you use only the minimum resources required to support your users. Align service levels to customer needs. Position resources to limit the network required for users and applications to consume them. Remove unused assets. Provide your team members with devices that support their needs and minimize their sustainability impact.",
+    "choices": [
+      {
+        "choiceId": "sus_sus_user_a2",
+        "title": "Scale workload infrastructure dynamically",
+        "description": "Use elasticity of the cloud and scale your infrastructure dynamically to match supply of cloud resources to demand and avoid overprovisioned capacity in your workload."
+      },
+      {
+        "choiceId": "sus_sus_user_a3",
+        "title": "Align SLAs with sustainability goals",
+        "description": "Review and optimize workload service-level agreements (SLA) based on your sustainability goals to minimize the resources required to support your workload while continuing to meet business needs."
+      },
+      {
+        "choiceId": "sus_sus_user_a5",
+        "title": "Optimize geographic placement of workloads based on their networking requirements",
+        "description": "Select cloud location and services for your workload that reduce the distance network traffic must travel and decrease the total network resources required to support your workload."
+      },
+      {
+        "choiceId": "sus_sus_user_a4",
+        "title": "Stop the creation and maintenance of unused assets",
+        "description": "Decommission unused assets in your workload to reduce the number of cloud resources required to support your demand and minimize waste."
+      },
+      {
+        "choiceId": "sus_sus_user_a6",
+        "title": "Optimize team member resources for activities performed",
+        "description": "Optimize resources provided to team members to minimize the environmental sustainability impact while supporting their needs."
+      },
+      {
+        "choiceId": "sus_sus_user_a7",
+        "title": "Implement buffering or throttling to flatten the demand curve",
+        "description": "Buffering and throttling flatten the demand curve and reduce the provisioned capacity required for your workload."
+      },
+      {
+        "choiceId": "sus_sus_user_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "sustainability",
+    "questionId": "sus_software",
+    "title": "How do you take advantage of software and architecture patterns to support your sustainability goals?",
+    "description": "Implement patterns for performing load smoothing and maintaining consistent high utilization of deployed resources to minimize the resources consumed. Components might become idle from lack of use because of changes in user behavior over time. Revise patterns and architecture to consolidate under-utilized components to increase overall utilization. Retire components that are no longer required. Understand the performance of your workload components, and optimize the components that consume the most resources. Be aware of the devices your customers use to access your services, and implement patterns to minimize the need for device upgrades.",
+    "choices": [
+      {
+        "choiceId": "sus_sus_software_a2",
+        "title": "Optimize software and architecture for asynchronous and scheduled jobs",
+        "description": "Use efficient software and architecture patterns such as queue-driven to maintain consistent high utilization of deployed resources."
+      },
+      {
+        "choiceId": "sus_sus_software_a3",
+        "title": "Remove or refactor workload components with low or no use",
+        "description": "Remove components that are unused and no longer required, and refactor components with little utilization to minimize waste in your workload."
+      },
+      {
+        "choiceId": "sus_sus_software_a4",
+        "title": "Optimize areas of code that consume the most time or resources",
+        "description": "Optimize your code that runs within different components of your architecture to minimize resource usage while maximizing performance."
+      },
+      {
+        "choiceId": "sus_sus_software_a5",
+        "title": "Optimize impact on devices and equipment",
+        "description": "Understand the devices and equipment used in your architecture and use strategies to reduce their usage. This can minimize the overall environmental impact of your cloud workload."
+      },
+      {
+        "choiceId": "sus_sus_software_a6",
+        "title": "Use software patterns and architectures that best support data access and storage patterns",
+        "description": "Understand how data is used within your workload, consumed by your users, transferred, and stored. Use software patterns and architectures that best support data access and storage to minimize the compute, networking, and storage resources required to support the workload."
+      },
+      {
+        "choiceId": "sus_sus_software_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "sustainability",
+    "questionId": "sus_data",
+    "title": "How do you take advantage of data management policies and patterns to support your sustainability goals?",
+    "description": "Implement data management practices to reduce the provisioned storage required to support your workload, and the resources required to use it. Understand your data, and use storage technologies and configurations that best support the business value of the data and how it’s used. Lifecycle data to more efficient, less performant storage when requirements decrease, and delete data that’s no longer required.",
+    "choices": [
+      {
+        "choiceId": "sus_sus_data_a2",
+        "title": "Implement a data classification policy",
+        "description": "Classify data to understand its criticality to business outcomes and choose the right energy-efficient storage tier to store the data."
+      },
+      {
+        "choiceId": "sus_sus_data_a3",
+        "title": "Use technologies that support data access and storage patterns",
+        "description": "Use storage technologies that best support how your data is accessed and stored to minimize the resources provisioned while supporting your workload."
+      },
+      {
+        "choiceId": "sus_sus_data_a4",
+        "title": "Use policies to manage the lifecycle of your datasets",
+        "description": "Manage the lifecycle of all of your data and automatically enforce deletion to minimize the total storage required for your workload."
+      },
+      {
+        "choiceId": "sus_sus_data_a6",
+        "title": "Remove unneeded or redundant data",
+        "description": "Remove unneeded or redundant data to minimize the storage resources required to store your datasets."
+      },
+      {
+        "choiceId": "sus_sus_data_a7",
+        "title": "Use shared file systems or storage to access common data",
+        "description": "Adopt shared file systems or storage to avoid data duplication and enable more efficient infrastructure for your workload."
+      },
+      {
+        "choiceId": "sus_sus_data_a9",
+        "title": "Back up data only when difficult to recreate",
+        "description": "Avoid backing up data that has no business value to minimize storage resources requirements for your workload."
+      },
+      {
+        "choiceId": "sus_sus_data_a5",
+        "title": "Use elasticity and automation to expand block storage or file system",
+        "description": "Use elasticity and automation to expand block storage or file system as data grows to minimize the total provisioned storage."
+      },
+      {
+        "choiceId": "sus_sus_data_a8",
+        "title": "Minimize data movement across networks",
+        "description": "Use shared file systems or object storage to access common data and minimize the total networking resources required to support data movement for your workload."
+      },
+      {
+        "choiceId": "sus_sus_data_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "sustainability",
+    "questionId": "sus_hardware",
+    "title": "How do you select and use cloud hardware and services in your architecture to support your sustainability goals?",
+    "description": "Look for opportunities to reduce workload sustainability impacts by making changes to your hardware management practices. Minimize the amount of hardware needed to provision and deploy, and select the most efficient hardware and services for your individual workload.",
+    "choices": [
+      {
+        "choiceId": "sus_sus_hardware_a2",
+        "title": "Use the minimum amount of hardware to meet your needs",
+        "description": "Use the minimum amount of hardware for your workload to efficiently meet your business needs."
+      },
+      {
+        "choiceId": "sus_sus_hardware_a3",
+        "title": "Use instance types with the least impact",
+        "description": "Continually monitor and use new instance types to take advantage of energy efficiency improvements."
+      },
+      {
+        "choiceId": "sus_sus_hardware_a4",
+        "title": "Use managed services",
+        "description": "Use managed services to operate more efficiently in the cloud."
+      },
+      {
+        "choiceId": "sus_sus_hardware_a5",
+        "title": "Optimize your use of hardware-based compute accelerators",
+        "description": "Optimize your use of accelerated computing instances to reduce the physical infrastructure demands of your workload."
+      },
+      {
+        "choiceId": "sus_sus_hardware_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "pillar": "sustainability",
+    "questionId": "sus_dev",
+    "title": "How do your organizational processes support your sustainability goals?",
+    "description": "Look for opportunities to reduce your sustainability impact by making changes to your development, test, and deployment practices.",
+    "choices": [
+      {
+        "choiceId": "sus_sus_dev_a1",
+        "title": "Communicate and cascade your sustainability goals",
+        "description": "Technology is a key enabler of sustainability. IT teams play a crucial role in driving meaningful change towards your organization's sustainability goals. These teams should clearly understand the company's sustainability targets and work to communicate and cascade those priorities across its operations."
+      },
+      {
+        "choiceId": "sus_sus_dev_a2",
+        "title": "Adopt methods that can rapidly introduce sustainability improvements",
+        "description": "Adopt methods and processes to validate potential improvements, minimize testing costs, and deliver small improvements."
+      },
+      {
+        "choiceId": "sus_sus_dev_a3",
+        "title": "Keep your workload up-to-date",
+        "description": "Keep your workload up-to-date to adopt efficient features, remove issues, and improve the overall efficiency of your workload."
+      },
+      {
+        "choiceId": "sus_sus_dev_a4",
+        "title": "Increase utilization of build environments",
+        "description": "Increase the utilization of resources to develop, test, and build your workloads."
+      },
+      {
+        "choiceId": "sus_sus_dev_a5",
+        "title": "Use managed device farms for testing",
+        "description": "Use managed device farms to efficiently test a new feature on a representative set of hardware."
+      },
+      {
+        "choiceId": "sus_sus_dev_no",
+        "title": "None of these",
+        "description": ""
+      }
+    ]
+  }
+]
